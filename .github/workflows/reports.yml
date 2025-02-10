@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Parse sha
+        id: parse_sha
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Login to the Container Registry
         uses: docker/login-action@v3
         with:
@@ -32,6 +36,7 @@ jobs:
         id: metadata
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: ${{ steps.parse_sha.outputs.sha_short }}-${{ github.run_number }},latest
           labels: |
             'org.opencontainers.image.title=Tombo Reports'
             'org.opencontainers.image.description=Tombo Reports Microservice'
