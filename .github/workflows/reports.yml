@@ -40,7 +40,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: reports-service
+          context: .
           file: reports-service/Dockerfile
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
