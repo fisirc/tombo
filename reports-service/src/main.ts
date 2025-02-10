@@ -12,7 +12,7 @@ new Elysia()
     })
     .ws('/echo', {
         message(ws, message) {
-            ws.send(`❇️ ${message}`);
+            ws.send(`❇️ ${message} ❇️`);
         }
     })
     .listen(PORT);
