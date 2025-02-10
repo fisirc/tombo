@@ -10,10 +10,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}-reports
 
-defaults:
-  run:
-    working-directory: reports-service
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,8 +38,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: reports-service
+          file: reports-service/Dockerfile
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
