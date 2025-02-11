@@ -46,3 +46,25 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        id: install-kubectl
+      - name: Authenticate to the cluster
+        run: |
+          export KUBECONFIG=${{ secrets.KUBECONFIG }}
+      - name: Check if cluster connection is working
+        run: |
+          kubectl cluster-info
