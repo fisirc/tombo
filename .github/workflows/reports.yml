@@ -4,6 +4,7 @@ on:
       - main
     paths:
       - 'reports-service/**'
+      - '.github/workflows/reports.yml'
   workflow_dispatch:
 
 env:
