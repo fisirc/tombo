@@ -63,10 +63,13 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v4
         id: install-kubectl
+        with:
+          version: latest
       - name: Authenticate to the cluster
         run: |
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=kubeconfig
       - name: Check if cluster connection is working
         run: |
           kubectl cluster-info
+        env:
+          KUBECONFIG: kubeconfig
