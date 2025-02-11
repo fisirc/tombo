@@ -64,7 +64,8 @@ jobs:
         id: install-kubectl
       - name: Authenticate to the cluster
         run: |
-          export KUBECONFIG=${{ secrets.KUBECONFIG }}
+          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig
+          export KUBECONFIG=kubeconfig
       - name: Check if cluster connection is working
         run: |
           kubectl cluster-info
