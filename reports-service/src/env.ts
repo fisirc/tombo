@@ -1,12 +1,7 @@
 // --- Environment variables
 
 export const PORT = maybeNumberEnv('PORT') ?? 6969;
-
-export const DATABASE_USER = env('DATABASE_USER');
-export const DATABASE_PASSWORD = env('DATABASE_PASSWORD');
-export const DATABASE_HOST = env('DATABASE_HOST');
-export const DATABASE_PORT = maybeNumberEnv('DATABASE_PORT') ?? 5432;
-export const DATABASE_URL = `postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}`;
+export const DATABASE_URL = env('DATABASE_URL');
 
 // --- Utils
 
