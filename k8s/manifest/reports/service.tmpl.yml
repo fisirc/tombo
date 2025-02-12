@@ -51,7 +51,7 @@ spec:
   selector:
     app.kubernetes.io/name: reports-service
   ports:
-  - port: 6969
+  - port: 80
     targetPort: 6969
 
 ---
