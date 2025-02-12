@@ -1,8 +1,6 @@
 import { Elysia } from 'elysia'
-import { DATABASE_URL, PORT } from '@/env';
-import { neon } from "@neondatabase/serverless";
-
-const sql = neon(DATABASE_URL);
+import { PORT } from '@/env';
+import { sql } from 'bun';
 
 new Elysia()
     .get('/', async () => {
