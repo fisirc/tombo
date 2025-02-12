@@ -63,13 +63,17 @@ metadata:
   namespace: tombo
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "32m"
+  labels:
+    app.kubernetes.io/name: reports-service
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: tombo
 spec:
   rules:
   - host: reports.tombo.local
     http:
       paths:
-      - path: /
-        pathType: Prefix
+      - pathType: Prefix
+        path: /reports
         backend:
           service:
             name: reports-service
