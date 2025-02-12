@@ -25,11 +25,31 @@ jobs:
 
   deploy:
     name: Deploy Reports manifests
-    uses: ./.github/workflows/kubectl.yml
     needs: build
+    runs-on: ubuntu-latest
+    environment: prod
     permissions:
       contents: read
-    with:
-      commands: |
-        kubectl cluster-info
-    secrets: inherit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Parse database URL
+        id: database-url
+        uses: paoloose/uri-parse-action@v1.0.0beta.3
+        with:
+          uri: ${{ secrets.REPORTS_DATABASE_URL }}
+      - name: Parse reports/secrets.yml manifest
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REPORTS_POSTGRES_USER: ${{ steps.database-url.outputs.username }}
+          REPORTS_POSTGRES_PASSWORD: ${{ steps.database-url.outputs.password }}
+          REPORTS_POSTGRES_DB: ${{ steps.database-url.outputs.path }}
+          REPORTS_DATABASE_URL: ${{ secrets.REPORTS_DATABASE_URL }}
+        with:
+          input: k8s/manifest/reports/secrets.tmpl.yml
+          output: k8s/manifest/reports/secrets.yml
+      - name: Apply Reports manifests
+        uses: ./.github/actions/kubectl.yml
+        with:
+          commands: |
+            kubectl apply -f k8s/manifest/reports/secrets.yml
