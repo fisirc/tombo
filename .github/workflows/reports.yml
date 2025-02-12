@@ -49,7 +49,7 @@ jobs:
           input: k8s/manifest/reports/secrets.tmpl.yml
           output: k8s/manifest/reports/secrets.yml
       - name: Apply Reports manifests
-        uses: ./.github/actions/kubectl.yml
+        uses: ./.github/actions/kubectl
         with:
           commands: |
             kubectl apply -f k8s/manifest/reports/secrets.yml
