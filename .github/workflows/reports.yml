@@ -38,7 +38,7 @@ jobs:
         uses: paoloose/uri-parse-action@v1.0.0beta.5
         with:
           uri: ${{ secrets.REPORTS_DATABASE_URL }}
-      - name: Parse reports/secrets.yml manifest
+      - name: Prepare reports/secrets.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REPORTS_POSTGRES_USER: ${{ steps.database-url.outputs.username }}
@@ -48,9 +48,18 @@ jobs:
         with:
           input: k8s/manifest/reports/secrets.tmpl.yml
           output: k8s/manifest/reports/secrets.yml
+      - name: Prepare reports/service.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REPORTS_CONTAINER: ${{ github.repository }}-reports:sha-${{ github.sha }}
+        with:
+          input: k8s/manifest/reports/service.tmpl.yml
+          output: k8s/manifest/reports/service.yml
       - name: Apply Reports manifests
         uses: ./.github/actions/kubectl
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
             kubectl apply -f k8s/manifest/reports/secrets.yml
+            kubectl apply -f k8s/manifest/reports/database.yml
+            kubectl apply -f k8s/manifest/reports/service.yml

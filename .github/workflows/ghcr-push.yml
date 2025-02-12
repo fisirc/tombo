@@ -40,7 +40,8 @@ jobs:
         with:
           images: ghcr.io/${{ inputs.image }}
           tags: |
-            type=sha
+            type=sha,format=short
+            type=sha,format=long
             type=raw,value=latest
           labels: ${{ inputs.labels }}
       - name: Build and push image
