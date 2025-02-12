@@ -51,5 +51,6 @@ jobs:
       - name: Apply Reports manifests
         uses: ./.github/actions/kubectl
         with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
             kubectl apply -f k8s/manifest/reports/secrets.yml
