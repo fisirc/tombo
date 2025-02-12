@@ -5,6 +5,7 @@ on:
     paths:
       - 'k8s/manifest/base/**'
       - '.github/workflows/base.yml'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -28,4 +29,5 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
+            kubectl apply -f k8s/manifest/base/namespace.yml
             kubectl apply -f k8s/manifest/base/secrets.yml
