@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Build reports container
     uses: ./.github/workflows/ghcr-push.yml
     permissions:
       contents: read
@@ -28,9 +29,7 @@ jobs:
     needs: build
     permissions:
       contents: read
-      packages: write
-      attestations: write
-      id-token: write
     with:
       commands: |
         kubectl cluster-info
+    secrets: inherit
