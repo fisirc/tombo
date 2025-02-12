@@ -20,7 +20,7 @@ runs:
     - name: Authenticate to the cluster
       shell: bash
       run: |
-        echo $KUBECONFIG | base64 --decode > kubeconfig
+        echo ${KUBECONFIG} | base64 --decode > kubeconfig
       env:
         KUBECONFIG: ${{ inputs.kubeconfig }}
     - name: Run kubectl commands
