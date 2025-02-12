@@ -12,5 +12,6 @@ jobs:
     uses: ./.github/workflows/kubectl.yml
     with:
       commands: |
+        ls -la
         kubectl apply -f k8s/manifest/base/namespace.yml
     secrets: inherit
