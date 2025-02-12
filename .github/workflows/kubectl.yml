@@ -23,7 +23,7 @@ jobs:
       - name: Authenticate to the cluster
         run: |
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig
-      - name: Check if cluster connection is working
+      - name: Run kubectl commands
         run: ${{ inputs.commands }}
         env:
           KUBECONFIG: kubeconfig
