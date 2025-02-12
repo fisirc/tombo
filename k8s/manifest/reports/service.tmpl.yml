@@ -72,6 +72,7 @@ metadata:
   namespace: tombo
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "32m"
+    nginx.ingress.kubernetes.io/rewrite-target: /
   labels:
     app.kubernetes.io/name: reports-service
     app.kubernetes.io/component: ingress
