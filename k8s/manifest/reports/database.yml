@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reports-database
+  namespace: tombo
+  labels:
+    app.kubernetes.io/name: reports-database
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tombo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: reports-database
+  template:
+    metadata:
+      namespace: tombo
+      labels:
+        app.kubernetes.io/name: reports-database
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: tombo
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:17.2
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: reports-database-secrets
+              key: postgres_user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: reports-database-secrets
+              key: postgres_password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: reports-database-secrets
+              key: postgres_db
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: reports-database
+  namespace: tombo
+  labels:
+    app.kubernetes.io/name: reports-database
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tombo
+spec:
+  selector:
+    app.kubernetes.io/name: reports-database
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
