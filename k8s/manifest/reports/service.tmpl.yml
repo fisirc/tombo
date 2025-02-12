@@ -9,6 +9,9 @@ metadata:
     app.kubernetes.io/part-of: tombo
 spec:
   replicas: 3
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 100%
   selector:
     matchLabels:
       app.kubernetes.io/name: reports-service
@@ -19,6 +22,12 @@ spec:
         app.kubernetes.io/component: microservice
         app.kubernetes.io/part-of: tombo
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions: [{key: app.kubernetes.io/name, operator: In, values: [reports-service]}]
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: reports-server
         image: ${REPORTS_CONTAINER}
