@@ -77,9 +77,9 @@ metadata:
     app.kubernetes.io/component: ingress
     app.kubernetes.io/part-of: tombo
 spec:
+  ingressClassName: "nginx"
   rules:
-  - host: reports.tombo.local
-    http:
+  - http:
       paths:
       - pathType: Prefix
         path: /reports
