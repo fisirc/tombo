@@ -52,7 +52,7 @@ jobs:
       - name: Prepare reports/service.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
-          REPORTS_CONTAINER: ${{ github.repository }}-reports:sha-${{ github.sha }}
+          REPORTS_CONTAINER: ghcr.io/${{ github.repository }}-reports:sha-${{ github.sha }}
         with:
           input: k8s/manifest/reports/service.tmpl.yml
           output: k8s/manifest/reports/service.yml
