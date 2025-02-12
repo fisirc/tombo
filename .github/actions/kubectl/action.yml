@@ -14,7 +14,6 @@ runs:
   steps:
     - name: Install kubectl
       uses: azure/setup-kubectl@v4
-      shell: bash
       id: install-kubectl
       with:
         version: latest
