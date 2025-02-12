@@ -14,7 +14,7 @@ spec:
       app.kubernetes.io/name: reports-service
   template:
     metadata:
-      annotations:
+      labels:
         app.kubernetes.io/name: reports-service
         app.kubernetes.io/component: microservice
         app.kubernetes.io/part-of: tombo

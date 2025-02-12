@@ -4,6 +4,7 @@ on:
       - main
     paths:
       - 'reports-service/**'
+      - 'k8s/manifest/reports/**'
       - '.github/workflows/reports.yml'
   workflow_dispatch:
 
