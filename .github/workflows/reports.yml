@@ -53,6 +53,7 @@ jobs:
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REPORTS_CONTAINER: ghcr.io/${{ github.repository }}-reports:sha-${{ github.sha }}
+          BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
         with:
           input: k8s/manifest/reports/service.tmpl.yml
           output: k8s/manifest/reports/service.yml
