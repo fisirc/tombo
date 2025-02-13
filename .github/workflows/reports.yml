@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Parse database URL
         id: database-url
-        uses: paoloose/uri-parse-action@v1.0.0beta.5
+        uses: paoloose/uri-parse-action@v1
         with:
           uri: ${{ secrets.REPORTS_DATABASE_URL }}
       - name: Prepare reports/secrets.yml

@@ -45,7 +45,7 @@ jobs:
             type=raw,value=latest
           labels: ${{ inputs.labels }}
       - name: Build and push image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6.13.0
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
