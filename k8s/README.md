@@ -1,4 +1,4 @@
-# Setup the Kubernetes cluster with minkube
+# Setup a multi-node Kubernetes cluster with minkube
 
 Follow these instructions to setup a minikube cluster accessible from the
 public internet.
@@ -200,8 +200,6 @@ the Ingress Controller behind a Service.
 We will solve this by replicating the `ingress-nginx-controller` with one pod
 per node.
 
-<!-- TODO: why not a DeamonSet? -->
-
 And to achieve this we will need to manually edit our Ingress Controller Service
 spec to:
 
@@ -229,16 +227,7 @@ spec:
   # ...
   template:
     spec:
-      # Add the following affinity rule
-+     affinity:
-+       podAntiAffinity:
-+         requiredDuringSchedulingIgnoredDuringExecution:
-+           - labelSelector:
-+               matchLabels:
-+                 app.kubernetes.io/name: ingress-nginx
-+                 app.kubernetes.io/component: controller
-+             topologyKey: kubernetes.io/hostname
-      # Add the following tolerations
+      # Add the following spread constraint
 +     topologySpreadConstraints:
 +       - labelSelector:
 +           matchLabels:
@@ -261,16 +250,6 @@ Here are the values so you can copy and paste them:
 spec:
   template:
     spec:
-
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: ingress-nginx
-                  app.kubernetes.io/component: controller
-              topologyKey: kubernetes.io/hostname
-
       topologySpreadConstraints:
         - labelSelector:
             matchLabels:
@@ -280,3 +259,10 @@ spec:
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
 ```
+
+The `topologySpreadConstraints` rule is used to spread the pods across the
+nodes of the cluster. The `topologyKey` is set to `kubernetes.io/hostname` so
+that each pod is scheduled on a different node.
+
+An alternative solution would be to deploy the ingress as a DaemonSet.
+See <https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx>
