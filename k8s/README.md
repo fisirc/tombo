@@ -32,6 +32,35 @@ minikube-m02   Ready    <none>          69s   v1.32.0   192.168.49.3
 minikube-m03   Ready    <none>          69s   v1.32.0   192.168.49.4
 ```
 
+## Installing Helm and the Charts
+
+Download the appropriate Helm release <https://github.com/helm/helm/releases> in your VPS.
+
+```bash
+# See https://helm.sh/docs/intro/install/#from-the-helm-project
+
+wget https://get.helm.sh/helm-v3.17.1-linux-amd64.tar.gz
+tar -zxvf helm-v3.0.0-linux-amd64.tar.gz
+mv linux-amd64/helm .local/bin/
+```
+
+### Adding the Helm Chart dependencies
+
+The following Charts are required to setup the cluster:
+
+**cert-manager** [[guide](<https://artifacthub.io/packages/helm/cert-manager/cert-manager#installing-the-chart>)]
+
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.crds.yaml
+helm repo add jetstack https://charts.jetstack.io --force-update
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.17.1
+```
+
 ## Allowing internet traffic
 
 Unless you use `--driver=none`, your cluster will not be accessible from your
