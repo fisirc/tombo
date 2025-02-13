@@ -107,9 +107,8 @@ services:
 In a nutshell, this configuration will route traffic from your VPS public IP
 to your `kube-api-server` running at `CONTROL_PLANE_IP:8443`.
 
-You can extend this configuration as your needs grow. In the future I will try
-to update this to support High Availability topology and Load Balancing of
-worker nodes.
+In future steps we will update this configuration to load balance HTTP traffic
+to our worker nodes.
 
 ## Remotely accessing the cluster
 
@@ -295,3 +294,46 @@ that each pod is scheduled on a different node.
 
 An alternative solution would be to deploy the ingress as a DaemonSet.
 See <https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx>
+
+## Load balancing the nodes traffic
+
+In previous steps we used Nginx as a reverse proxy to route traffic from our
+VPS to the `kube-api-server` running on the primary node.
+
+The same idea can be applied to balance HTTP/HTTPS traffic to our worker nodes.
+
+The resulting configuration will look like this:
+
+```nginx
+stream {
+    # kube-api-server
+    server {
+        listen 8443;
+        proxy_pass 192.168.49.2:8443;
+    }
+
+    # proxy for http pods
+    upstream worker_nodes_http {
+        least_conn;
+        server 192.168.49.2:80 max_fails=3 fail_timeout=5s;
+        server 192.168.49.3:80 max_fails=3 fail_timeout=5s;
+        server 192.168.49.4:80 max_fails=3 fail_timeout=5s;
+    }
+    server {
+        listen 80;
+        proxy_pass worker_nodes_http;
+    }
+
+    # proxy for https pods
+    upstream worker_nodes_https {
+        least_conn;
+        server 192.168.49.2:443 max_fails=3 fail_timeout=5s;
+        server 192.168.49.3:443 max_fails=3 fail_timeout=5s;
+        server 192.168.49.4:443 max_fails=3 fail_timeout=5s;
+    }
+    server {
+        listen 443;
+        proxy_pass worker_nodes_https;
+    }
+
+```
