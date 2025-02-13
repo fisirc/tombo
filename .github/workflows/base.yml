@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Prepare base/secrets.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
@@ -24,6 +25,15 @@ jobs:
         with:
           input: k8s/manifest/base/secrets.tmpl.yml
           output: k8s/manifest/base/secrets.yml
+
+      - name: Prepare base/cert-issuer.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          CERT_MANAGER_EMAIL: ${{ vars.CERT_MANAGER_EMAIL }}
+        with:
+          input: k8s/manifest/base/cert-issuer.tmpl.yml
+          output: k8s/manifest/base/cert-issuer.yml
+
       - name: Apply base manifests
         uses: ./.github/actions/kubectl
         with:
@@ -31,3 +41,4 @@ jobs:
           commands: |
             kubectl apply -f k8s/manifest/base/namespace.yml
             kubectl apply -f k8s/manifest/base/secrets.yml
+            kubectl apply -f k8s/manifest/base/cert-issuer.yml
