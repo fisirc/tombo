@@ -119,6 +119,11 @@ metadata:
     app.kubernetes.io/component: minio
     app.kubernetes.io/part-of: tombo
 spec:
+  ingressClassName: "nginx"
+  tls:
+    - hosts:
+        - console.minio.${BASE_DOMAIN}
+      secretName: tombo-minio-tls
   rules:
   - host: console.minio.${BASE_DOMAIN}
     http:
