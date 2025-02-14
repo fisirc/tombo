@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'k8s/manifest/minio/**'
+      - '.github/workflows/minio.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Minio manifests
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare minio/secrets.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+        with:
+          input: k8s/manifest/minio/secrets.tmpl.yml
+          output: k8s/manifest/minio/secrets.yml
+
+      - name: Prepare minio/service.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+        with:
+          input: k8s/manifest/minio/service.tmpl.yml
+          output: k8s/manifest/minio/service.yml
+
+      - name: Apply Minio manifests
+        uses: ./.github/actions/kubectl
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          commands: |
+            kubectl apply -f k8s/manifest/minio/secrets.yml
+            kubectl apply -f k8s/manifest/minio/service.yml
