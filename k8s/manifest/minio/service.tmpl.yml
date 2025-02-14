@@ -76,12 +76,12 @@ metadata:
     app.kubernetes.io/part-of: tombo
 spec:
   type: ClusterIP
+  selector:
+    app.kubernetes.io/name: minio
   ports:
   - port: 9000
     targetPort: 9000
     protocol: TCP
-  selector:
-    app.kubernetes.io/name: minio
 
 ---
 
@@ -97,19 +97,19 @@ metadata:
     app.kubernetes.io/part-of: tombo
 spec:
   type: ClusterIP
+  selector:
+    app.kubernetes.io/name: minio
   ports:
   - port: 80
     targetPort: 9001
     protocol: TCP
-  selector:
-    app.kubernetes.io/name: minio
 
 ---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: minio
+  name: minio-ingress
   namespace: tombo
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "64m"
