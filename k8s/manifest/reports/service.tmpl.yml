@@ -42,12 +42,12 @@ spec:
         - name: S3_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              key: MINIO_ACCESS_KEY
+              key: MINIO_ROOT_USER
               name: minio-secrets
         - name: S3_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              key: MINIO_SECRET_KEY
+              key: MINIO_ROOT_PASSWORD
               name: minio-secrets
         - name: S3_ENDPOINT
           value: "http://minio:9000"

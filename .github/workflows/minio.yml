@@ -21,7 +21,7 @@ jobs:
       - name: Prepare minio/secrets.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
-          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
         with:
           input: k8s/manifest/minio/secrets.tmpl.yml
           output: k8s/manifest/minio/secrets.yml

@@ -48,16 +48,16 @@ spec:
         image: minio/minio:RELEASE.2025-02-07T23-21-09Z
         args: ["server", "/data", "--console-address", ":9001"]
         env:
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           valueFrom:
             secretKeyRef:
               name: minio-secrets
-              key: MINIO_ACCESS_KEY
-        - name: MINIO_SECRET_KEY
+              key: MINIO_ROOT_USER
+        - name: MINIO_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: minio-secrets
-              key: MINIO_SECRET_KEY
+              key: MINIO_ROOT_PASSWORD
         ports:
         - containerPort: 9000
         - containerPort: 9001
@@ -103,7 +103,7 @@ spec:
   selector:
     app.kubernetes.io/name: minio
   ports:
-  - port: 80
+  - port: 9001
     targetPort: 9001
     protocol: TCP
 
@@ -125,8 +125,40 @@ spec:
   ingressClassName: "nginx"
   tls:
     - hosts:
-        - console.minio.${BASE_DOMAIN}
+        - minio.${BASE_DOMAIN}
       secretName: tombo-minio-tls
+  rules:
+  - host: minio.${BASE_DOMAIN}
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: minio
+            port:
+              number: 9000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-console-ingress
+  namespace: tombo
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  labels:
+    app.kubernetes.io/name: minio-console
+    app.kubernetes.io/component: minio
+    app.kubernetes.io/part-of: tombo
+spec:
+  ingressClassName: "nginx"
+  tls:
+    - hosts:
+        - console.minio.${BASE_DOMAIN}
+      secretName: tombo-minio-console-tls
   rules:
   - host: console.minio.${BASE_DOMAIN}
     http:
@@ -137,4 +169,4 @@ spec:
           service:
             name: minio-console
             port:
-              number: 80
+              number: 9001
