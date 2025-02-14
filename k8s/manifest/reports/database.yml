@@ -1,3 +1,21 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: reports-database-pvc
+  namespace: tombo
+  labels:
+    app.kubernetes.io/name: reports-database-pvc
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tombo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +30,8 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: reports-database
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -19,9 +39,16 @@ spec:
         app.kubernetes.io/component: database
         app.kubernetes.io/part-of: tombo
     spec:
+      volumes:
+        - name: reports-database
+          persistentVolumeClaim:
+            claimName: reports-database-pvc
       containers:
       - name: postgres
         image: postgres:17.2
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: reports-database
         ports:
         - containerPort: 5432
         env:

@@ -32,6 +32,24 @@ minikube-m02   Ready    <none>          69s   v1.32.0   192.168.49.3
 minikube-m03   Ready    <none>          69s   v1.32.0   192.168.49.4
 ```
 
+By default we get a very limited "standard" storage class that does not support
+multi-node clusters and does not implement the CSI interface
+(See [minikube#12360](https://github.com/kubernetes/minikube/issues/12360)).
+
+So we will need to setup the
+[CSI Hostpath Driver](https://minikube.sigs.k8s.io/docs/tutorials/volume_snapshots_and_csi/) to solve this.
+
+```bash
+minikube addons enable volumesnapshots
+minikube addons enable csi-hostpath-driver
+
+# Make it the default storage class
+kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+# And verify the installation running
+kubectl get sc
+```
+
 ## Installing Helm and the Charts
 
 Download the appropriate Helm release <https://github.com/helm/helm/releases> in your VPS.
