@@ -3,6 +3,11 @@
 export const PORT = maybeNumberEnv('PORT') ?? 6969;
 export const DATABASE_URL = env('DATABASE_URL');
 
+export const S3_ACCESS_KEY_ID = maybeEnv('S3_ACCESS_KEY_ID') ?? 'minio';
+export const S3_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY');
+export const S3_ENDPOINT = env('S3_ENDPOINT');
+export const S3_BUCKET = env('S3_BUCKET');
+
 // --- Utils
 
 function env(name: string): string {

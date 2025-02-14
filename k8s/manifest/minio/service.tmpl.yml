@@ -49,7 +49,10 @@ spec:
         args: ["server", "/data", "--console-address", ":9001"]
         env:
         - name: MINIO_ACCESS_KEY
-          value: "minio"
+          valueFrom:
+            secretKeyRef:
+              name: minio-secrets
+              key: MINIO_ACCESS_KEY
         - name: MINIO_SECRET_KEY
           valueFrom:
             secretKeyRef:

@@ -39,6 +39,21 @@ spec:
             secretKeyRef:
               name: reports-secrets
               key: DATABASE_URL
+        - name: S3_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: MINIO_ACCESS_KEY
+              name: minio-secrets
+        - name: S3_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: MINIO_SECRET_KEY
+              name: minio-secrets
+        - name: S3_ENDPOINT
+          value: "http://minio:9000"
+        # Note that this bucket MUST be created manually
+        - name: S3_BUCKET
+          value: "reports"
         ports:
         - containerPort: 6969
         # TODO: resources
