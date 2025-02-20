@@ -282,9 +282,9 @@ spec:
 +         maxSkew: 1
 +         topologyKey: kubernetes.io/hostname
 +         whenUnsatisfiable: DoNotSchedule
-      # And remove the nodeSelector
--     nodeSelector:
--       kubernetes.io/os: linux
+      # And remove the "primary" nodeSelector constraint (if exists)
+      nodeSelector:
+        kubernetes.io/os: linux
 -       minikube.k8s.io/primary: "true"
 
 # (Only relevant parts are shown)
