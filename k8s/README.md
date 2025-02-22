@@ -110,6 +110,18 @@ helm install \
   --version v1.17.1
 ```
 
+**redis** [[guide](https://artifacthub.io/packages/helm/bitnami/redis)]
+
+```bash
+helm install \
+  tombo-redis oci://registry-1.docker.io/bitnamicharts/redis \
+  --namespace tombo \
+  --set metrics.enabled=true \
+  --set architecture=replication \
+  --set auth.enabled=false \
+  --set replica.replicaCount=3
+```
+
 ## Configure your Nginx Ingress
 
 Deploy your Nginx ingress by running:
