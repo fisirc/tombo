@@ -62,6 +62,7 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
+            kubectl apply -f k8s/manifest/reports/configmap.yml
             kubectl apply -f k8s/manifest/reports/secrets.yml
             kubectl apply -f k8s/manifest/reports/database.yml
             kubectl apply -f k8s/manifest/reports/service.yml
