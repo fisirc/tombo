@@ -11,11 +11,11 @@ WORKDIR /usr/src/app
 FROM base AS install
 
 WORKDIR /temp/app/dev/
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 WORKDIR /temp/app/prod/
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --production --frozen-lockfile
 
 # ---
