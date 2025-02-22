@@ -50,14 +50,21 @@ spec:
               key: MINIO_ROOT_PASSWORD
               name: minio-secrets
         - name: S3_ENDPOINT
-          value: "http://minio:9000"
+          valueFrom:
+            secretKeyRef:
+              key: MINIO_ENDPOINT
+              name: minio-secrets
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_URL
+              name: reports-configmap
         # Note that this bucket MUST be created manually
         - name: S3_BUCKET
           value: "reports"
         ports:
         - containerPort: 6969
         # TODO: resources
-      # TODO: volumes
 
 ---
 

@@ -7,4 +7,5 @@ metadata:
     app.kubernetes.io/name: reports-configmap
     app.kubernetes.io/component: configmap
     app.kubernetes.io/part-of: tombo
-data: {}
+data:
+  REDIS_URL: "redis://tombo-redis-master:6379"

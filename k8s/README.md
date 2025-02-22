@@ -1,54 +1,85 @@
 # Setup a multi-node Kubernetes cluster with minkube
 
-Follow these instructions to setup a minikube cluster accessible from the
+Follow these instructions to setup a [kind](https://kind.sigs.k8s.io/) cluster accessible from the
 public internet.
 
 ## Creating the cluster
 
-Note that the following with create your cluster under the "minikube" profile
-if you did not specify one before.
-
 Replace `PUBLIC_IP` with your server's public IP address.
 
 ```bash
-minikube start \
-  --driver=docker \
-  --addons=ingress \
-  --memory=14g \
-  --cpus=max \
-  --nodes 3 \
-  --disk-size=50000mb \
-  --apiserver-ips=PUBLIC_IP
+cat <<EOF | kind create cluster --config=-
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: kind
+networking:
+  apiServerAddress: PUBLIC_IP
+nodes:
+- role: control-plane
+- role: control-plane
+- role: control-plane
+- role: worker
+- role: worker
+- role: worker
+EOF
+```
+
+I had to run this command multiple times along with `docker network rm kind` to get
+this to work.
+
+> See the [kind configuration](https://kind.sigs.k8s.io/docs/user/configuration/) docs.
+>
+> Note that publicly exposing your kind cluster is strongly discouraged
+> by the [Security Goose](https://kind.sigs.k8s.io/docs/user/configuration/#api-server),
+> but what do gooses know about security?
+
+If the HA setup is not working for you, you may want to start a single control-plane
+topology and removing the NoSchedule taint for it.
+
+```bash
+kubectl taint nodes kind-control-plane node-role.kubernetes.io/control-plane:NoSchedule-
 ```
 
 Verify the nodes by running:
 
 ```bash
 $ kubectl get nodes -owide
-
-NAME           STATUS   ROLES           AGE   VERSION   INTERNAL-IP
-minikube       Ready    control-plane   69s   v1.32.0   192.168.49.2
-minikube-m02   Ready    <none>          69s   v1.32.0   192.168.49.3
-minikube-m03   Ready    <none>          69s   v1.32.0   192.168.49.4
+NAME                  STATUS   ROLES           AGE     VERSION   INTERNAL-IP
+kind-control-plane    Ready    control-plane   4m39s   v1.32.2   172.18.0.5
+kind-control-plane2   Ready    control-plane   4m31s   v1.32.2   172.18.0.3
+kind-control-plane3   Ready    control-plane   4m23s   v1.32.2   172.18.0.8
+kind-worker           Ready    <none>          4m14s   v1.32.2   172.18.0.7
+kind-worker2          Ready    <none>          4m14s   v1.32.2   172.18.0.4
+kind-worker3          Ready    <none>          4m14s   v1.32.2   172.18.0.6
 ```
 
-By default we get a very limited "standard" storage class that does not support
-multi-node clusters and does not implement the CSI interface
-(See [minikube#12360](https://github.com/kubernetes/minikube/issues/12360)).
+## Remotely accessing the cluster with kubectl
 
-So we will need to setup the
-[CSI Hostpath Driver](https://minikube.sigs.k8s.io/docs/tutorials/volume_snapshots_and_csi/) to solve this.
+Kind creates a ready-to-use kube config file in `~/.kube/config`. All you
+will need to do is to copy it to your local machine.
 
 ```bash
-minikube addons enable volumesnapshots
-minikube addons enable csi-hostpath-driver
-
-# Make it the default storage class
-kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-
-# And verify the installation running
-kubectl get sc
+# For example with scp
+scp your-remote-vps:~/.kube/config ~/.kube/config
 ```
+
+And use it to access your cluster with `kubectl`:
+
+```bash
+export KUBECONFIG=/path/to/kubeconfig
+kubectl cluster-info
+```
+
+The GitHub actions reads this config from the `KUBECONFIG` secret. You must
+base64 encode the file before adding it to the repository.
+
+```bash
+cat kubeconfig | base64 -w 0 | xclip -selection clipboard
+```
+
+Note that in HA setups this config has `clusters[0].cluster.server` pointing
+to an special `kind-external-load-balancer` container.
+Verify this by running `kubectl config view` and `docker ps`.
 
 ## Installing Helm and the Charts
 
@@ -58,7 +89,7 @@ Download the appropriate Helm release <https://github.com/helm/helm/releases> in
 # See https://helm.sh/docs/intro/install/#from-the-helm-project
 
 wget https://get.helm.sh/helm-v3.17.1-linux-amd64.tar.gz
-tar -zxvf helm-v3.0.0-linux-amd64.tar.gz
+tar -zxvf helm-v3.17.1-linux-amd64.tar.gz
 mv linux-amd64/helm .local/bin/
 ```
 
@@ -79,152 +110,44 @@ helm install \
   --version v1.17.1
 ```
 
-## Allowing internet traffic
-
-Unless you use `--driver=none`, your cluster will not be accessible from your
-public IP as the nodes are Docker containers running on an isolated network.
-
-This is an expected behavior. You can now use your VPS as a reverse proxy to
-route traffic to your cluster and load balance your worker nodes.
-
-Create a `nginx.conf` file with the following content:
-
-```nginx
-user  nginx;
-worker_processes  auto;
-
-error_log  /var/log/nginx/error.log notice;
-pid        /var/run/nginx.pid;
-
-events {
-    worker_connections  1024;
-}
-
-stream {
-  server {
-    listen 8443;
-    proxy_pass CONTROL_PLANE_IP:8443;
-  }
-}
-```
-
-> In the output of the previous step we see that our `CONTROL_PLANE_IP` is
-> `192.168.49.2`.
-
-And use docker-compose to start the Nginx container:
-
-```yaml
-services:
-  nginx:
-    image: nginx:1.27.4-alpine
-    network_mode: "host"
-    volumes:
-      - /path/to/nginx.conf:/etc/nginx/nginx.conf:ro
-```
-
-In a nutshell, this configuration will route traffic from your VPS public IP
-to your `kube-api-server` running at `CONTROL_PLANE_IP:8443`.
-
-In future steps we will update this configuration to load balance HTTP traffic
-to our worker nodes.
-
-## Remotely accessing the cluster
-
-Create your KUBECONFIG file using `~/.kube/config` as base
+**redis** [[guide](https://artifacthub.io/packages/helm/bitnami/redis)]
 
 ```bash
-cat ~/.kube/config
-```
-
-Change the following keys in your config file
-
-- `clusters[0].cluster.certificate-authority`
-- `users[0].user.client-certificate`
-- `users[0].user.client-key`
-
-For the following keys, respectively:
-
-- `cluster.certificate-authority-data`
-- `user.client-certificate-data`
-- `user.client-key-data`
-
-And encode the values with the following commands:
-
-```bash
-cat ~/.minikube/ca.crt | base64 -w 0
-cat ~/.minikube/profiles/minikube/client.crt | base64 -w 0
-cat ~/.minikube/profiles/minikube/client.key | base64 -w 0
-```
-
-And the `clusters[0].cluster.server` should be changed to the public IP of
-your server.
-
-Now you can use that kubeconfig file to access your cluster remotely.
-
-```bash
-export KUBECONFIG=/path/to/kubeconfig
-kubectl cluster-info
-```
-
-The GitHub actions reads this config from the `KUBECONFIG` secret. You must
-base64 encode the file before adding it to the repository.
-
-```bash
-cat kubeconfig | base64 -w 0 | xclip -selection clipboard
+helm install \
+  tombo-redis oci://registry-1.docker.io/bitnamicharts/redis \
+  --namespace tombo \
+  --set metrics.enabled=true \
+  --set architecture=replication \
+  --set auth.enabled=false \
+  --set replica.replicaCount=3
 ```
 
 ## Configure your Nginx Ingress
 
-In the first step we already added the Nginx addon to our cluster. If you forgot
-to do so, enable it with.
+Deploy your Nginx ingress by running:
 
 ```bash
-minikube addons enable ingress
+kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+# See https://kind.sigs.k8s.io/docs/user/ingress/
 ```
 
-After a hard debugging session, I found out that the Nginx Ingress controller
-has only one replica with its node selector set to:
-
-```yaml
-# Inspect this yourself by running
-# kubectl edit -n ingress-nginx deployments.apps ingress-nginx-controller
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ingress-nginx-controller
-  namespace: ingress-nginx
-spec:
-  replicas: 1
-  template:
-    spec:
-      containers:
-      - nodeSelector:
-          kubernetes.io/os: linux
-          minikube.k8s.io/primary: "true"
-
-# (Only relevant parts are shown)
-```
-
-Even if you increase the number of replicas to match the number of nodes,
-because of the
-[`nodeSelector`](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
-constraint the pods will only select the primary node, and the replicas will
-not be scheduled because of port conflicts (specifically ports 80 and 443).
+By default this ingress has no replicas, so the controller will only be
+accessible in the node it was scheduled. Trying to reach your service from
+another worker will fail.
 
 ```bash
 # Setup a Deployment + Service + Ingress and you will get the following
 
-curl http://192.168.49.2:80/service  # works       (minikube)
-curl http://192.168.49.3:80/service  # unreachable (minikube-m02)
-curl http://192.168.49.4:80/service  # unreachable (minikube-m03)
+curl http://172.18.0.7.2:80/service  # works       (kind-worker)
+curl http://172.18.0.4.3:80/service  # unreachable (kind-worker2)
+curl http://172.18.0.6.4:80/service  # unreachable (kind-worker3)
 ```
 
 If you know your Kubernetes (and I'm sure you do 🌻), you might be thinking
 that our `service` is indeed reachable from any node!. And this is because how
 this specific Nginx distribution sets up its Service.
 
-The Nginx configuration provided by minikube creates a Service of type
+The Nginx configuration provided by Kind creates a Service of type
 `NodePort` that exposes the Deployment at a cluster level. So if you know the
 Service `nodePort` you can access our `service` from any node and still
 using our Ingress rules.
@@ -235,9 +158,9 @@ $ kubectl get svc -n ingress-nginx ingress-nginx-controller
 NAME                                 TYPE        CLUSTER-IP      PORT(S)
 ingress-nginx-controller             NodePort    10.96.127.242   80:31325/TCP,443:30301/TCP
 
-$ curl http://192.168.49.2:31325/service  # works! (minikube)
-$ curl http://192.168.49.3:31325/service  # works! (minikube-m02)
-$ curl http://192.168.49.4:31325/service  # works! (minikube-m03)
+$ curl http://172.18.0.7.2:31325/service  # works! (kind-worker)
+$ curl http://172.18.0.4.3:31325/service  # works! (kind-worker2)
+$ curl http://172.18.0.6.4:31325/service  # works! (kind-worker3)
 ```
 
 However using the `NodePort` directly completely defeats the purpose of having
@@ -282,9 +205,9 @@ spec:
 +         maxSkew: 1
 +         topologyKey: kubernetes.io/hostname
 +         whenUnsatisfiable: DoNotSchedule
-      # And remove the nodeSelector
--     nodeSelector:
--       kubernetes.io/os: linux
+      # And remove the "primary" nodeSelector constraint (if exists)
+      nodeSelector:
+        kubernetes.io/os: linux
 -       minikube.k8s.io/primary: "true"
 
 # (Only relevant parts are shown)
@@ -353,5 +276,47 @@ stream {
         listen 443;
         proxy_pass worker_nodes_https;
     }
-
+}
 ```
+
+And use docker-compose to start the Nginx container:
+
+```yaml
+services:
+  nginx:
+    image: nginx:1.27.4-alpine
+    network_mode: "host"
+    volumes:
+      - /path/to/nginx.conf:/etc/nginx/nginx.conf:ro
+```
+
+You can get a default config by runnning
+
+```bash
+docker run --rm --entrypoint=cat nginx /etc/nginx/nginx.conf > nginx.conf
+```
+
+## Minio setup
+
+Create a bucket called "reports" with the following Access Policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::reports/*"]
+    }
+  ]
+}
+```
+
+That will enable public read access to the objects in the bucket.
+
+## Side notes
+
+For the minikube version of this guide see
+[ddff827](https://github.com/fisirc/tombo/blob/ddff827d244f8a7db59616381cad6b92f1818250/k8s/README.md).

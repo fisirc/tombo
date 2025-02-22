@@ -8,6 +8,8 @@ export const S3_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY');
 export const S3_ENDPOINT = env('S3_ENDPOINT');
 export const S3_BUCKET = env('S3_BUCKET');
 
+export const REDIS_URL = env('REDIS_URL');
+
 // --- Utils
 
 function env(name: string): string {
