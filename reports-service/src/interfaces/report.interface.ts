@@ -1,5 +1,3 @@
-// src/interfaces/report.interface.ts
-
 export interface CreateReportDTO {
   title: string;
   content: string;
