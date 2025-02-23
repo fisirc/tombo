@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-service
+  namespace: tombo
+  labels:
+    app.kubernetes.io/name: notifications-service
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: tombo
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: notifications-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: notifications-service
+        app.kubernetes.io/component: microservice
+        app.kubernetes.io/part-of: tombo
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions: [{key: app.kubernetes.io/name, operator: In, values: [notifications-service]}]
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: notifications-server
+        image: ${NOTIFICATIONS_CONTAINER}
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_URL
+              name: notifications-configmap

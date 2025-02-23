@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notifications-configmap
+  namespace: tombo
+  labels:
+    app.kubernetes.io/name: notifications-configmap
+    app.kubernetes.io/component: configmap
+    app.kubernetes.io/part-of: tombo
+data:
+  REDIS_URL: "redis://tombo-redis-replicas:6379"

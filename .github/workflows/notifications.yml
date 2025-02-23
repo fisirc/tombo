@@ -1,0 +1,50 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'notifications-service/**'
+      - 'k8s/manifest/notifications/**'
+      - '.github/workflows/notifications.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build notifications container
+    uses: ./.github/workflows/ghcr-push.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    with:
+      context: notifications-service
+      dockerfile: notifications-service/Dockerfile
+      image: ${{ github.repository }}-notifications
+      labels: |
+        org.opencontainers.image.title=Tombo Notifications
+        org.opencontainers.image.description=Tombo Notifications Microservice
+
+  deploy:
+    name: Deploy Notifications manifests
+    needs: build
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare notifications/service.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          NOTIFICATIONS_CONTAINER: ghcr.io/${{ github.repository }}-notifications:sha-${{ github.sha }}
+        with:
+          input: k8s/manifest/notifications/service.tmpl.yml
+          output: k8s/manifest/notifications/service.yml
+      - name: Apply Notifications manifests
+        uses: ./.github/actions/kubectl
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          commands: |
+            kubectl apply -f k8s/manifest/notifications/configmap.yml
+            kubectl apply -f k8s/manifest/notifications/service.yml
