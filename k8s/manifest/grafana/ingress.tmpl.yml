@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: observability
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "128m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  labels:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: observability
+spec:
+  ingressClassName: "nginx"
+  tls:
+    - hosts:
+        - grafana.${BASE_DOMAIN}
+      secretName: grafana-tls
+  rules:
+  - host: grafana.${BASE_DOMAIN}
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80

@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'k8s/manifest/grafana/**'
+      - '.github/workflows/lgtm.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy LGTM manifests
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare minio/grafana/ingress.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+        with:
+          input: k8s/manifest/grafana/ingress.yml
+          output: k8s/manifest/grafana/ingress.tmpl.yml
+
+      - name: Apply LGTM manifests
+        uses: ./.github/actions/kubectl
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          commands: |
+            kubectl apply -f k8s/manifest/grafana/ingress.yml

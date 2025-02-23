@@ -122,6 +122,30 @@ helm install \
   --set replica.replicaCount=3
 ```
 
+**prometheus** [[guide](https://artifacthub.io/packages/helm/prometheus-community/prometheus)]
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm install \
+  prometheus prometheus-community/prometheus \
+  --namespace observability \
+  --create-namespace
+```
+
+**grafana** [[guide](https://artifacthub.io/packages/helm/grafana/grafana)]
+
+```bash
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+helm install \
+  grafana grafana/grafana \
+  --namespace observability \
+  --create-namespace
+```
+
 ## Configure your Nginx Ingress
 
 Deploy your Nginx ingress by running:
