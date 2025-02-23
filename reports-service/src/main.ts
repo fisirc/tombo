@@ -18,8 +18,9 @@ new Elysia()
         console.log(rows[0].version);
         return rows[0].version;
     })
-    // TODO health check
-    // TODO queue integration
+    .get('/healthz', async () => {
+        return 'All systems operational';
+    })
     .get('/minio', async () => {
         const hash = Math.random().toString(36).substring(7);
         const filename = `test_${hash}.txt`;
@@ -35,6 +36,10 @@ new Elysia()
     .get('/redis/get/:key', async ({ params }) => {
         const value = await redis.get(params.key);
         return `🔑 ${params.key} is ${value}`;
+    })
+    .get('/redis/publish/:channel/:message', async ({ params }) => {
+        await redis.publish(params.channel, params.message);
+        return `📡 ${params.message} published to ${params.channel}`;
     })
     .post('/reports', async (context): Promise<ApiResponse<Report>> => {
         console.log('📝 Creating new report:', context.body);
