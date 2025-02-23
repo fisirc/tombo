@@ -1,17 +1,18 @@
-import { View, Pressable, Text } from "react-native";
+import { Pressable, Text, PressableProps, Button } from "react-native";
 
-type Props = {
-  label: string;
-  onPress?: () => void;
-};
+export type ButtonProps = PressableProps & {
+  label: string
+  danger?: boolean
+}
 
-export default function Button({ label, onPress }: Props) {
+export default (props: ButtonProps) => {
   return (
     <Pressable
-      className="rounded-md w-320 h-68 mx-20 items-center justify-center p-3 bg-blue-800"
-      onPress={onPress}
+      className={`rounded-xl h-16 items-center justify-center p-4 bg-inverse active:bg-inverse-mild`}
+      onPress={props.onPress}
+      {...props}
     >
-      <Text className="color-white text-xl">{label}</Text>
+      <Text className="color-inverse font-medium">{props.label}</Text>
     </Pressable>
   );
 }
