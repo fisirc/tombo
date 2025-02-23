@@ -16,9 +16,9 @@ func main() {
 	})
 
 	status := rdb.Ping(ctx)
-	fmt.Println("🚦 Connected to ", config.RedisURL, "with status ", status)
+	fmt.Println("🚦 Connected to", config.RedisURL, status)
 
-	pubsub := rdb.Subscribe(ctx, "mychannel1")
+	pubsub := rdb.Subscribe(ctx, "notifications")
 	defer pubsub.Close()
 
 	ch := pubsub.Channel()
