@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun --env-file=.env run src/main.ts",
-    "dev": "bun --env-file=.env.local run --watch src/main.ts"
+    "dev": "bun --env-file=.env run --watch src/main.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -17,7 +17,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
     "drizzle-typebox": "^0.3.0",
     "elysia": "^1.2.12",
