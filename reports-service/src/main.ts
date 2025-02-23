@@ -71,6 +71,6 @@ const app = new Elysia()
             ws.send(`❇️ ${message} ❇️`);
         }
     })
-    .listen(6969);
+    .listen(PORT);
 
 export default app;
