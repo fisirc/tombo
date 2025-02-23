@@ -5,7 +5,8 @@ export const ProfileService = {
     const data: ProfileData = {
       name: 'John Doe',
       phone: '1234567890',
-      notifications: true
+      notifications: true,
+      notificationsRadius: 5
     }
     return data
   },
