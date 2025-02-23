@@ -23,8 +23,8 @@ jobs:
         env:
           BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
         with:
-          input: k8s/manifest/grafana/ingress.yml
-          output: k8s/manifest/grafana/ingress.tmpl.yml
+          input: k8s/manifest/grafana/ingress.tmpl.yml
+          output: k8s/manifest/grafana/ingress.yml
 
       - name: Apply LGTM manifests
         uses: ./.github/actions/kubectl
