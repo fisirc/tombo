@@ -122,28 +122,23 @@ helm install \
   --set replica.replicaCount=3
 ```
 
-**prometheus** [[guide](https://artifacthub.io/packages/helm/prometheus-community/prometheus)]
+**prometheus + grafana** [[guide](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)]
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
 helm install \
-  prometheus prometheus-community/prometheus \
+  prometheus-stack prometheus-community/kube-prometheus-stack \
   --namespace observability \
   --create-namespace
 ```
 
-**grafana** [[guide](https://artifacthub.io/packages/helm/grafana/grafana)]
+The user for the grafana dashboard is `admin`, and the password can be obtained
+by running:
 
 ```bash
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-
-helm install \
-  grafana grafana/grafana \
-  --namespace observability \
-  --create-namespace
+kubectl get secret --namespace observability prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 ## Configure your Nginx Ingress
