@@ -12,7 +12,7 @@ const reportRepository = new ReportRepository();
 const reportEvents = new ReportEvents();
 const reportService = new ReportService(reportRepository, reportEvents);
 
-const app = new Elysia()
+new Elysia()
     .get('/', async () => {
         const rows = await sql`SELECT version()`;
         console.log(rows[0].version);
@@ -72,5 +72,3 @@ const app = new Elysia()
         }
     })
     .listen(PORT);
-
-export default app;
