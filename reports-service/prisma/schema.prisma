@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MultimediaComment {
+  id          String    @id @default(uuid())
+  url         String
+  date        DateTime  @map("multimedia_comment_date")
+  type        String
+  comment     Comment   @relation(fields: [commentId], references: [id])
+  commentId   String    @map("comment_id")
+
+  @@map("multimedia_comments")
+}
+
+model Comment {
+  id              String    @id @default(uuid())
+  message         String
+  date            DateTime  @map("comment_date")
+  report          Report    @relation(fields: [reportId], references: [id])
+  reportId        String    @map("report_id")
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @map("user_id")
+  multimediaComments MultimediaComment[]
+
+  @@map("comments")
+}
+
+model Report {
+  id          String    @id @default(uuid())
+  latitude    String
+  longitude   String
+  description String
+  date        DateTime  @map("report_date")
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @map("user_id")
+  reportType  ReportType @relation(fields: [reportTypeId], references: [id])
+  reportTypeId String    @map("report_type_id")
+  comments    Comment[]
+  multimediaReports MultimediaReport[]
+
+  @@map("reports")
+}
+
+model MultimediaReport {
+  id          String    @id @default(uuid())
+  url         String
+  date        DateTime  @map("multimedia_report_date")
+  type        String
+  report      Report    @relation(fields: [reportId], references: [id])
+  reportId    String    @map("report_id")
+
+  @@map("multimedia_reports")
+}
+
+model PointType {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  points      Point[]
+
+  @@map("point_types")
+}
+
+model Point {
+  id              String    @id @default(uuid())
+  name            String
+  latitude        String
+  longitude       String
+  physicalAddress String    @map("physical_address")
+  pointType       PointType @relation(fields: [pointTypeId], references: [id])
+  pointTypeId     String    @map("point_type_id")
+
+  @@map("points")
+}
+
+model ReportType {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  reports     Report[]
+
+  @@map("report_types")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  phone         String
+  passwordHash  String    @map("password_hash")
+  passwordSalt  String    @map("password_salt")
+  preferences   Preferences? @relation(fields: [preferencesId], references: [id])
+  preferencesId String?    @unique @map("preferences_id")
+  reports       Report[]
+  comments      Comment[]
+
+  @@map("users")
+}
+
+model Preferences {
+  id                  String  @id @default(uuid())
+  activeNotifications Boolean @map("active_notifications")
+  alertRadiusKm       Float   @map("alert_radius_km")
+  interfaceTheme      String  @map("interface_theme")
+  language           String
+  user               User?
+
+  @@map("preferences")
+}

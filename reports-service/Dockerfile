@@ -4,7 +4,6 @@
 
 # ---
 FROM docker.io/oven/bun:1.2 AS base
-
 WORKDIR /usr/src/app
 
 # ---
@@ -25,6 +24,8 @@ COPY --from=install /temp/app/dev/node_modules node_modules
 COPY . .
 
 ENV NODE_ENV=production
+
+RUN bunx prisma generate
 RUN bun test
 
 # ---
@@ -32,8 +33,10 @@ FROM base AS release
 
 COPY --from=install /temp/app/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/src ./src
+COPY --from=prerelease /usr/src/app/prisma ./prisma
 COPY --from=prerelease /usr/src/app/package.json .
 COPY --from=prerelease /usr/src/app/tsconfig.json .
+COPY --from=prerelease /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 6969/TCP
 ENTRYPOINT ["bun", "start"]

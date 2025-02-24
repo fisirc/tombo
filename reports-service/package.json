@@ -7,18 +7,17 @@
     "dev": "bun --env-file=.env run --watch src/main.ts"
   },
   "devDependencies": {
+    "@prisma/client": "^6.4.1",
     "@types/bun": "latest",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.4",
-    "tsx": "^4.19.3",
-    "@types/redis": "^4.0.11"
+    "@types/redis": "^4.0.11",
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "drizzle-orm": "^0.39.3",
-    "drizzle-typebox": "^0.3.0",
     "elysia": "^1.2.12",
     "pg": "^8.13.3",
     "redis": "^4.7.0",

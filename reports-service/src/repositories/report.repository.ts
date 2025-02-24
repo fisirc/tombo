@@ -1,19 +1,39 @@
-import { sql } from 'bun';
+import { PrismaClient } from '@prisma/client'
+import type { IReport, IReportRepository } from '../interfaces/report.interface'
 
-export class ReportRepository {
-  async createReport(data: { title: string; content: string }) {
-    const result = await sql`
-      INSERT INTO reports (title, content)
-      VALUES (${data.title}, ${data.content})
-      RETURNING *
-    `;
-    return result[0];
+export class ReportRepository implements IReportRepository {
+  private prisma: PrismaClient
+
+  constructor() {
+    this.prisma = new PrismaClient()
   }
 
-  async getReportById(id: string) {
-    const result = await sql`
-      SELECT * FROM reports WHERE id = ${id}
-    `;
-    return result[0];
+  async create(report: Omit<IReport, 'id'>): Promise<IReport> {
+    return this.prisma.report.create({
+      data: report
+    })
+  }
+
+  async findById(id: string): Promise<IReport | null> {
+    return this.prisma.report.findUnique({
+      where: { id }
+    })
+  }
+
+  async findAll(): Promise<IReport[]> {
+    return this.prisma.report.findMany()
+  }
+
+  async update(id: string, report: Partial<IReport>): Promise<IReport> {
+    return this.prisma.report.update({
+      where: { id },
+      data: report
+    })
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.report.delete({
+      where: { id }
+    })
   }
 }
