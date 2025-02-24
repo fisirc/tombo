@@ -95,11 +95,10 @@ model ReportType {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(uuid()) @unique
+  authkId       String    @map("authk_id") @unique
   name          String
   phone         String
-  passwordHash  String    @map("password_hash")
-  passwordSalt  String    @map("password_salt")
   preferences   Preferences? @relation(fields: [preferencesId], references: [id])
   preferencesId String?    @unique @map("preferences_id")
   reports       Report[]
