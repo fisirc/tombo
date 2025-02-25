@@ -1,5 +1,4 @@
 import TabButton, { TabButtonProps } from '@/components/TabButton';
-import useTheme from '@/hooks/useTheme';
 import { IconAlertSquareRounded, IconAlertSquareRoundedFilled, IconCompass, IconCompassFilled, IconUser } from '@tabler/icons-react-native';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 
@@ -28,8 +27,6 @@ const tabs: TabButtonProps[] = [
 ]
 
 export default function TabLayout() {
-  const theme = useTheme()
-
   return (
     <Tabs>
       <TabSlot />
