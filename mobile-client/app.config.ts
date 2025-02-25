@@ -4,6 +4,9 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
   return {
     name: "mobile-client",
     slug: "mobile-client",
+    android: {
+      package: "pe.tombo.app",
+    },
     version: "1.0.0",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -12,6 +15,13 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
       output: "static"
     },
     plugins: [
+      [
+        "expo-splash-screen",
+        {
+          image: "./assets/splash-icon.png",
+          backgroundColor: "#000",
+        },
+      ],
       "expo-router",
       [
         "@rnmapbox/maps",
@@ -25,7 +35,7 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
           "photosPermission": "La aplicación accede a tus fotos para adjuntarlas a los reportes que realices.",
           "cameraPermission": "La aplicación accede a tu cámara para adjuntar fotos a los reportes que realices."
         }
-      ]
+      ],
     ],
     experiments: {
       typedRoutes: true
