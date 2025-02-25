@@ -55,7 +55,7 @@ const Form = ({ defaultValues }: {
     <View className="px-5 py-10 flex gap-14">
       <View className="flex gap-8">
         <Text className="text-default text-xl font-medium">General</Text>
-        <View className="flex gap-6">            
+        <View className="flex gap-4">            
           <Controller
             name="name"
             control={control}
@@ -82,7 +82,7 @@ const Form = ({ defaultValues }: {
       </View>
       <View className="flex gap-8">
         <Text className="text-default text-xl font-medium">Notificaciones</Text>
-        <View className="flex gap-6">
+        <View className="flex gap-4">
           <Controller
             name="notifications"
             control={control}
