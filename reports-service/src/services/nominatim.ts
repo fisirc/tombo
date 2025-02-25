@@ -68,8 +68,7 @@ export async function reverseGeocode(lat: number, lon: number): Promise<Nominati
             console.error('Error:', data.error);
             return null;
         }
-
-        return data.display_name; // Full human-readable address
+        return data;
     } catch (error) {
         console.error('Failed to fetch data:', error);
         return null;
