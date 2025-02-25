@@ -18,7 +18,7 @@ model MultimediaComment {
   resource  String
   date      DateTime @map("multimedia_comment_date")
   type      String
-  comment   Comment  @relation(fields: [commentId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String   @map("comment_id")
 
   @@map("multimedia_comments")
@@ -58,7 +58,7 @@ model MultimediaReport {
   resource String
   date     DateTime @map("multimedia_report_date")
   type     String
-  report   Report   @relation(fields: [reportId], references: [id])
+  report   Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
   reportId String   @map("report_id")
 
   @@map("multimedia_reports")
