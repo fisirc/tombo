@@ -1,14 +1,8 @@
-import { reportSchema, type IReportResponse } from '@/interfaces/report.interface';
+import { type IReportResponse } from '@/interfaces/report.interface';
 import type { ElysiaWS } from 'elysia/ws';
-import { t, type Static } from 'elysia';
 import { redis } from '@/redis';
 
-const createdReportPayload = t.Object({
-  publisherId: t.Number(),
-  reportData: reportSchema,
-});
-
-type ReportCreatedEventPayload = Static<typeof createdReportPayload>;
+type ReportCreatedEventPayload = IReportResponse;
 
 type WSReportClient = {
   ws: ElysiaWS,
@@ -26,15 +20,18 @@ const redisSubscriber = await redis.duplicate().connect();
 
 redisSubscriber.subscribe(REDIS_REPORTS_CHANNEL, (data) => {
   const reportData = JSON.parse(data) as ReportCreatedEventPayload;
+  console.log(`📨 ${REDIS_REPORTS_CHANNEL}:`, data);
 
   for (const { ws } of wsReportsClientsMap.values()) {
-    if (ws.id === reportData.publisherId) return;
+    console.log('> notifying ws client:', ws.id);
     ws.send(JSON.stringify(reportData));
   }
 });
 
 export class ReportEvents {
   async publishReportCreated(report: IReportResponse) {
-    await redis.publish(REDIS_REPORTS_CHANNEL, JSON.stringify(report));
+    await redis.publish(REDIS_REPORTS_CHANNEL, JSON.stringify(
+      report satisfies ReportCreatedEventPayload
+    ));
   }
 }

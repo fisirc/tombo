@@ -6,9 +6,11 @@ export const reportSchema = t.Object({
   longitude: t.String(),
   description: t.String(),
   reportType: t.String(),
-  multimediaReports: t.Files({
-    type: ['image/*', 'video/*'],
-  }),
+  multimediaReports: t.Optional(
+    t.Files({
+      type: ['image/*', 'video/*'],
+    }),
+  ),
 });
 
 export const createReportSchema = t.Omit(reportSchema, ['id']);

@@ -1,14 +1,8 @@
-import { commentSchema, type IComment } from '@/interfaces/comment.interface';
+import { type IComment } from '@/interfaces/comment.interface';
 import type { ElysiaWS } from 'elysia/ws';
-import { t, type Static } from 'elysia';
 import { redis } from '@/redis';
 
-const createdCommentPayload = t.Object({
-  publisherId: t.Number(),
-  commentData: commentSchema,
-});
-
-type CommentCreatedEventPayload = Static<typeof createdCommentPayload>;
+type CommentCreatedEventPayload = IComment;
 
 type WSCommentClient = {
   ws: ElysiaWS,
@@ -19,21 +13,25 @@ export const wsCommentsClientsMap = new Map<string, WSCommentClient>();
 
 // Redis sub on reports
 
-export const REDIS_REPORTS_CHANNEL = 'comments:created';
+export const REDIS_COMMENTS_CHANNEL = 'comments:created';
 
 const redisSubscriber = await redis.duplicate().connect();
 
-redisSubscriber.subscribe(REDIS_REPORTS_CHANNEL, (data) => {
+redisSubscriber.subscribe(REDIS_COMMENTS_CHANNEL, (data) => {
   const commentData = JSON.parse(data) as CommentCreatedEventPayload;
+  console.log(`📨 ${REDIS_COMMENTS_CHANNEL}:`, data);
 
-  for (const { ws } of wsCommentsClientsMap.values()) {
-    if (ws.id === commentData.publisherId) return;
-    ws.send(JSON.stringify(commentData));
+  for (const client of wsCommentsClientsMap.values()) {
+    console.log('> notifying ws client:', client.ws.id);
+    if (commentData.reportId !== client.reportId) return;
+    client.ws.send(JSON.stringify(commentData));
   }
 });
 
 export class CommentEvents {
-  async publishReportCreated(comment: IComment) {
-    await redis.publish(REDIS_REPORTS_CHANNEL, JSON.stringify(comment));
+  async publishCommentCreated(comment: IComment) {
+    await redis.publish(REDIS_COMMENTS_CHANNEL, JSON.stringify(
+      comment satisfies CommentCreatedEventPayload
+    ));
   }
 }

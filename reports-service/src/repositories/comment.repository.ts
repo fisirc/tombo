@@ -8,12 +8,18 @@ export class CommentRepository implements ICommentRepository {
     this.prisma = new PrismaClient()
   }
 
-  async create(comment: Omit<IComment, 'id' | 'date'>): Promise<IComment> {
+  async create(comment: Omit<IComment, 'id' | 'date' | 'userId'>): Promise<IComment> {
     return this.prisma.comment.create({
       data: {
-        ...comment,
+        message: comment.message,
+        report: {
+          connect: { id: comment.reportId },
+        },
+        user: {
+          connect: { email: 'admin@tombo.pe' },
+        },
         date: new Date()
-      }
+      },
     })
   }
 

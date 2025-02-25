@@ -14,7 +14,7 @@ export class ReportRepository implements IReportRepository {
   async create(report: Omit<IReport, 'id'>) {
     const uploads: Promise<string>[] = [];
 
-    for (const file of report.multimediaReports) {
+    for (const file of report.multimediaReports ?? []) {
       const filename = `media/${v7()}.${getExtensionFromFiletype(file.type)}`;
       const f = bucket.file(filename);
 
