@@ -3,6 +3,7 @@ import type { IReport, IReportRepository, IReportResponse } from '../interfaces/
 import { bucket } from '@/minio';
 import { v7 } from 'uuid';
 import { getExtensionFromFiletype } from '@/utils';
+import { reverseGeocode } from '@/services/nominatim';
 
 export class ReportRepository implements IReportRepository {
   private prisma: PrismaClient
@@ -29,14 +30,21 @@ export class ReportRepository implements IReportRepository {
     }
 
     const resourceNames = await Promise.all(uploads);
+    const latitude = Number(report.latitude);
+    const longitude = Number(report.longitude);
+
+
+    const location = await reverseGeocode(latitude, longitude);
+    const address = location?.display_name;
 
     return this.prisma.report.create({
       data: {
         date: new Date(),
         description: report.description,
-        latitude: Number(report.latitude),
-        longitude: Number(report.longitude),
+        latitude: latitude,
+        longitude: longitude,
         reportType: report.reportType,
+        address: address,
         user: {
           connect: { email: 'admin@tombo.pe' },
         },
@@ -60,7 +68,7 @@ export class ReportRepository implements IReportRepository {
       include: {
         multimediaReports: true,
       },
-    })
+    });
   }
 
   async findAll(): Promise<IReportResponse[]> {
@@ -68,12 +76,12 @@ export class ReportRepository implements IReportRepository {
       include: {
         multimediaReports: true,
       },
-    })
+    });
   }
 
   async delete(id: string): Promise<void> {
     await this.prisma.report.delete({
       where: { id }
-    })
+    });
   }
 }

@@ -41,6 +41,7 @@ model Report {
   id                String             @id @default(uuid())
   latitude          Float
   longitude         Float
+  address           String             @default("No address")
   description       String
   date              DateTime           @map("report_date")
   user              User               @relation(fields: [userId], references: [id])

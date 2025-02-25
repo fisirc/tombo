@@ -24,6 +24,7 @@ export type IReportResponse = {
   date: Date;
   userId: string;
   reportType: string;
+  address: string;
   multimediaReports: {
     id: string;
     date: Date;
