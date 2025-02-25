@@ -13,13 +13,29 @@ Style your universal React app with Tailwind CSS classes. [NativeWind](https://w
 
 ## 🚀 How to use
 
-<!-- Setup instructions -->
-
 - Install with `yarn` or `npm install`.
 - Run `yarn start` or `npm run start` to try it out.
 
-## 📝 Notes
+## Creating an Android keystore
 
-<!-- Link to related Expo or library docs -->
+You will be prompted for information about the authors and a password that you must save
 
-- This example replicates the [NativeWind Expo Router setup instructions](https://www.nativewind.dev/getting-started/expo-router) for NativeWind v4.
+```bash
+keytool -genkeypair -v -keystore tombo.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias tombo
+```
+
+To get the SHA-1 of the keystore, run
+
+```bash
+keytool -list -v -keystore tombo.keystore -alias tombo
+```
+
+```bash
+npx expo prebuild -p android --clean
+```
+
+And run the project with
+
+```bash
+npx expo run:android --device
+```
