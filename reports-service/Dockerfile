@@ -38,4 +38,4 @@ COPY --from=prerelease /usr/src/app/tsconfig.json .
 COPY --from=prerelease /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 6969/TCP
-ENTRYPOINT ["/bin/bash", "-c", "node_modules/prisma/build/index.js migrate dev --name init && bun start"]
+ENTRYPOINT ["/bin/bash", "-c", "node_modules/prisma/build/index.js migrate deploy && bun start"]
