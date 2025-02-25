@@ -11,21 +11,20 @@ export const commentController = new Elysia({ prefix: '/comments' })
   })
 
   .post('/',
-    async ({ body, user }) => {
-      if (!user) throw new Error('Unauthorized')
-      return await commentService.createComment({ ...body, userId: user.id })
+    async ({ body }) => {
+      return await commentService.createComment({
+        ...body,
+      })
     },
     {
       body: t.Object({
         message: t.String(),
-        reportId: t.String()
+        reportId: t.String(),
+        userId: t.String()
       })
     }
   )
 
-  .delete('/:id', async ({ params: { id }, user }) => {
-    if (!user) throw new Error('Unauthorized')
-    const comment = await commentService.getCommentById(id)
-    if (comment.userId !== user.id) throw new Error('Forbidden')
+  .delete('/:id', async ({ params: { id } }) => {
     return await commentService.deleteComment(id)
   })
