@@ -17,15 +17,11 @@ export async function setupDatabase() {
         avatar: 'https://minio.tombo.paoloose.site/public/default-avatar.jpg',
         phone: '123456789',
       },
-      include: {
-        preferences: true,
-      }
     });
 
     console.log('👤 Admin user:', admin);
   } catch (error) {
     console.error('❌ Database connection error:', error);
     process.exit(1);
-
   }
 }

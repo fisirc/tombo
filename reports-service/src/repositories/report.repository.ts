@@ -30,7 +30,7 @@ export class ReportRepository implements IReportRepository {
 
     const resourceNames = await Promise.all(uploads);
 
-    const report2 = await this.prisma.report.create({
+    return this.prisma.report.create({
       data: {
         date: new Date(),
         description: report.description,
@@ -52,8 +52,6 @@ export class ReportRepository implements IReportRepository {
         multimediaReports: true,
       },
     });
-
-    return report2;
   }
 
   async findById(id: string): Promise<IReportResponse | null> {

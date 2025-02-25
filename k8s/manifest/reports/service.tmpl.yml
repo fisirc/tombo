@@ -31,6 +31,10 @@ spec:
       containers:
       - name: reports-server
         image: ${REPORTS_CONTAINER}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 6969
         env:
         - name: PORT
           value: '6969'
