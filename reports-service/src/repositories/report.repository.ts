@@ -38,7 +38,7 @@ export class ReportRepository implements IReportRepository {
         longitude: Number(report.longitude),
         reportType: report.reportType,
         user: {
-          connect: { id: '1' }
+          connect: { id: '1' } // TODO: get user from auth
         },
         multimediaReports: {
           create: resourceNames.map((res) => ({
