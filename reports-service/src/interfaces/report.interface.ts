@@ -1,12 +1,18 @@
-export interface IReport {
-  id: string
-  latitude: string
-  longitude: string
-  description: string
-  date: Date
-  userId: string
-  reportTypeId: string
-}
+import { t, type Static } from 'elysia';
+
+export const reportSchema = t.Object({
+  id: t.String(),
+  latitude: t.String(),
+  longitude: t.String(),
+  description: t.String(),
+  date: t.Date(),
+  userId: t.String(),
+  reportTypeId: t.String(),
+});
+
+export const createReportSchema = t.Omit(reportSchema, ['id']);
+
+export type IReport = Static<typeof reportSchema>;
 
 export interface IReportRepository {
   create(report: Omit<IReport, 'id'>): Promise<IReport>
@@ -23,3 +29,6 @@ export interface IReportService {
   updateReport(id: string, report: Partial<IReport>): Promise<IReport>
   deleteReport(id: string): Promise<void>
 }
+export type ApiResponse<T> = {
+  error?: string;
+} | T;

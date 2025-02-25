@@ -1,13 +1,17 @@
 import type { ReportRepository } from '@/repositories/report.repository'
-import type { IReport, IReportRepository, IReportService } from '../interfaces/report.interface'
+import type { IReport, IReportService } from '../interfaces/report.interface'
+import { ReportEvents } from '../events/report.events';
 
 export class ReportService implements IReportService {
   constructor(
-    private readonly reportRepository: ReportRepository
-  ) {}
+    private readonly reportRepository: ReportRepository,
+    private readonly reportEvents: ReportEvents,
+  ) { }
 
-  async createReport(report: Omit<IReport, 'id'>): Promise<IReport> {
-    return this.reportRepository.create(report)
+  async createReport(reportData: Omit<IReport, 'id'>): Promise<IReport> {
+    const report = await this.reportRepository.create(reportData);
+    await this.reportEvents.publishReportCreated(report);
+    return report;
   }
 
   async getReportById(id: string): Promise<IReport> {
