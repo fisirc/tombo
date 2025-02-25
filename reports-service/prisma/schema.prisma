@@ -14,58 +14,58 @@ datasource db {
 }
 
 model MultimediaComment {
-  id          String    @id @default(uuid())
-  url         String
-  date        DateTime  @map("multimedia_comment_date")
-  type        String
-  comment     Comment   @relation(fields: [commentId], references: [id])
-  commentId   String    @map("comment_id")
+  id        String   @id @default(uuid())
+  url       String
+  date      DateTime @map("multimedia_comment_date")
+  type      String
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId String   @map("comment_id")
 
   @@map("multimedia_comments")
 }
 
 model Comment {
-  id              String    @id @default(uuid())
-  message         String
-  date            DateTime  @map("comment_date")
-  report          Report    @relation(fields: [reportId], references: [id])
-  reportId        String    @map("report_id")
-  user            User      @relation(fields: [userId], references: [id])
-  userId          String    @map("user_id")
+  id                 String              @id @default(uuid())
+  message            String
+  date               DateTime            @map("comment_date")
+  report             Report              @relation(fields: [reportId], references: [id])
+  reportId           String              @map("report_id")
+  user               User                @relation(fields: [userId], references: [id])
+  userId             String              @map("user_id")
   multimediaComments MultimediaComment[]
 
   @@map("comments")
 }
 
 model Report {
-  id          String    @id @default(uuid())
-  latitude    String
-  longitude   String
-  description String
-  date        DateTime  @map("report_date")
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String    @map("user_id")
-  reportType  ReportType @relation(fields: [reportTypeId], references: [id])
-  reportTypeId String    @map("report_type_id")
-  comments    Comment[]
+  id                String             @id @default(uuid())
+  latitude          Float
+  longitude         Float
+  description       String
+  date              DateTime           @map("report_date")
+  user              User               @relation(fields: [userId], references: [id])
+  userId            String             @map("user_id")
+  reportType        ReportType         @relation(fields: [reportTypeId], references: [id])
+  reportTypeId      String             @map("report_type_id")
+  comments          Comment[]
   multimediaReports MultimediaReport[]
 
   @@map("reports")
 }
 
 model MultimediaReport {
-  id          String    @id @default(uuid())
-  url         String
-  date        DateTime  @map("multimedia_report_date")
-  type        String
-  report      Report    @relation(fields: [reportId], references: [id])
-  reportId    String    @map("report_id")
+  id       String   @id @default(uuid())
+  url      String
+  date     DateTime @map("multimedia_report_date")
+  type     String
+  report   Report   @relation(fields: [reportId], references: [id])
+  reportId String   @map("report_id")
 
   @@map("multimedia_reports")
 }
 
 model PointType {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String
   points      Point[]
@@ -76,8 +76,8 @@ model PointType {
 model Point {
   id              String    @id @default(uuid())
   name            String
-  latitude        String
-  longitude       String
+  latitude        Float
+  longitude       Float
   physicalAddress String    @map("physical_address")
   pointType       PointType @relation(fields: [pointTypeId], references: [id])
   pointTypeId     String    @map("point_type_id")
@@ -86,7 +86,7 @@ model Point {
 }
 
 model ReportType {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String
   reports     Report[]
@@ -95,12 +95,12 @@ model ReportType {
 }
 
 model User {
-  id            String    @id @default(uuid()) @unique
-  authkId       String    @map("authk_id") @unique
+  id            String       @id @unique @default(uuid())
+  authkId       String       @unique @map("authk_id")
   name          String
   phone         String
   preferences   Preferences? @relation(fields: [preferencesId], references: [id])
-  preferencesId String?    @unique @map("preferences_id")
+  preferencesId String?      @unique @map("preferences_id")
   reports       Report[]
   comments      Comment[]
 
@@ -112,8 +112,8 @@ model Preferences {
   activeNotifications Boolean @map("active_notifications")
   alertRadiusKm       Float   @map("alert_radius_km")
   interfaceTheme      String  @map("interface_theme")
-  language           String
-  user               User?
+  language            String
+  user                User?
 
   @@map("preferences")
 }

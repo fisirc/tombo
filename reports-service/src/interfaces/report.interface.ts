@@ -2,8 +2,8 @@ import { t, type Static } from 'elysia';
 
 export const reportSchema = t.Object({
   id: t.String(),
-  latitude: t.String(),
-  longitude: t.String(),
+  latitude: t.Number(),
+  longitude: t.Number(),
   description: t.String(),
   date: t.Date(),
   userId: t.String(),
