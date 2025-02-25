@@ -11,7 +11,7 @@ export default (props: InputProps) => {
         {props.label}
       </Text>
       <TextInput
-        className='bg-foreground h-16 text-default p-4 rounded-xl'
+        className='bg-foreground-mild h-16 text-default p-4 rounded-xl'
         {...props}
       />
     </View>

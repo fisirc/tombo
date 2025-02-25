@@ -23,7 +23,7 @@ export default (props: SelectProps) => {
 
   return (
     <View className='flex gap-2'>
-      <Text className='text-default text-sm'>
+      <Text className='text-default'>
         {props.label}
       </Text>
       <SelectDropdown
@@ -47,7 +47,7 @@ export default (props: SelectProps) => {
           </View>
         )}
         renderButton={(selectedItem: Item, isOpened) => (
-          <View className='rounded-xl h-16 flex flex-row justify-between items-center p-4 bg-foreground'>
+          <View className='rounded-xl h-16 flex flex-row justify-between items-center p-4 bg-foreground-mild'>
             <Text className="text-default">
               {selectedItem?.label || 'Seleccione un valor'}
             </Text>
