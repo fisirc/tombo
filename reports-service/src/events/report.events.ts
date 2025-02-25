@@ -25,7 +25,6 @@ export const REDIS_REPORTS_CHANNEL = 'reports:created';
 const redisSubscriber = await redis.duplicate().connect();
 
 redisSubscriber.subscribe(REDIS_REPORTS_CHANNEL, (data) => {
-  // TODO: validate
   const reportData = JSON.parse(data) as ReportCreatedEventPayload;
 
   for (const { ws } of wsReportsClientsMap.values()) {
@@ -36,8 +35,6 @@ redisSubscriber.subscribe(REDIS_REPORTS_CHANNEL, (data) => {
 
 export class ReportEvents {
   async publishReportCreated(report: IReportResponse) {
-    // TODO: only publish meaningful data, not all the report
-    // TODO: move to top level function
     await redis.publish(REDIS_REPORTS_CHANNEL, JSON.stringify(report));
   }
 }
