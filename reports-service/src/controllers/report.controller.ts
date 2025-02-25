@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia'
 import { ReportService } from '../services/report.service'
 import { ReportRepository } from '../repositories/report.repository'
-import { createReportSchema, type IReport } from '@/interfaces/report.interface'
+import { createReportSchema } from '@/interfaces/report.interface'
 import { ReportEvents } from '@/events/report.events'
 
 const reportService = new ReportService(
@@ -39,21 +39,6 @@ export const reportController = new Elysia({ prefix: '/reports' })
     },
     {
       body: createReportSchema,
-    }
-  )
-  .put('/:id',
-    async ({ params: { id }, body }) => {
-      return await reportService.updateReport(id, body as Partial<IReport>)
-    },
-    {
-      body: t.Partial(t.Object({
-        latitude: t.String(),
-        longitude: t.String(),
-        description: t.String(),
-        date: t.Date(),
-        userId: t.String(),
-        reportTypeId: t.String()
-      }))
     }
   )
   .delete('/:id', async ({ params: { id } }) => {

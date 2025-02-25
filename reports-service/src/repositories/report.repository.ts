@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client'
-import type { IReport, IReportRepository } from '../interfaces/report.interface'
+import type { IReport, IReportRepository, IReportResponse } from '../interfaces/report.interface'
+import { bucket } from '@/minio';
+import { v7 } from 'uuid';
+import { getExtensionFromFiletype } from '@/utils';
 
 export class ReportRepository implements IReportRepository {
   private prisma: PrismaClient
@@ -8,26 +11,65 @@ export class ReportRepository implements IReportRepository {
     this.prisma = new PrismaClient()
   }
 
-  async create(report: Omit<IReport, 'id'>): Promise<IReport> {
-    return this.prisma.report.create({
-      data: report
-    })
+  async create(report: Omit<IReport, 'id'>) {
+    const uploads: Promise<string>[] = [];
+
+    for (const file of report.multimediaReports) {
+      const filename = `media/${v7()}.${getExtensionFromFiletype(file.type)}`;
+      const f = bucket.file(filename);
+
+      uploads.push(new Promise<string>((res, rej) => {
+        file.bytes().then((data) => {
+          f.write(data).then(() => {
+            console.log('📄 File uploaded:', filename);
+            res(filename);
+          }).catch(rej);
+        }).catch(rej);
+      }));
+    }
+
+    const resourceNames = await Promise.all(uploads);
+
+    const report2 = await this.prisma.report.create({
+      data: {
+        date: new Date(),
+        description: report.description,
+        latitude: Number(report.latitude),
+        longitude: Number(report.longitude),
+        reportType: report.reportType,
+        user: {
+          connect: { id: '1' }
+        },
+        multimediaReports: {
+          create: resourceNames.map((res) => ({
+            date: new Date(),
+            type: 'image',
+            resource: res,
+          }))
+        },
+      },
+      include: {
+        multimediaReports: true,
+      },
+    });
+
+    return report2;
   }
 
-  async findById(id: string): Promise<IReport | null> {
+  async findById(id: string): Promise<IReportResponse | null> {
     return this.prisma.report.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        multimediaReports: true,
+      },
     })
   }
 
-  async findAll(): Promise<IReport[]> {
-    return this.prisma.report.findMany()
-  }
-
-  async update(id: string, report: Partial<IReport>): Promise<IReport> {
-    return this.prisma.report.update({
-      where: { id },
-      data: report
+  async findAll(): Promise<IReportResponse[]> {
+    return this.prisma.report.findMany({
+      include: {
+        multimediaReports: true,
+      },
     })
   }
 

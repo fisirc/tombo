@@ -1,6 +1,6 @@
 import { Elysia, t } from 'elysia'
 import { PORT } from '@/env';
-import { minio } from './minio';
+import { bucket } from './minio';
 import { redis } from './redis';
 import { reportController } from './controllers/report.controller';
 import { setupDatabase } from './config/database';
@@ -12,7 +12,9 @@ import swagger from '@elysiajs/swagger';
 await setupDatabase()
 
 const app = new Elysia()
-    .use(swagger())
+    .use(swagger({
+        path: '/openapi',
+    }))
     .get('/healthz', async () => {
         return 'All systems operational'
     })
@@ -20,7 +22,7 @@ const app = new Elysia()
         const hash = Math.random().toString(36).substring(7)
         const filename = `test_${hash}.txt`
 
-        const f = minio.file(filename)
+        const f = bucket.file(filename)
         await f.write(`🐢 working 🐢 - ${hash} `)
         return `🐢 ${filename} was created`
     })

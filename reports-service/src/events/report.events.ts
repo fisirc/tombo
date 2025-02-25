@@ -1,4 +1,4 @@
-import { reportSchema, type IReport } from '@/interfaces/report.interface';
+import { reportSchema, type IReportResponse } from '@/interfaces/report.interface';
 import type { ElysiaWS } from 'elysia/ws';
 import { t, type Static } from 'elysia';
 import { redis } from '@/redis';
@@ -35,7 +35,7 @@ redisSubscriber.subscribe(REDIS_REPORTS_CHANNEL, (data) => {
 });
 
 export class ReportEvents {
-  async publishReportCreated(report: IReport) {
+  async publishReportCreated(report: IReportResponse) {
     // TODO: only publish meaningful data, not all the report
     // TODO: move to top level function
     await redis.publish(REDIS_REPORTS_CHANNEL, JSON.stringify(report));
