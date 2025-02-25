@@ -1,20 +1,32 @@
 {
-  "expo": {
-    "name": "mobile-client",
-    "slug": "mobile-client",
-    "version": "1.0.0",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "web": {
-      "bundler": "metro",
-      "output": "static"
+  "name": "mobile-client",
+  "slug": "mobile-client",
+  "version": "1.0.0",
+  "userInterfaceStyle": "automatic",
+  "newArchEnabled": true,
+  "web": {
+    "bundler": "metro",
+    "output": "static"
+  },
+  "plugins": [
+    "expo-router",
+    [
+      "@rnmapbox/maps",
+      {
+        "RNMapboxMapsDownloadToken": ""
+      }
+    ]
+  ],
+  "experiments": {
+    "typedRoutes": true
+  },
+  "scheme": "myapp",
+  "extra": {
+    "router": {
+      "origin": false
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "scheme": "myapp"
+    "eas": {
+      "projectId": "16276d4d-ca48-4ad3-8775-aeb18f91c38f"
+    }
   }
 }
