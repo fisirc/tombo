@@ -4,10 +4,10 @@ export type ThemeMode = 'light' | 'dark'
 
 export const values = {
   light: {
-    '--color-bg-default':          'rgb(245 245 245)',
-    '--color-bg-foreground':       'rgb(255 255 255)',
-    '--color-bg-foreground-extra': 'rgb(245 245 245)',
-    '--color-bg-foreground-mild':  'rgb(240 240 240)',
+    '--color-bg-default':          'rgb(255 255 255)',
+    '--color-bg-foreground':       'rgb(238 238 238)',
+    '--color-bg-foreground-extra': 'rgb(224 224 224)',
+    '--color-bg-foreground-mild':  'rgb(245 245 245)',
     '--color-bg-deep':             'rgb(255 255 255)',
     '--color-bg-inverse':          'rgb(33  33  33)',
     '--color-bg-inverse-mild':     'rgb(45  45  45)',
