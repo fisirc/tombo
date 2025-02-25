@@ -14,7 +14,7 @@ export const values = {
     '--color-text-default':        'rgb(27  27  27)',
     '--color-text-muted':          'rgb(128 128 128)',
     '--color-text-inverse':        'rgb(255 255 255)',
-    '--color-danger':              'rgb(255 0   0)',
+    '--color-danger':              'rgb(255 71   71)',
     '--color-warning':             'rgb(255 64  64)',
     '--color-success':             'rgb(71  248 152)',
   },
@@ -29,7 +29,7 @@ export const values = {
     '--color-text-default':        'rgb(255 255 255)',
     '--color-text-muted':          'rgb(128 128 128)',
     '--color-text-inverse':        'rgb(27  27  27)',
-    '--color-danger':              'rgb(255 0   0)',
+    '--color-danger':              'rgb(255 71   71)',
     '--color-warning':             'rgb(255 64  64)',
     '--color-success':             'rgb(71  248 152)',
   }

@@ -11,7 +11,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        error:   "var(--color-error)",
+        danger:   "var(--color-danger)",
         warning: "var(--color-warning)",
         success: "var(--color-success)",
       },
