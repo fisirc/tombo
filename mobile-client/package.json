@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@rnmapbox/maps": "^10.1.36",
     "@tabler/icons-react-native": "^3.30.0",
     "@tanstack/react-query": "^5.66.9",
     "axios": "^1.7.9",
