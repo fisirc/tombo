@@ -4,7 +4,7 @@ import Input from "@/components/Input";
 import QueryWait from "@/components/QueryWait";
 import Select from "@/components/Select";
 import Switch from "@/components/Switch";
-import { ProfileData } from "@/types";
+import { Profile } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
@@ -34,9 +34,9 @@ const radii: Radius[] = [
 ]
 
 const Form = ({ defaultValues }: {
-  defaultValues: ProfileData
+  defaultValues: Profile
 }) => {
-  const { control, handleSubmit } = useForm<ProfileData>({ defaultValues })
+  const { control, handleSubmit } = useForm<Profile>({ defaultValues })
 
   const queryClient = useQueryClient()
 
@@ -47,7 +47,7 @@ const Form = ({ defaultValues }: {
     })
   })
 
-  const onSubmit: SubmitHandler<ProfileData> = (data) => {
+  const onSubmit: SubmitHandler<Profile> = (data) => {
     updateProfileMutation.mutate(data)
   }
 
@@ -64,6 +64,7 @@ const Form = ({ defaultValues }: {
                 label="Nombre*"
                 value={field.value}
                 onChangeText={field.onChange}
+                placeholder="Juan Pérez"
               />
             )}
           />
@@ -75,6 +76,7 @@ const Form = ({ defaultValues }: {
                 label="Teléfono*"
                 value={field.value}
                 onChangeText={field.onChange}
+                placeholder="987654321"
               />
             )}
           />
@@ -103,6 +105,7 @@ const Form = ({ defaultValues }: {
                 data={radii}
                 defaultValue={radii.find(r => r.value === defaultValues.notificationsRadius)}
                 onSelect={field.onChange}
+                onBlur={field.onBlur}
               />
             )}
           />
