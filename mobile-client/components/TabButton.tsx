@@ -19,19 +19,19 @@ export default forwardRef(
     
     const iconProps = (isFocused: boolean | undefined): IconProps => ({
       size: 28,
-      strokeWidth: isFocused ? 2 : 1.5,
-      color: theme['--color-text-default'],
+      strokeWidth: 1.5,
+      color: isFocused ? theme['--color-text-inverse'] : theme['--color-text-default']
     });
     
     return (
       <Pressable
         ref={ref}
         {...props}
-        className={`flex-1 items-center rounded-2xl ${isFocused ? 'bg-foreground' : 'bg-transparent'}`}
+        className={`m-1 flex-1 items-center rounded-2xl ${isFocused ? 'bg-inverse' : 'bg-transparent'}`}
       >
         <View className="flex flex-col items-center flex-1 gap-1">
           <IconDefault {...iconProps(isFocused)} />
-          <Text className={`text-sm text-default font-medium`}>
+          <Text className={`text-sm font-medium ${isFocused ? 'text-inverse' : 'text-default'}`}>
             {label}
           </Text>
         </View>
