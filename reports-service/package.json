@@ -16,10 +16,14 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@auth/core": "^0.37.4",
     "@elysiajs/swagger": "^1.2.2",
+    "@lucia-auth/adapter-prisma": "^4.0.1",
     "@prisma/client": "^6.4.1",
     "@sinclair/typebox": "^0.34.27",
     "elysia": "^1.2.12",
+    "google-auth-library": "^9.15.1",
+    "lucia": "^3.2.2",
     "pg": "^8.13.3",
     "prisma": "^6.4.1",
     "redis": "^4.7.0",

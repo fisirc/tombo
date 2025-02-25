@@ -86,8 +86,10 @@ model Point {
 
 model User {
   id            String       @id @unique @default(uuid())
-  authkId       String       @unique @map("authk_id")
+  googleId      String       @unique
+  email         String       @unique
   name          String
+  avatar        String
   phone         String
   preferences   Preferences? @relation(fields: [preferencesId], references: [id])
   preferencesId String?      @unique @map("preferences_id")
