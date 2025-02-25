@@ -5,10 +5,12 @@ import { redis } from './redis';
 import { reportController } from './controllers/report.controller';
 import { setupDatabase } from './config/database';
 import { wsReportsClientsMap } from './events/report.events';
+import swagger from '@elysiajs/swagger';
 
 await setupDatabase()
 
 const app = new Elysia()
+    .use(swagger())
     .get('/healthz', async () => {
         return 'All systems operational'
     })
