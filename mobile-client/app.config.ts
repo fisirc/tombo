@@ -18,6 +18,13 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
         {
           RNMapboxMapsDownloadToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "La aplicación accede a tus fotos para adjuntarlas a los reportes que realices.",
+          "cameraPermission": "La aplicación accede a tu cámara para adjuntar fotos a los reportes que realices."
+        }
       ]
     ],
     experiments: {
