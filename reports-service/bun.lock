@@ -5,6 +5,7 @@
       "name": "reports-service",
       "dependencies": {
         "@elysiajs/swagger": "^1.2.2",
+        "@prisma/client": "^6.4.1",
         "@sinclair/typebox": "^0.34.27",
         "elysia": "^1.2.12",
         "pg": "^8.13.3",
@@ -13,7 +14,6 @@
         "zod": "^3.24.1",
       },
       "devDependencies": {
-        "@prisma/client": "^6.4.1",
         "@types/bun": "latest",
         "@types/node": "^22.13.5",
         "@types/pg": "^8.11.11",

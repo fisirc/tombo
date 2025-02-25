@@ -1,6 +1,6 @@
 services:
   tombodb:
-    image: postgis/postgis:latest
+    image: postgres:17.2
     container_name: tombo-db
     restart: always
     environment:
