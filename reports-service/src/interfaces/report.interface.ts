@@ -5,6 +5,7 @@ export const reportSchema = t.Object({
   latitude: t.String(),
   longitude: t.String(),
   description: t.String(),
+  address: t.Optional(t.String()),
   reportType: t.String(),
   multimediaReports: t.Optional(
     t.Files({

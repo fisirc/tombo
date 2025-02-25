@@ -33,9 +33,14 @@ export class ReportRepository implements IReportRepository {
     const latitude = Number(report.latitude);
     const longitude = Number(report.longitude);
 
+    let display_address: string | undefined;
 
-    const location = await reverseGeocode(latitude, longitude);
-    const address = location?.display_name;
+    if (report.address) {
+      display_address = report.address;
+    } else {
+      const location = await reverseGeocode(latitude, longitude);
+      display_address = location?.display_name;
+    }
 
     return this.prisma.report.create({
       data: {
@@ -44,7 +49,7 @@ export class ReportRepository implements IReportRepository {
         latitude: latitude,
         longitude: longitude,
         reportType: report.reportType,
-        address: address,
+        address: display_address,
         user: {
           connect: { email: 'admin@tombo.pe' },
         },
