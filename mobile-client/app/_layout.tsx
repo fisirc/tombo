@@ -6,6 +6,8 @@ import { View } from "react-native";
 import themes from "@/themes";
 import { useColorScheme } from "nativewind";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default function RootLayout() {
   const queryClient = new QueryClient()
@@ -13,14 +15,18 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <View style={themes[colorScheme || 'dark']} className="flex-1">
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false }}
-          />
-        </Stack>
-      </View>
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <View style={themes[colorScheme || 'dark']} className="flex-1">
+            <Stack>
+              <Stack.Screen
+                name="(tabs)"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+          </View>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }

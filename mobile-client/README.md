@@ -31,6 +31,7 @@ keytool -list -v -keystore tombo.keystore -alias tombo
 ```
 
 ```bash
+npx expo install --fix
 npx expo prebuild -p android --clean
 ```
 
