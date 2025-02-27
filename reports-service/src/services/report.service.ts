@@ -17,7 +17,7 @@ export class ReportService implements IReportService {
     await this.reportEvents.publishReportCreated(report);
     // Publish the notification
     await this.pushNotificationEvents.sentPushNotification({
-      title: `Reporte: ${report.reportType}`,
+      title: `🚨 Reporte: ${report.reportType}`,
       message: report.description,
       externalUserIds: [], // send to all users
       image: publicS3Url(report.multimediaReports[0]?.resource),
