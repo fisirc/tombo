@@ -6,8 +6,12 @@ import Select from "@/components/Select";
 import Switch from "@/components/Switch";
 import { Profile } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
+import { GoogleLogin } from "../_layout";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { AuthService } from "@/api/services/auth";
 
 type Radius = {
   label: string
@@ -51,11 +55,40 @@ const Form = ({ defaultValues }: {
     updateProfileMutation.mutate(data)
   }
 
+  const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
+
+	const handleGoogleLogin = async () => {
+		setLoading(true);
+		try {
+			const response = await GoogleLogin();
+			const { data } = response;
+
+			if (response.type === 'success') {
+        const { idToken } = response.data;
+        const user = {
+          email: response.data.user.email,
+        }
+				/*const resp = await AuthService.validateToken({
+					token: idToken,
+					email: user.email,
+				});
+				await handlePostLoginData(resp.data);*/
+			}
+		} catch (apiError) {
+			setError(
+				'Something went wrong'
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
   return (
     <View className="px-5 py-10 flex gap-14">
       <View className="flex gap-8">
         <Text className="text-default text-xl font-medium">General</Text>
-        <View className="flex gap-6">            
+        <View className="flex gap-6">
           <Controller
             name="name"
             control={control}
@@ -114,6 +147,10 @@ const Form = ({ defaultValues }: {
       <Button
         label="Guardar cambios"
         onPress={handleSubmit(onSubmit)}
+      />
+      <Button
+        label="Google Sign In"
+        onPress={handleGoogleLogin}
       />
     </View>
   )
