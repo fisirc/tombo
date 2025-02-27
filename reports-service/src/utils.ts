@@ -1,3 +1,5 @@
+import { S3_PUBLIC_MEDIA_ENDPOINT } from './env';
+
 export function getExtensionFromFiletype(type: string): string {
   switch (type.toLowerCase()) {
     case 'image/jpeg':
@@ -15,4 +17,9 @@ export function getExtensionFromFiletype(type: string): string {
     default:
       throw new Error('Unsupported file type');
   }
+}
+
+export function publicS3Url(resource?: string): string | undefined {
+  if (!resource) return resource;
+  return `${S3_PUBLIC_MEDIA_ENDPOINT}/${resource}`;
 }

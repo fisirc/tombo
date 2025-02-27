@@ -5,9 +5,10 @@ import { createReportSchema } from '@/interfaces/report.interface'
 import { ReportEvents, wsReportsClientsMap } from '@/events/report.events'
 import { wsCommentsClientsMap } from '@/events/comment.event'
 import { db } from '@/config/database'
+import { PushNotificationEvents } from '@/events/pushnotification.event'
 
 const reportService = new ReportService(
-  new ReportRepository(), new ReportEvents(),
+  new ReportRepository(), new ReportEvents(), new PushNotificationEvents(),
 );
 
 export const reportController = new Elysia({ prefix: '/reports' })

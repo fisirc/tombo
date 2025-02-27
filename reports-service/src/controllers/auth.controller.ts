@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { AuthService } from '../services/auth.service';
 
 const authService = new AuthService();
@@ -18,7 +18,23 @@ export const authController = new Elysia()
 
     return redirect(url);
   })
+  .post('/device-identity', async (req) => {
+    const { deviceId } = req.body;
 
+    try {
+      // TODO: get and set the user id
+      await authService.saveDeviceIdentity(deviceId, undefined);
+      req.set.status = 200;
+      return { deviceId };
+    } catch (error) {
+      req.set.status = 500;
+      return { error: 'Failed to save device identity' };
+    }
+  }, {
+    body: t.Object({
+      deviceId: t.String(),
+    }),
+  })
   .get('/auth/google/callback', async ({ query, cookie: { google_state } }) => {
     const { code, state } = query;
     const storedState = google_state.value;

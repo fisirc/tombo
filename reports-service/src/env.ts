@@ -6,6 +6,7 @@ export const DATABASE_URL = env('DATABASE_URL');
 export const S3_ACCESS_KEY_ID = env('S3_ACCESS_KEY_ID');
 export const S3_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY');
 export const S3_ENDPOINT = env('S3_ENDPOINT');
+export const S3_PUBLIC_MEDIA_ENDPOINT = maybeEnv('S3_PUBLIC_MEDIA_ENDPOINT') ?? 'https://minio.tombo.paoloose.site';
 export const S3_BUCKET = env('S3_BUCKET');
 
 export const REDIS_URL = env('REDIS_URL');

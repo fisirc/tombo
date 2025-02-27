@@ -1,7 +1,14 @@
+import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 import querystring from 'querystring';
 
 export class AuthService {
+  private prisma: PrismaClient
+
+  constructor() {
+    this.prisma = new PrismaClient()
+  }
+
   getGoogleAuthURL(state: string) {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
     const options = {
@@ -66,5 +73,13 @@ export class AuthService {
       console.log(error);
       throw new Error('Failed to retrieve user information');
     }
+  }
+
+  async saveDeviceIdentity(deviceId: string, userId?: string) {
+    this.prisma.deviceIdentity.upsert({
+      where: { deviceId },
+      update: { userId, deviceId },
+      create: { userId, deviceId, },
+    });
   }
 }
