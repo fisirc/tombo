@@ -9,3 +9,4 @@ metadata:
     app.kubernetes.io/part-of: tombo
 data:
   REDIS_URL: "redis://tombo-redis-master:6379"
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
