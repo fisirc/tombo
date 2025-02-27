@@ -24,6 +24,7 @@
     "crypto": "^1.0.1",
     "elysia": "^1.2.12",
     "google-auth-library": "^9.15.1",
+    "logixlysia": "^4.1.2",
     "lucia": "^3.2.2",
     "pg": "^8.13.3",
     "prisma": "^6.4.1",
