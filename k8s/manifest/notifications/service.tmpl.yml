@@ -37,3 +37,13 @@ spec:
             configMapKeyRef:
               key: REDIS_URL
               name: notifications-configmap
+        - name: ONE_SIGNAL_APP_ID
+          valueFrom:
+            configMapKeyRef:
+              key: ONE_SIGNAL_APP_ID
+              name: notifications-configmap
+        - name: ONE_SIGNAL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: ONE_SIGNAL_API_KEY
+              name: notifications-secrets

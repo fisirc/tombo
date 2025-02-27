@@ -9,3 +9,4 @@ metadata:
     app.kubernetes.io/part-of: tombo
 data:
   REDIS_URL: "tombo-redis-master:6379"
+  ONE_SIGNAL_APP_ID: ${NOTIFICATIONS_ONE_SIGNAL_APP_ID}

@@ -34,6 +34,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Prepare notifications/configmap.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          NOTIFICATIONS_ONE_SIGNAL_APP_ID: ${{ vars.NOTIFICATIONS_ONE_SIGNAL_APP_ID }}
+        with:
+          input: k8s/manifest/notifications/configmap.tmpl.yml
+          output: k8s/manifest/notifications/configmap.yml
+
+      - name: Prepare notifications/secrets.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          NOTIFICATIONS_ONE_SIGNAL_API_KEY: ${{ secrets.NOTIFICATIONS_ONE_SIGNAL_API_KEY }}
+        with:
+          input: k8s/manifest/notifications/secrets.tmpl.yml
+          output: k8s/manifest/notifications/secrets.yml
+
       - name: Prepare notifications/service.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
@@ -41,10 +58,12 @@ jobs:
         with:
           input: k8s/manifest/notifications/service.tmpl.yml
           output: k8s/manifest/notifications/service.yml
+
       - name: Apply Notifications manifests
         uses: ./.github/actions/kubectl
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
+            kubectl apply -f k8s/manifest/notifications/secrets.yml
             kubectl apply -f k8s/manifest/notifications/configmap.yml
             kubectl apply -f k8s/manifest/notifications/service.yml
