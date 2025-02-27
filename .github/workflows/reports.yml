@@ -34,11 +34,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Parse database URL
         id: database-url
         uses: paoloose/uri-parse-action@v1
         with:
           uri: ${{ secrets.REPORTS_DATABASE_URL }}
+
+      - name: Prepare reports/configmap.yml
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+        with:
+          input: k8s/manifest/reports/configmap.tmpl.yml
+          output: k8s/manifest/reports/configmap.yml
+
       - name: Prepare reports/secrets.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
@@ -46,9 +56,11 @@ jobs:
           REPORTS_POSTGRES_PASSWORD: ${{ steps.database-url.outputs.password }}
           REPORTS_POSTGRES_DB: ${{ steps.database-url.outputs.path }}
           REPORTS_DATABASE_URL: ${{ secrets.REPORTS_DATABASE_URL }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         with:
           input: k8s/manifest/reports/secrets.tmpl.yml
           output: k8s/manifest/reports/secrets.yml
+
       - name: Prepare reports/service.yml
         uses: danielr1996/envsubst-action@1.0.0
         env:
@@ -57,6 +69,7 @@ jobs:
         with:
           input: k8s/manifest/reports/service.tmpl.yml
           output: k8s/manifest/reports/service.yml
+
       - name: Apply Reports manifests
         uses: ./.github/actions/kubectl
         with:

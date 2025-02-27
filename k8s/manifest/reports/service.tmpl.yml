@@ -63,6 +63,16 @@ spec:
             configMapKeyRef:
               key: REDIS_URL
               name: reports-configmap
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: GOOGLE_CLIENT_SECRET
+              name: reports-secrets
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: GOOGLE_CLIENT_ID
+              name: reports-configmap
         # Note that this bucket MUST be created manually
         - name: S3_BUCKET
           value: "reports"
