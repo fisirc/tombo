@@ -10,6 +10,10 @@ export const S3_BUCKET = env('S3_BUCKET');
 
 export const REDIS_URL = env('REDIS_URL');
 
+export const GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID');
+export const GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET');
+export const GOOGLE_REDIRECT_URI = env('GOOGLE_REDIRECT_URI');
+
 // --- Utils
 
 function env(name: string): string {
