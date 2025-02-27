@@ -34,7 +34,13 @@ export default function TabLayout() {
       {
         tabs.map((tab) => (
           <TabTrigger key={tab.label} name={tab.name} href={tab.href} asChild>
-            <TabButton {...tab} />
+            <TabButton
+              name={tab.name}
+              href={tab.href}
+              label={tab.label}
+              IconDefault={tab.IconDefault}
+              IconFocused={tab.IconFocused}
+            />
           </TabTrigger>
         ))
       }

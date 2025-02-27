@@ -16,13 +16,13 @@ export type TabButtonProps = TabTriggerSlotProps & {
 export default forwardRef(
   ({ label, IconDefault, isFocused, ...props }: TabButtonProps, ref: Ref<View>) => {
     const theme = useTheme()
-    
+
     const iconProps = (isFocused: boolean | undefined): IconProps => ({
       size: 28,
       strokeWidth: 1.5,
       color: isFocused ? theme['--color-text-inverse'] : theme['--color-text-default']
     });
-    
+
     return (
       <Pressable
         ref={ref}
