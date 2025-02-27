@@ -21,11 +21,13 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@prisma/client": "^6.4.1",
     "@sinclair/typebox": "^0.34.27",
+    "crypto": "^1.0.1",
     "elysia": "^1.2.12",
     "google-auth-library": "^9.15.1",
     "lucia": "^3.2.2",
     "pg": "^8.13.3",
     "prisma": "^6.4.1",
+    "querystring": "^0.2.1",
     "redis": "^4.7.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.1"

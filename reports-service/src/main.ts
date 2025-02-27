@@ -6,6 +6,9 @@ import { reportController } from './controllers/report.controller';
 import { setupDatabase } from './config/database';
 import { commentController } from './controllers/comment.controller';
 import swagger from '@elysiajs/swagger';
+import crypto from 'crypto'
+import querystring from 'querystring'
+import { authController } from './controllers/auth.controller';
 
 await setupDatabase()
 
@@ -41,6 +44,7 @@ const app = new Elysia()
             ws.send(`❇️ ${message} ❇️`)
         }
     })
+    .use(authController)
     .group('/api', app => app
         .use(reportController)
         .use(commentController)
