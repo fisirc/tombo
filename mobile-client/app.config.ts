@@ -7,6 +7,9 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     android: {
       package: "pe.tombo.app",
     },
+    ios: {
+      bundleIdentifier: "pe.tombo.app",
+    },
     version: "1.0.0",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -15,6 +18,13 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
       output: "static"
     },
     plugins: [
+      "expo-router",
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development",
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -22,7 +32,6 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
           backgroundColor: "#000",
         },
       ],
-      "expo-router",
       [
         "@rnmapbox/maps",
         {
