@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/OneSignal/onesignal-go-api"
@@ -20,6 +20,8 @@ type NotificationPayload struct {
 }
 
 func PushNotification(config Config, ctx context.Context, payload NotificationPayload) {
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+
 	osAuthCtx := context.WithValue(
 		ctx,
 		onesignal.AppAuth,
@@ -53,11 +55,10 @@ func PushNotification(config Config, ctx context.Context, payload NotificationPa
 	resp, r, err := apiClient.DefaultApi.CreateNotification(osAuthCtx).Notification(notification).Execute()
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `CreateNotification`: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+		logger.Printf("Error when calling `CreateNotification`: %v\n", err)
+		logger.Printf("Full HTTP response: %v\n", r)
 		return
 	}
 
-	fmt.Fprintf(os.Stdout, "Response from `CreateNotification`: %v\n", resp)
-	fmt.Fprintf(os.Stdout, "Notification ID: %v\n", resp.GetId())
+	logger.Printf("Notification (id=%s) sent to %d recipients\n", resp.Id, resp.Recipients)
 }
