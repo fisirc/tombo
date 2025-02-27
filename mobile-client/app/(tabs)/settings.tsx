@@ -10,8 +10,10 @@ import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
 import { GoogleLogin } from "../_layout";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { AuthService } from "@/api/services/auth";
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 
 type Radius = {
   label: string
@@ -55,34 +57,34 @@ const Form = ({ defaultValues }: {
     updateProfileMutation.mutate(data)
   }
 
-  const [error, setError] = useState('');
-	const [loading, setLoading] = useState(false);
 
-	const handleGoogleLogin = async () => {
-		setLoading(true);
-		try {
-			const response = await GoogleLogin();
-			const { data } = response;
+  GoogleSignin.configure({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    scopes: ['profile', 'email'], // what API you want to access on behalf of the user, default is email and profile
+    offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+    forceCodeForRefreshToken: false,
+  });
 
-			if (response.type === 'success') {
-        const { idToken } = response.data;
-        const user = {
-          email: response.data.user.email,
-        }
-				/*const resp = await AuthService.validateToken({
-					token: idToken,
-					email: user.email,
-				});
-				await handlePostLoginData(resp.data);*/
-			}
-		} catch (apiError) {
-			setError(
-				'Something went wrong'
-			);
-		} finally {
-			setLoading(false);
-		}
-	};
+  const GoogleLogin = async () => {
+    await GoogleSignin.hasPlayServices();
+
+    const userInfo = await GoogleSignin.signIn();
+    console.log('User Info --> ', userInfo);
+    return userInfo;
+  };
+
+  const googleSignIn = async () => {
+    try {
+      const response = await GoogleLogin();
+      // retrieve user data
+      const { idToken, user } = response.data ?? {};
+      if (idToken) {
+        //await processUserData(idToken, user); // Server call to validate the token & process the user data for signing In
+      }
+    } catch (error) {
+      console.log('Error', error);
+    }
+  };
 
   return (
     <View className="px-5 py-10 flex gap-14">
@@ -148,10 +150,7 @@ const Form = ({ defaultValues }: {
         label="Guardar cambios"
         onPress={handleSubmit(onSubmit)}
       />
-      <Button
-        label="Google Sign In"
-        onPress={handleGoogleLogin}
-      />
+      <GoogleSigninButton onPress={googleSignIn} />
     </View>
   )
 }
