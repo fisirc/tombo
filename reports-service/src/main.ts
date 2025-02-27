@@ -17,10 +17,8 @@ const app = new Elysia()
     }))
     .use(logixlysia({
         config: {
-            ip: true,
-            showStartupMessage: true,
-            startupMessageFormat: 'simple',
-            customLogFormat: '{now} {level} {duration} {method} {pathname} {status} {message} {ip}',
+            showStartupMessage: false,
+            customLogFormat: '{now} {duration} {level} {method} {pathname} {status} {message}',
         },
     }))
     .get('/healthz', async () => {
