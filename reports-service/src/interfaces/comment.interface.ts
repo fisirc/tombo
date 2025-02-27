@@ -3,7 +3,7 @@ import { t, type Static } from 'elysia';
 export const commentSchema = t.Object({
   id: t.String(),
   message: t.String(),
-  date: t.Date(),
+  createdAt: t.Date(),
   reportId: t.String(),
   userId: t.String(),
 });

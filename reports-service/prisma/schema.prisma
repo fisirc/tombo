@@ -16,10 +16,10 @@ datasource db {
 model MultimediaComment {
   id        String   @id @default(uuid())
   resource  String
-  date      DateTime @map("multimedia_comment_date")
   type      String
   comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String   @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("multimedia_comments")
 }
@@ -27,12 +27,12 @@ model MultimediaComment {
 model Comment {
   id                 String              @id @default(uuid())
   message            String
-  date               DateTime            @map("comment_date")
   report             Report              @relation(fields: [reportId], references: [id])
   reportId           String              @map("report_id")
   user               User                @relation(fields: [userId], references: [id])
   userId             String              @map("user_id")
   multimediaComments MultimediaComment[]
+  createdAt          DateTime            @default(now()) @map("created_at")
 
   @@map("comments")
 }
@@ -43,23 +43,23 @@ model Report {
   longitude         Float
   address           String             @default("No address")
   description       String
-  date              DateTime           @map("report_date")
   user              User               @relation(fields: [userId], references: [id])
   userId            String             @map("user_id")
   reportType        String             @map("report_type")
   comments          Comment[]
   multimediaReports MultimediaReport[]
+  createdAt         DateTime           @default(now()) @map("created_at")
 
   @@map("reports")
 }
 
 model MultimediaReport {
-  id       String   @id @default(uuid())
-  resource String
-  date     DateTime @map("multimedia_report_date")
-  type     String
-  report   Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  reportId String   @map("report_id")
+  id        String   @id @default(uuid())
+  resource  String
+  type      String
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId  String   @map("report_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("multimedia_reports")
 }
@@ -86,16 +86,17 @@ model Point {
 }
 
 model User {
-  id            String       @id @unique @default(uuid())
-  googleId      String       @unique
-  email         String       @unique
-  name          String
-  avatar        String
-  phone         String
-  preferences   Preferences? @relation(fields: [preferencesId], references: [id])
-  preferencesId String?      @unique @map("preferences_id")
-  reports       Report[]
-  comments      Comment[]
+  id             String           @id @unique @default(uuid())
+  googleId       String           @unique
+  email          String           @unique
+  name           String
+  avatar         String
+  phone          String
+  preferences    Preferences?     @relation(fields: [preferencesId], references: [id])
+  preferencesId  String?          @unique @map("preferences_id")
+  reports        Report[]
+  comments       Comment[]
+  DeviceIdentity DeviceIdentity[]
 
   @@map("users")
 }
@@ -109,4 +110,14 @@ model Preferences {
   user                User?
 
   @@map("preferences")
+}
+
+model DeviceIdentity {
+  id        Int      @id @default(autoincrement())
+  deviceId  String   @unique @map("device_id")
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("device_identities")
 }

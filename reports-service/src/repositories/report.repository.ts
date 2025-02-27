@@ -44,7 +44,6 @@ export class ReportRepository implements IReportRepository {
 
     return this.prisma.report.create({
       data: {
-        date: new Date(),
         description: report.description,
         latitude: latitude,
         longitude: longitude,
@@ -55,7 +54,6 @@ export class ReportRepository implements IReportRepository {
         },
         multimediaReports: {
           create: resourceNames.map((res) => ({
-            date: new Date(),
             type: 'image',
             resource: res,
           }))

@@ -22,13 +22,13 @@ export type IReportResponse = {
   latitude: number;
   longitude: number;
   description: string;
-  date: Date;
+  createdAt: Date;
   userId: string;
   reportType: string;
   address: string;
   multimediaReports: {
     id: string;
-    date: Date;
+    createdAt: Date;
     resource: string;
     type: string;
     reportId: string;

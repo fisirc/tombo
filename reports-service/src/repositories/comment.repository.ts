@@ -18,7 +18,6 @@ export class CommentRepository implements ICommentRepository {
         user: {
           connect: { email: 'admin@tombo.pe' },
         },
-        date: new Date()
       },
     })
   }
