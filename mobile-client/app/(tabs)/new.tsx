@@ -69,7 +69,7 @@ const Form = () => {
             label="Imágenes"
             value={field.value}
             onChange={field.onChange}
-          />        
+          />
         )}
       />
       <Button
