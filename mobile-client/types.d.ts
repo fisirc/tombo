@@ -15,7 +15,7 @@ export type ReportType = {
 }
 
 export type Report = {
-  id: number
+  id: string
   latitude: number
   longitude: number
   description: string
@@ -40,13 +40,20 @@ export type ReportForm = {
 }
 
 export type ReportComment = {
-  id: number
-  content: string
-  createdAt: Date
+  id: string
+  message: string
+  reportId: string
+  userId: string
+  createdAt: string
+}
+
+export type ReportCommentForm = {
+  message: string
+  reportId: string
 }
 
 export type Media = {
-  id: number
+  id: string
   resource: string
 }
 
