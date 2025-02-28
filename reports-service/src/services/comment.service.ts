@@ -8,7 +8,7 @@ export class CommentService implements ICommentService {
     private readonly commentEvents: CommentEvents,
   ) { }
 
-  async createComment(comment: Omit<IComment, 'id' | 'date' | 'userId'>): Promise<IComment> {
+  async createComment(comment: Omit<IComment, 'id' | 'createdAt' | 'userId'>): Promise<IComment> {
     const createdComment = await this.commentRepository.create(comment);
     this.commentEvents.publishCommentCreated(createdComment);
     return createdComment;

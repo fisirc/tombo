@@ -47,6 +47,9 @@ export const reportController = new Elysia({ prefix: '/reports' })
   .delete('/:id', async ({ params: { id } }) => {
     return await reportService.deleteReport(id)
   })
+  .delete('/', async () => {
+    return await reportService.deletAllReports();
+  })
   .ws('/', {
     body: t.Object({
       message: t.String()

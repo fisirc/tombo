@@ -49,6 +49,7 @@ export default function ImageInput({ label, value, onChange }:
       allowsEditing: true,
       quality: 1,
     });
+    console.log(`Uploaded image: ${result}`)
     updateValue(result)
   }
 
@@ -65,7 +66,7 @@ export default function ImageInput({ label, value, onChange }:
               <Image
                 key={image.uri}
                 source={image}
-                style={{ borderRadius: 12 }}
+                style={{ borderRadius: 12, height: 250 }}
               />
             ))
           }

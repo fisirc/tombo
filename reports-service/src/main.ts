@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia'
+import { Elysia } from 'elysia'
 import { PORT } from '@/env';
 import { bucket } from './minio';
 import { redis } from './redis';
@@ -6,8 +6,7 @@ import { reportController } from './controllers/report.controller';
 import { setupDatabase } from './config/database';
 import { commentController } from './controllers/comment.controller';
 import swagger from '@elysiajs/swagger';
-import crypto from 'crypto'
-import querystring from 'querystring'
+import logixlysia from 'logixlysia';
 import { authController } from './controllers/auth.controller';
 import { userController } from './controllers/user.controller';
 
@@ -16,6 +15,12 @@ await setupDatabase()
 const app = new Elysia()
     .use(swagger({
         path: '/openapi',
+    }))
+    .use(logixlysia({
+        config: {
+            showStartupMessage: false,
+            customLogFormat: '{now} {duration} {level} {method} {pathname} {status} {message}',
+        },
     }))
     .get('/healthz', async () => {
         return 'All systems operational'

@@ -30,6 +30,11 @@ export type ReportForm = {
   reportType: string
   address: string
   multimediaReports: LocalMedia[]
+  location: {
+    latitude: number
+    longitude: number
+    address?: string
+  }
 }
 
 export type ReportComment = {

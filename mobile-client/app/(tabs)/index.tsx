@@ -4,6 +4,7 @@ import Mapbox, { Annotation, Camera, UserLocation, UserTrackingMode } from '@rnm
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IReportResponse, ReportService } from '@/api/services/report';
 import BottomSheet, { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { Link, usePathname, useRouter } from 'expo-router';
 
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
@@ -24,11 +25,11 @@ function useReports() {
 export default function Index() {
   const queryClient = useQueryClient();
   const map = useRef<Mapbox.MapView | null>();
+  const router = useRouter()
 
   const { status, data, error, isFetching } = useReports();
 
   const [zoom, setZoom] = useState(15);
-  const [selectedReport, setSelectedReport] = useState<IReportResponse | null>(null);
   const [newReports, setNewReports] = useState<IReportResponse[]>([]);
 
   useEffect(() => {
@@ -84,14 +85,8 @@ export default function Index() {
                 id={report.id}
                 key={report.id}
                 onSelected={() => {
-                  console.log('🚨 Selecting report', report);
-                  if (selectedReport === report) {
-                    setSelectedReport(null);
-                    bottomSheetModalRef.current?.close();
-                  } else {
-                    setSelectedReport(report);
-                    bottomSheetModalRef.current?.present();
-                  }
+                  router.replace(`/report/${report.id}`);
+                  console.log('🚨 report selected:', report.id);
                 }}
               >
                 <View style={{
@@ -164,21 +159,6 @@ export default function Index() {
           <UserLocation minDisplacement={DISPLACEMENT[0]} />
         </Mapbox.MapView>
       </View>
-      <BottomSheetModal
-        style={styles.modal}
-        ref={bottomSheetModalRef}
-        onChange={handleSheetChanges}
-      >
-        {
-          selectedReport && (
-            <BottomSheetView style={styles.contentContainer}>
-              <Text style={styles.titleText}>{selectedReport.description}</Text>
-              <Text>{selectedReport.reportType}</Text>
-              <Text style={{ paddingTop: 12 }}>{selectedReport.address}</Text>
-            </BottomSheetView>
-          )
-        }
-      </BottomSheetModal>
     </View>
   );
 }

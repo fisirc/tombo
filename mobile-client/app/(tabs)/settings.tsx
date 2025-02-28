@@ -137,6 +137,7 @@ const Form = ({ defaultValues }: {
             render={({ field }) => (
               <Select
                 label="Rango de cercanía"
+                placeholder="1km"
                 data={radii}
                 defaultValue={radii.find(r => r.value === defaultValues.notificationsRadius)}
                 onSelect={field.onChange}
