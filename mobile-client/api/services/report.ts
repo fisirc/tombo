@@ -1,4 +1,4 @@
-import { ReportForm } from "@/types";
+import { ReportComment, ReportCommentForm, ReportForm } from "@/types";
 
 export type IReportResponse = {
   id: string;
@@ -59,5 +59,27 @@ export const ReportService = {
     const report = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/reports/${id}`);
     const reportData = await report.json();
     return reportData as IReportResponse;
+  },
+  getComments: async (id: string) => {
+    const comments = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/comments/report/${id}`);
+    if (!comments.ok) {
+      throw new Error('Error fetching comments');
+    }
+    console.log(comments)
+    const commentsData = await comments.json();
+    return commentsData as ReportComment[]; 
+  },
+  createComment: async (data: ReportCommentForm) => {
+    const result = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (!result.ok) {
+      throw new Error('Error creating comment');
+    }
+    return await result.json();
   }
 }

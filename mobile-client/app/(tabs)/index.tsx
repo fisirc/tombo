@@ -4,7 +4,12 @@ import Mapbox, { Annotation, Camera, UserLocation, UserTrackingMode } from '@rnm
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IReportResponse, ReportService } from '@/api/services/report';
 import BottomSheet, { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { Link, usePathname, useRouter } from 'expo-router';
+import useTheme from '@/hooks/useTheme';
+import QueryWait from '@/components/QueryWait';
+import dayjs from 'dayjs';
+import { ScrollView } from 'react-native-gesture-handler';
+import TextArea from '@/components/TextArea';
+import Button from '@/components/Button';
 
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
@@ -21,15 +26,144 @@ function useReports() {
   });
 }
 
+const NewCommentForm = ({ reportId }: {
+  reportId: string
+}) => {
+  const theme = useTheme()
+  const queryClient = useQueryClient()
+  const [message, setMessage] = useState<string>('')
+
+  const commentMutation = useMutation({
+    mutationFn: ReportService.createComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['reports', reportId, 'comments']
+      })
+      setMessage('')
+    }
+  })
+
+  const handleSubmit = () => {
+    commentMutation.mutate({
+      reportId,
+      message,
+    })
+  }
+
+  return (
+    <View className='flex gap-2'>
+      <Text className='text-sm' style={{ color: theme['--color-text-muted'] }}>
+        Nuevo comentario
+      </Text>
+      <TextArea
+        placeholder='El sospechoso escapó por la avenida...'
+        value={message}
+        onChangeText={setMessage}
+      />
+      <Button
+        style={{ backgroundColor: theme['--color-bg-inverse'] }}
+        label='Publicar'
+        onPress={handleSubmit}
+      />
+    </View>
+  )
+}
+
+const ReportComments = ({ reportId }: {
+  reportId: string
+}) => {
+  const theme = useTheme()
+
+  const commentsQuery = useQuery({
+    queryKey: ['reports', reportId, 'comments'],
+    queryFn: () => ReportService.getComments(reportId),
+  })
+
+  if (!commentsQuery.data) return <QueryWait query={commentsQuery} />
+
+  console.log(commentsQuery.data)
+
+  return (
+    <View className='flex gap-3'>
+      <Text className='text-sm' style={{ color: theme['--color-text-muted'] }}>
+        Comentarios
+      </Text>
+      {
+        commentsQuery.data.map((comment) => (
+          <View
+            key={comment.id}
+            className='p-4 rounded-xl gap-2'
+            style={{ backgroundColor: theme['--color-bg-foreground'] }}
+          >
+            <Text style={{ color: theme['--color-text-default'] }}>
+              {comment.message}
+            </Text>
+            <Text className='text-sm' style={{color: theme['--color-text-muted']}}>
+              {dayjs(comment.createdAt).fromNow()}
+            </Text>
+          </View>
+        ))
+      }
+    </View>
+  )
+}
+
+const ReportSheet = ({ report }: {
+  report: IReportResponse
+}) => {
+  const theme = useTheme()
+
+  return (
+    <BottomSheetView
+      style={{ backgroundColor: theme['--color-bg-default'] }}
+    >
+      <ScrollView className='h-[60vh]'>
+        <View className='flex gap-8 px-5 py-10'>
+          <View className='flex gap-2'>
+            <Text
+              className='text-4xl font-bold'
+              style={{ color: theme['--color-text-default'] }}
+            >
+              {report.reportType}
+            </Text>
+            <Text
+              className='text-sm'
+              style={{ color: theme['--color-text-muted'] }}
+            >
+              {report.address}
+            </Text>
+          </View>
+          <View className='flex gap-2'>
+            <Text
+              className='text-sm'
+              style={{ color: theme['--color-text-muted'] }}
+            >
+              Descripción
+            </Text>
+            <Text
+              style={{ color: theme['--color-text-default'] }}
+            >
+              {report.description}
+            </Text>
+          </View>
+          <NewCommentForm reportId={report.id} />
+          <ReportComments reportId={report.id} />
+        </View>
+      </ScrollView>
+    </BottomSheetView>
+  )
+}
+
 // -12.062081, -76.989357
 export default function Index() {
   const queryClient = useQueryClient();
   const map = useRef<Mapbox.MapView | null>();
-  const router = useRouter()
+  const theme = useTheme()
 
   const { status, data, error, isFetching } = useReports();
 
   const [zoom, setZoom] = useState(15);
+  const [selectedReport, setSelectedReport] = useState<IReportResponse | null>(null);
   const [newReports, setNewReports] = useState<IReportResponse[]>([]);
 
   useEffect(() => {
@@ -85,8 +219,14 @@ export default function Index() {
                 id={report.id}
                 key={report.id}
                 onSelected={() => {
-                  router.replace(`/report/${report.id}`);
-                  console.log('🚨 report selected:', report.id);
+                  console.log('🚨 Selecting report', report);
+                  if (selectedReport === report) {
+                    setSelectedReport(null);
+                    bottomSheetModalRef.current?.close();
+                  } else {
+                    setSelectedReport(report);
+                    bottomSheetModalRef.current?.present();
+                  }
                 }}
               >
                 <View style={{
@@ -109,12 +249,12 @@ export default function Index() {
                 anchor={{ x: 0.5, y: 1 }}
                 style={{
                   width: zoom * ZOOM_SIZE_MULT * 4,
-                  height: zoom * ZOOM_SIZE_MULT * 4,
                   minWidth: zoom * ZOOM_SIZE_MULT * 4,
                   minHeight: zoom * ZOOM_SIZE_MULT * 4,
+                  overflow: 'visible'
                 }}
               >
-                <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 13 }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
                   {
                     report.multimediaReports.length > 0 ? <Image
                       source={{
@@ -122,17 +262,22 @@ export default function Index() {
                       }}
                       width={zoom * ZOOM_SIZE_MULT * 4}
                       height={zoom * ZOOM_SIZE_MULT * 4}
+                      style={{ overflow: 'visible', borderRadius: 20 }}
                     ></Image>
                     : <View
                         style={{
-                          backgroundColor: '#FFF',
-                          padding: 10,
-                          borderRadius: 5,
+                          backgroundColor: theme['--color-bg-default'],
+                          borderRadius: 20,
                           alignItems: 'center',
                           justifyContent: 'center',
+                          height: zoom * ZOOM_SIZE_MULT * 6,
+                          width: zoom * ZOOM_SIZE_MULT * 8,
                         }}
+                        className='p-4'
                       >
-                      <Text>{report.description}</Text>
+                      <Text style={{ color: theme['--color-text-default'] }}>
+                        {report.description}
+                      </Text>
                     </View>
                   }
                   <View
@@ -159,6 +304,14 @@ export default function Index() {
           <UserLocation minDisplacement={DISPLACEMENT[0]} />
         </Mapbox.MapView>
       </View>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        onChange={handleSheetChanges}
+        handleStyle={{ backgroundColor: theme['--color-bg-default'] }}
+        handleIndicatorStyle={{ backgroundColor: theme['--color-bg-foreground'] }}
+      >
+        {selectedReport && <ReportSheet report={selectedReport} />}
+      </BottomSheetModal>
     </View>
   );
 }

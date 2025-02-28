@@ -1,6 +1,8 @@
 // Import your global CSS file
 import * as Application from 'expo-application';
 import "../global.css";
+import 'dayjs/locale/es'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { View } from "react-native";
 import { Stack } from "expo-router";
 import themes from "@/themes";
@@ -11,6 +13,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import { useEffect } from "react";
+import dayjs from 'dayjs';
 
 GoogleSignin.configure({
 	webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
@@ -30,6 +33,9 @@ export default function RootLayout() {
   const { colorScheme } = useColorScheme()
 
   useEffect(() => {
+    dayjs.locale('es')
+    dayjs.extend(relativeTime)
+
     OneSignal.Notifications.requestPermission(true);
     const androidId = Application.getAndroidId();
     // TODO: Move this to login
