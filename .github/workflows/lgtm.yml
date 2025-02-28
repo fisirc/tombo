@@ -31,4 +31,5 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           commands: |
+            kubectl apply -f k8s/manifest/grafana/namespace.yml
             kubectl apply -f k8s/manifest/grafana/ingress.yml
