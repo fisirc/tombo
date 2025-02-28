@@ -87,4 +87,8 @@ export class ReportRepository implements IReportRepository {
       where: { id }
     });
   }
+
+  async deleteAll(): Promise<void> {
+    await this.prisma.report.deleteMany({});
+  }
 }

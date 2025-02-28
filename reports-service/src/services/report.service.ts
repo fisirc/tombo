@@ -40,4 +40,8 @@ export class ReportService implements IReportService {
   async deleteReport(id: string): Promise<void> {
     await this.reportRepository.delete(id)
   }
+
+  async deletAllReports(): Promise<void> {
+    await this.reportRepository.deleteAll()
+  }
 }
