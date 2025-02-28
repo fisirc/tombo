@@ -8,7 +8,7 @@ export class CommentRepository implements ICommentRepository {
     this.prisma = new PrismaClient()
   }
 
-  async create(comment: Omit<IComment, 'id' | 'date' | 'userId'>): Promise<IComment> {
+  async create(comment: Omit<IComment, 'id' | 'createdAt' | 'userId'>): Promise<IComment> {
     return this.prisma.comment.create({
       data: {
         message: comment.message,
