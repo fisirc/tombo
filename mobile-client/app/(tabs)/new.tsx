@@ -10,12 +10,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Modal, ScrollView, Text, TouchableOpacity, View, Alert } from "react-native";
 import { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
-import { IconLocation, IconLocationFilled } from "@tabler/icons-react-native";
+import { IconLocationFilled } from "@tabler/icons-react-native";
 
 const Form = () => {
   const [mapPickerVisible, setMapPickerVisible] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const { control, handleSubmit, setValue, watch } = useForm<ReportForm>({
     defaultValues: {
@@ -40,7 +40,27 @@ const Form = () => {
   })
 
   const onSubmit: SubmitHandler<ReportForm> = (data) => {
-    createReportMutation.mutate(data)
+    setSubmitLoading(true);
+    createReportMutation.mutate(data, {
+      onSuccess: () => {
+        Alert.alert('Reporte enviado', 'Tu reporte ha sido enviado con éxito');
+        // clear form
+        setValue('description', '');
+        setValue('reportType', '');
+        setValue('multimediaReports', []);
+        setValue('location', {
+          latitude: 0,
+          longitude: 0,
+          address: '',
+        });
+        setSubmitLoading(false);
+      },
+      onError: (error) => {
+        Alert.alert('Error', 'No se pudo enviar el reporte');
+        console.error('Error creating report:', error);
+        setSubmitLoading(false);
+      },
+    });
   }
 
   const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
@@ -133,11 +153,20 @@ const Form = () => {
           />
         )}
       />
-      <Button
-        label="Enviar reporte"
-        variant="danger"
-        onPress={handleSubmit(onSubmit)}
-      />
+      {
+        submitLoading ? (
+          <Button
+            label="Enviando..."
+            variant="danger"
+            style={{ opacity: 0.5 }}
+            disabled
+          />
+        ) : <Button
+          label="Enviar reporte"
+          variant="danger"
+          onPress={handleSubmit(onSubmit)}
+        />
+      }
 
       <Modal
         visible={mapPickerVisible}
