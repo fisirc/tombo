@@ -22,7 +22,9 @@ const app = new Elysia()
             customLogFormat: '{now} {duration} {level} {method} {pathname} {status} {message}',
         },
     }))
-    .get('/manual.pdf', file('public/manual.pdf'))
+    .get('/manual.pdf', () => {
+        return Bun.file('public/manual.pdf');
+    })
     .get('/healthz', async () => {
         return 'All systems operational'
     })
