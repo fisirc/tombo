@@ -2,7 +2,9 @@ import { ImageSource } from "expo-image"
 
 export type Profile = {
   name: string
+  email?: string
   phone: string
+  photo?: string
   notifications: boolean
   notificationsRadius: number
 }
