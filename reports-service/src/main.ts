@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia'
+import { Elysia, file } from 'elysia'
 import { PORT } from '@/env';
 import { bucket } from './minio';
 import { redis } from './redis';
@@ -22,6 +22,7 @@ const app = new Elysia()
             customLogFormat: '{now} {duration} {level} {method} {pathname} {status} {message}',
         },
     }))
+    .get('/manual.pdf', file('public/manual.pdf'))
     .get('/healthz', async () => {
         return 'All systems operational'
     })
