@@ -9,6 +9,7 @@ import swagger from '@elysiajs/swagger';
 import crypto from 'crypto'
 import querystring from 'querystring'
 import { authController } from './controllers/auth.controller';
+import { userController } from './controllers/user.controller';
 
 await setupDatabase()
 
@@ -48,6 +49,7 @@ const app = new Elysia()
     .group('/api', app => app
         .use(reportController)
         .use(commentController)
+        .use(userController)
     );
 
 app.listen(PORT, () => {
