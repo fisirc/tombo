@@ -21,6 +21,30 @@ GoogleSignin.configure({
   offlineAccess: true,
 });
 
+type Radius = {
+  label: string
+  value: number
+}
+
+const radii: Radius[] = [
+  {
+    label: '1km',
+    value: 1
+  },
+  {
+    label: '5km',
+    value: 5
+  },
+  {
+    label: '10km',
+    value: 10
+  },
+  {
+    label: '20km',
+    value: 20
+  }
+];
+
 const LoginScreen = ({ onLogin }: { onLogin: (user: any) => void }) => {
   const handleGoogleLogin = async () => {
     try {
@@ -114,6 +138,20 @@ const Form = ({ defaultValues, user, onLogout }: { defaultValues: Profile, user:
           />
         </View>
       </View>
+      <Controller
+        name="notificationsRadius"
+        control={control}
+        render={({ field }) => (
+          <Select
+            label="Rango de cercanía"
+            placeholder="1km"
+            data={radii}
+            defaultValue={radii.find(r => r.value === defaultValues.notificationsRadius)}
+            onSelect={field.onChange}
+            onBlur={field.onBlur}
+          />
+        )}
+      />
       <Button
         label={isEditing ? "Guardar cambios" : "Editar"}
         onPress={isEditing ? handleSubmit(toggleEditMode) : toggleEditMode}
