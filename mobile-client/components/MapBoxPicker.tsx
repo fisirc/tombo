@@ -1,8 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import Mapbox, { Camera, UserTrackingMode } from '@rnmapbox/maps';
-import { Ionicons } from '@expo/vector-icons';
-import * as Location from 'expo-location';
+import React, { useRef, useState, useEffect } from "react";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import Mapbox, { Camera, UserTrackingMode } from "@rnmapbox/maps";
+import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
+import Button from "./Button";
 
 interface MapBoxPickerProps {
   onSelectLocation: (location: {
@@ -13,7 +14,11 @@ interface MapBoxPickerProps {
   onClose: () => void;
 }
 
-export const reverseGeocoding = async (longitude: number, latitude: number, useOSM: boolean = false) => {
+export const reverseGeocoding = async (
+  longitude: number,
+  latitude: number,
+  useOSM: boolean = false
+) => {
   let url;
   if (useOSM) {
     url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`;
@@ -38,11 +43,16 @@ export const reverseGeocoding = async (longitude: number, latitude: number, useO
       return null;
     }
   }
-}
+};
 
-export const MapPicker: React.FC<MapBoxPickerProps> = ({ onSelectLocation, onClose }) => {
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
-  const [placeName, setPlaceName] = useState<string>('');
+export const MapPicker: React.FC<MapBoxPickerProps> = ({
+  onSelectLocation,
+  onClose,
+}) => {
+  const [selectedCoordinates, setSelectedCoordinates] = useState<
+    [number, number] | null
+  >(null);
+  const [placeName, setPlaceName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const mapRef = useRef<Mapbox.MapView | null>(null);
 
@@ -50,21 +60,21 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({ onSelectLocation, onClo
     const getUserLocation = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          console.log('Permission to access location was denied');
+        if (status !== "granted") {
+          console.log("Permission to access location was denied");
           return;
         }
 
         const location = await Location.getCurrentPositionAsync({});
         const currentLocation: [number, number] = [
           location.coords.longitude,
-          location.coords.latitude
+          location.coords.latitude,
         ];
-        console.log({currentLocation})
+        console.log({ currentLocation });
         setSelectedCoordinates(currentLocation);
         await fetchPlaceName(currentLocation[0], currentLocation[1]);
       } catch (error) {
-        console.error('Error getting location:', error);
+        console.error("Error getting location:", error);
       }
     };
     getUserLocation();
@@ -77,11 +87,11 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({ onSelectLocation, onClo
       if (address) {
         setPlaceName(address);
       } else {
-        setPlaceName('Unknown location');
+        setPlaceName("Unknown location");
       }
     } catch (error) {
-      console.error('Error fetching place name:', error);
-      setPlaceName('Location unavailable');
+      console.error("Error fetching place name:", error);
+      setPlaceName("Location unavailable");
     } finally {
       setIsLoading(false);
     }
@@ -106,17 +116,19 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({ onSelectLocation, onClo
 
   return (
     <View style={styles.container}>
-      <View style={styles.header} className='bg-default'>
+      <View style={styles.header} className="bg-default">
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.title} className='text-default'>🚨 Selecciona la ubicación</Text>
+        <Text style={styles.title} className="text-default">
+          🚨 Selecciona la ubicación
+        </Text>
       </View>
 
       <Mapbox.MapView
         ref={(ref) => (mapRef.current = ref)}
         style={styles.map}
-        styleURL='mapbox://styles/mapbox/dark-v11'
+        styleURL="mapbox://styles/mapbox/dark-v11"
         onPress={handleMapPress}
         logoEnabled={false}
         scaleBarEnabled={false}
@@ -142,27 +154,21 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({ onSelectLocation, onClo
         )}
       </Mapbox.MapView>
 
-      <View className='absolute bottom-0 left-0 w-full p-4'>
+      <View className="absolute bottom-0 left-0 w-full p-4">
         {selectedCoordinates ? (
           <>
-        <Text className='text-default text-lg rounded-xl mb-2 px-7 py-6 bg-default' numberOfLines={2}>
-          {isLoading ? 'Getting location...' : placeName || 'Select a location on the map'}
-        </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <TouchableOpacity
-            className='flex-1 items-center justify-center bg-default py-4 mr-2 rounded-md'
-            onPress={onClose}
-          >
-            <Text className='font-bold text-default rounded-xl'>Cancelar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className='flex-1 items-center justify-center bg-default py-4 rounded-md bg-inverse'
-            onPress={handleConfirmLocation}
-            disabled={!selectedCoordinates}
-          >
-            <Text className='font-bold'>Confirmar</Text>
-          </TouchableOpacity>
-        </View>
+            <Text
+              className="text-default text-lg rounded-xl mb-2 px-7 py-6 bg-default"
+              numberOfLines={2}
+            >
+              {isLoading
+                ? "Obteniendo ubicación..."
+                : placeName || "Selecciona una ubicación en el mapa"}
+            </Text>
+            <View className="flex-row justify-between gap-2">
+              <Button onPress={onClose} label="Cancelar" variant="secondary" />
+              <Button onPress={handleConfirmLocation} label="Confirmar" />
+            </View>
           </>
         ) : (
           <Text>Toca en el mapa para seleccionar</Text>
@@ -177,8 +183,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -188,7 +194,7 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginRight: 28, // To balance the close button
   },
   map: {
@@ -202,7 +208,7 @@ const styles = StyleSheet.create({
   confirmButton: {
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
