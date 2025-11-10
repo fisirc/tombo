@@ -215,13 +215,13 @@ export default function Settings() {
     setUser(null);
   };
 
-  if (!user) {
-    return <LoginScreen onLogin={setUser} />;
-  }
+  // if (!user) {
+  //   return <LoginScreen onLogin={setUser} />;
+  // }
 
   return (
     <ScrollView className="flex-1 bg-default">
-      <View className="p-5 flex items-center">
+      {/* <View className="p-5 flex items-center">
         <Image
           source={{ uri: user.photo }}
           className="w-20 h-20 rounded-full mb-3"
@@ -229,7 +229,8 @@ export default function Settings() {
         <Text className="text-lg font-bold text-white">{user.name}</Text>
         <Text className="text-md text-white">{user.email}</Text>
       </View>
-      <QueryLayer user={user} onLogout={handleLogout} />
+      <QueryLayer user={user} onLogout={handleLogout} /> */}
+      <Text className="text-default">Settings</Text>
     </ScrollView>
   );
 }

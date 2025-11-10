@@ -154,25 +154,27 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
         )}
       </Mapbox.MapView>
 
-      <View className="absolute bottom-0 left-0 w-full p-4">
-        {selectedCoordinates ? (
-          <>
-            <Text
-              className="text-default text-lg rounded-xl mb-2 px-7 py-6 bg-default"
-              numberOfLines={2}
-            >
-              {isLoading
-                ? "Obteniendo ubicación..."
-                : placeName || "Selecciona una ubicación en el mapa"}
-            </Text>
-            <View className="flex-row justify-between gap-2">
-              <Button onPress={onClose} label="Cancelar" variant="secondary" />
-              <Button onPress={handleConfirmLocation} label="Confirmar" />
-            </View>
-          </>
-        ) : (
-          <Text>Toca en el mapa para seleccionar</Text>
-        )}
+      <View className="absolute bottom-0 left-0 w-full p-4 ">
+        <View className="bg-default p-6 rounded-xl flex flex-col gap-4">
+          {selectedCoordinates ? (
+            <>
+              <Text
+                className="text-default text-lg"
+                numberOfLines={2}
+              >
+                {isLoading
+                  ? "Obteniendo ubicación..."
+                  : placeName || "Selecciona una ubicación en el mapa"}
+              </Text>
+              <View className="flex-row justify-between gap-4">
+                <Button onPress={onClose} label="Cancelar" variant="secondary" />
+                <Button onPress={handleConfirmLocation} label="Confirmar" />
+              </View>
+            </>
+          ) : (
+            <Text>Toca en el mapa para seleccionar</Text>
+          )}
+        </View>
       </View>
     </View>
   );

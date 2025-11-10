@@ -14,7 +14,7 @@ import Button from '@/components/Button';
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
 
-const ws = new WebSocket('wss://reports.tombo.paoloose.site/api/reports');
+const ws = new WebSocket(`${process.env.EXPO_PUBLIC_WS_URL}/api/reports`);
 ws.onopen = () => {
   console.log('Listening to reports!');
 }
@@ -258,7 +258,7 @@ export default function Index() {
                   {
                     report.multimediaReports.length > 0 ? <Image
                       source={{
-                        uri: `https://minio.tombo.paoloose.site/reports/${report.multimediaReports[0].resource}`,
+                        uri: `${process.env.EXPO_PUBLIC_STORAGE_URL}/reports/${report.multimediaReports[0].resource}`,
                       }}
                       width={zoom * ZOOM_SIZE_MULT * 4}
                       height={zoom * ZOOM_SIZE_MULT * 4}
