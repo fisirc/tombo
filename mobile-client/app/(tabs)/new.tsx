@@ -8,9 +8,16 @@ import reportTypes from "@/constants/reportTypes";
 import { ReportForm } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Modal, ScrollView, Text, TouchableOpacity, View, Alert } from "react-native";
+import {
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+} from "react-native";
 import { useState } from "react";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 import { IconLocationFilled } from "@tabler/icons-react-native";
 
 const Form = () => {
@@ -23,57 +30,61 @@ const Form = () => {
       location: {
         latitude: 0,
         longitude: 0,
-        address: '',
+        address: "",
       },
     },
-  })
+  });
 
   const location = watch("location");
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const createReportMutation = useMutation({
     mutationFn: ReportService.createReport,
-    onSuccess: () => queryClient.invalidateQueries({
-      queryKey: ['reports']
-    })
-  })
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: ["reports"],
+      }),
+  });
 
   const onSubmit: SubmitHandler<ReportForm> = (data) => {
     setSubmitLoading(true);
     createReportMutation.mutate(data, {
       onSuccess: () => {
-        Alert.alert('Reporte enviado', 'Tu reporte ha sido enviado con éxito');
+        Alert.alert("Reporte enviado", "Tu reporte ha sido enviado con éxito");
         // clear form
-        setValue('description', '');
-        setValue('reportType', '');
-        setValue('multimediaReports', []);
-        setValue('location', {
+        setValue("description", "");
+        setValue("reportType", "");
+        setValue("multimediaReports", []);
+        setValue("location", {
           latitude: 0,
           longitude: 0,
-          address: '',
+          address: "",
         });
         setSubmitLoading(false);
       },
       onError: (error) => {
-        Alert.alert('Error', 'No se pudo enviar el reporte');
-        console.error('Error creating report:', error);
+        Alert.alert("Error", "No se pudo enviar el reporte");
+        console.error("Error creating report:", error);
         setSubmitLoading(false);
       },
     });
-  }
+  };
 
   const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
     value: rt.name,
     label: rt.name,
-  }))
+  }));
 
   const getCurrentLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (status !== 'granted') {
-        Alert.alert('Permiso denegado', 'Se requiere permiso para acceder a la ubicación');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permiso denegado",
+          "Se requiere permiso para acceder a la ubicación"
+        );
         return;
       }
 
@@ -84,14 +95,14 @@ const Form = () => {
 
       const address = await reverseGeocoding(longitude, latitude);
 
-      setValue('location', {
+      setValue("location", {
         latitude,
         longitude,
         address,
       });
     } catch (error) {
-      Alert.alert('Error', 'No se pudo obtener la ubicación actual');
-      console.error('Error getting location:', error);
+      Alert.alert("Error", "No se pudo obtener la ubicación actual");
+      console.error("Error getting location:", error);
     }
   };
 
@@ -101,34 +112,47 @@ const Form = () => {
         name="reportType"
         control={control}
         render={({ field }) => (
-          <Select
-            label="Tipo de evento*"
-            data={formattedReportTypes}
-            onSelect={field.onChange}
-            onBlur={field.onBlur}
-            search
-            placeholder="Robo a mano armada"
-            searchPlaceHolder="Buscar tipo de evento..."
-          />
+          <View className="flex gap-2">
+            <Text className="text-default">Tipo de evento*</Text>
+            <Select
+              data={formattedReportTypes}
+              onSelect={field.onChange}
+              onBlur={field.onBlur}
+              search
+              placeholder="Robo a mano armada"
+              searchPlaceHolder="Buscar tipo de evento..."
+            />
+          </View>
         )}
       />
-      <View>
-        <Text className="text-sm font-medium mb-2 text-default">Lugar</Text>
-        <TouchableOpacity
+      <View className="flex flex-col gap-2">
+        <Text className="text-default">Lugar</Text>
+        {/* <TouchableOpacity
           onPress={() => setMapPickerVisible(true)}
           className="rounded-md p-3 flex-row justify-between items-center bg-bg-default bg-foreground-mild"
         >
+        </TouchableOpacity> */}
+        <Button
+          className="justify-between bg-foreground-mild"
+          variant="secondary"
+          onPress={() => setMapPickerVisible(true)}
+        >
           <Text className="text-default">
-        {location?.address ? location.address : "Seleccionar ubicación"}
+            {location?.address ? location.address : "Seleccionar ubicación"}
           </Text>
           <IconLocationFilled size={20} color="#7f7f7f" />
-        </TouchableOpacity>
-        <TouchableOpacity
+        </Button>
+        {/* <TouchableOpacity
           onPress={getCurrentLocation}
           className="mv-2 mt-2 flex-row items-center justify-center p-3 bg-bg-subtle rounded-md bg-foreground"
         >
           <Text className="text-default text-md">Usar ubicación actual</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <Button
+          variant="secondary"
+          label="Usar ubicación actual"
+          onPress={getCurrentLocation}
+        />
       </View>
       <Controller
         name="description"
@@ -153,20 +177,20 @@ const Form = () => {
           />
         )}
       />
-      {
-        submitLoading ? (
-          <Button
-            label="Enviando..."
-            variant="danger"
-            style={{ opacity: 0.5 }}
-            disabled
-          />
-        ) : <Button
+      {submitLoading ? (
+        <Button
+          label="Enviando..."
+          variant="danger"
+          style={{ opacity: 0.5 }}
+          disabled
+        />
+      ) : (
+        <Button
           label="Enviar reporte"
           variant="danger"
           onPress={handleSubmit(onSubmit)}
         />
-      }
+      )}
 
       <Modal
         visible={mapPickerVisible}
@@ -175,7 +199,7 @@ const Form = () => {
       >
         <MapPicker
           onSelectLocation={(location) => {
-            setValue('location', {
+            setValue("location", {
               address: location.address,
               latitude: location.latitude,
               longitude: location.longitude,
@@ -187,7 +211,7 @@ const Form = () => {
       </Modal>
     </View>
   );
-}
+};
 
 export default function Settings() {
   return (

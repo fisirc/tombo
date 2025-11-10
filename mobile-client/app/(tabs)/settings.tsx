@@ -12,7 +12,7 @@ import { ScrollView, Text, View, Image, Alert } from "react-native";
 import {
   GoogleSignin,
   GoogleSigninButton,
-  statusCodes
+  statusCodes,
 } from "@react-native-google-signin/google-signin";
 
 GoogleSignin.configure({
@@ -22,27 +22,27 @@ GoogleSignin.configure({
 });
 
 type Radius = {
-  label: string
-  value: number
-}
+  label: string;
+  value: number;
+};
 
 const radii: Radius[] = [
   {
-    label: '1km',
-    value: 1
+    label: "1km",
+    value: 1,
   },
   {
-    label: '5km',
-    value: 5
+    label: "5km",
+    value: 5,
   },
   {
-    label: '10km',
-    value: 10
+    label: "10km",
+    value: 10,
   },
   {
-    label: '20km',
-    value: 20
-  }
+    label: "20km",
+    value: 20,
+  },
 ];
 
 const LoginScreen = ({ onLogin }: { onLogin: (user: any) => void }) => {
@@ -62,13 +62,23 @@ const LoginScreen = ({ onLogin }: { onLogin: (user: any) => void }) => {
 
   return (
     <View className="flex-1 justify-center items-center bg-default">
-      <Text className="text-xl font-medium mb-4 text-white">Inicia sesión para continuar</Text>
+      <Text className="text-xl font-medium mb-4 text-white">
+        Inicia sesión para continuar
+      </Text>
       <GoogleSigninButton onPress={handleGoogleLogin} />
     </View>
   );
 };
 
-const Form = ({ defaultValues, user, onLogout }: { defaultValues: Profile, user: any, onLogout: () => void }) => {
+const Form = ({
+  defaultValues,
+  user,
+  onLogout,
+}: {
+  defaultValues: Profile;
+  user: any;
+  onLogout: () => void;
+}) => {
   const [isEditing, setIsEditing] = useState(true);
   const { control, handleSubmit } = useForm<Profile>({ defaultValues });
 
@@ -142,14 +152,18 @@ const Form = ({ defaultValues, user, onLogout }: { defaultValues: Profile, user:
         name="notificationsRadius"
         control={control}
         render={({ field }) => (
-          <Select
-            label="Rango de cercanía"
-            placeholder="1km"
-            data={radii}
-            defaultValue={radii.find(r => r.value === defaultValues.notificationsRadius)}
-            onSelect={field.onChange}
-            onBlur={field.onBlur}
-          />
+          <View className="flex gap-2">
+            <Text className="text-default">Rango de cercanía</Text>
+            <Select
+              placeholder="1km"
+              data={radii}
+              defaultValue={radii.find(
+                (r) => r.value === defaultValues.notificationsRadius
+              )}
+              onSelect={field.onChange}
+              onBlur={field.onBlur}
+            />
+          </View>
         )}
       />
       <Button
@@ -166,7 +180,13 @@ const Form = ({ defaultValues, user, onLogout }: { defaultValues: Profile, user:
   );
 };
 
-const QueryLayer = ({ user, onLogout }: { user: any, onLogout: () => void }) => {
+const QueryLayer = ({
+  user,
+  onLogout,
+}: {
+  user: any;
+  onLogout: () => void;
+}) => {
   const defaultValuesQuery = useQuery({
     queryKey: ["profile"],
     queryFn: ProfileService.getProfile,
@@ -202,7 +222,10 @@ export default function Settings() {
   return (
     <ScrollView className="flex-1 bg-default">
       <View className="p-5 flex items-center">
-        <Image source={{ uri: user.photo }} className="w-20 h-20 rounded-full mb-3" />
+        <Image
+          source={{ uri: user.photo }}
+          className="w-20 h-20 rounded-full mb-3"
+        />
         <Text className="text-lg font-bold text-white">{user.name}</Text>
         <Text className="text-md text-white">{user.email}</Text>
       </View>
