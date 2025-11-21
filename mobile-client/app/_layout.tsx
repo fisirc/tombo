@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect } from "react";
 import dayjs from 'dayjs';
+import useSession from '@/hooks/useSession';
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -32,6 +33,7 @@ import dayjs from 'dayjs';
 export default function RootLayout() {
   const queryClient = new QueryClient()
   const { colorScheme } = useColorScheme()
+  const session = useSession()
 
   useEffect(() => {
     dayjs.locale('es')
@@ -50,12 +52,22 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <View style={themes[colorScheme || 'dark']} className="flex-1">
             <Stack>
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                }}
-              />
+              <Stack.Protected guard={session !== null}>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack.Protected>
+              <Stack.Protected guard={session === null}>
+                <Stack.Screen
+                  name="sign-in"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack.Protected>
             </Stack>
           </View>
         </BottomSheetModalProvider>

@@ -35,7 +35,7 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
       [
         "@rnmapbox/maps",
         {
-          RNMapboxMapsDownloadToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
+          RNMAPBOX_MAPS_DOWNLOAD_TOKEN: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
         }
       ],
       [

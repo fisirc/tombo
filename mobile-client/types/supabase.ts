@@ -44,13 +44,6 @@ export type Database = {
             referencedRelation: "reports"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_comments_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       device_identities: {
@@ -58,29 +51,21 @@ export type Database = {
           created_at: string
           device_id: string
           id: number
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           device_id: string
           id?: number
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           device_id?: string
           id?: number
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_device_identities_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       multimedia_comments: {
         Row: {
@@ -199,27 +184,21 @@ export type Database = {
           },
         ]
       }
-      preferences: {
+      profiles: {
         Row: {
-          active_notifications: boolean
-          alert_radius_km: number
+          alert_radius_km: number | null
           id: string
-          interface_theme: string
-          language: string
+          name: string
         }
         Insert: {
-          active_notifications: boolean
-          alert_radius_km: number
+          alert_radius_km?: number | null
           id?: string
-          interface_theme: string
-          language: string
+          name?: string
         }
         Update: {
-          active_notifications?: boolean
-          alert_radius_km?: number
+          alert_radius_km?: number | null
           id?: string
-          interface_theme?: string
-          language?: string
+          name?: string
         }
         Relationships: []
       }
@@ -254,53 +233,7 @@ export type Database = {
           report_type?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_reports_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      users: {
-        Row: {
-          avatar: string
-          email: string
-          googleid: string
-          id: string
-          name: string
-          phone: string
-          preferences_id: string | null
-        }
-        Insert: {
-          avatar: string
-          email: string
-          googleid: string
-          id?: string
-          name: string
-          phone: string
-          preferences_id?: string | null
-        }
-        Update: {
-          avatar?: string
-          email?: string
-          googleid?: string
-          id?: string
-          name?: string
-          phone?: string
-          preferences_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_users_preferences"
-            columns: ["preferences_id"]
-            isOneToOne: true
-            referencedRelation: "preferences"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

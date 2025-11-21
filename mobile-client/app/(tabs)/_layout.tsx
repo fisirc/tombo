@@ -1,5 +1,6 @@
 import TabButton, { TabButtonProps } from '@/components/TabButton';
 import { IconAlertSquareRounded, IconAlertSquareRoundedFilled, IconCompass, IconCompassFilled, IconUser } from '@tabler/icons-react-native';
+import { Redirect } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 
 const tabs: TabButtonProps[] = [
