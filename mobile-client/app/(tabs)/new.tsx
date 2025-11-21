@@ -5,78 +5,42 @@ import { MapPicker, reverseGeocoding } from "@/components/MapBoxPicker";
 import Select, { SelectItem } from "@/components/Select";
 import TextArea from "@/components/TextArea";
 import reportTypes from "@/constants/reportTypes";
-import { ReportForm } from "@/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   Modal,
   ScrollView,
   Text,
-  TouchableOpacity,
   View,
   Alert,
 } from "react-native";
 import { useState } from "react";
 import * as Location from "expo-location";
 import { IconLocationFilled } from "@tabler/icons-react-native";
+import { TablesInsert } from "@/types/supabase";
+import useCreateReport from "@/hooks/useCreateReport";
+
+const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
+  value: rt.name,
+  label: rt.name,
+}));
 
 const Form = () => {
-  const [mapPickerVisible, setMapPickerVisible] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false);
-
-  const { control, handleSubmit, setValue, watch } = useForm<ReportForm>({
+  const { control, handleSubmit, setValue, watch, reset } = useForm<TablesInsert<'reports'>>({
     defaultValues: {
-      multimediaReports: [],
-      location: {
-        latitude: 0,
-        longitude: 0,
-        address: "",
-      },
+      latitude: 0,
+      longitude: 0,
+      address: "",
     },
   });
 
-  const location = watch("location");
+  const { mutate: createReport, isPending } = useCreateReport(reset);
+  const onSubmit: SubmitHandler<TablesInsert<'reports'>> = (data) => createReport(data)
 
-  const queryClient = useQueryClient();
+  const address = watch("address")
 
-  const createReportMutation = useMutation({
-    mutationFn: ReportService.createReport,
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["reports"],
-      }),
-  });
+  const [mapPickerVisible, setMapPickerVisible] = useState(false);
 
-  const onSubmit: SubmitHandler<ReportForm> = (data) => {
-    setSubmitLoading(true);
-    createReportMutation.mutate(data, {
-      onSuccess: () => {
-        Alert.alert("Reporte enviado", "Tu reporte ha sido enviado con éxito");
-        // clear form
-        setValue("description", "");
-        setValue("reportType", "");
-        setValue("multimediaReports", []);
-        setValue("location", {
-          latitude: 0,
-          longitude: 0,
-          address: "",
-        });
-        setSubmitLoading(false);
-      },
-      onError: (error) => {
-        Alert.alert("Error", "No se pudo enviar el reporte");
-        console.error("Error creating report:", error);
-        setSubmitLoading(false);
-      },
-    });
-  };
-
-  const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
-    value: rt.name,
-    label: rt.name,
-  }));
-
-  const getCurrentLocation = async () => {
+  const setCurrentLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -91,15 +55,14 @@ const Form = () => {
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
       });
+
       const { latitude, longitude } = currentLocation.coords;
 
       const address = await reverseGeocoding(longitude, latitude);
 
-      setValue("location", {
-        latitude,
-        longitude,
-        address,
-      });
+      setValue("latitude", latitude);
+      setValue("longitude", longitude);
+      setValue("address", address);
     } catch (error) {
       Alert.alert("Error", "No se pudo obtener la ubicación actual");
       console.error("Error getting location:", error);
@@ -109,7 +72,7 @@ const Form = () => {
   return (
     <View className="px-5 py-10 flex gap-6">
       <Controller
-        name="reportType"
+        name="report_type"
         control={control}
         render={({ field }) => (
           <View className="flex gap-2">
@@ -127,31 +90,20 @@ const Form = () => {
       />
       <View className="flex flex-col gap-2">
         <Text className="text-default">Lugar</Text>
-        {/* <TouchableOpacity
-          onPress={() => setMapPickerVisible(true)}
-          className="rounded-md p-3 flex-row justify-between items-center bg-bg-default bg-foreground-mild"
-        >
-        </TouchableOpacity> */}
         <Button
           className="justify-between bg-foreground-mild"
           variant="secondary"
           onPress={() => setMapPickerVisible(true)}
         >
           <Text className="text-default">
-            {location?.address ? location.address : "Seleccionar ubicación"}
+            {address || "Seleccionar ubicación"}
           </Text>
           <IconLocationFilled size={20} color="#7f7f7f" />
         </Button>
-        {/* <TouchableOpacity
-          onPress={getCurrentLocation}
-          className="mv-2 mt-2 flex-row items-center justify-center p-3 bg-bg-subtle rounded-md bg-foreground"
-        >
-          <Text className="text-default text-md">Usar ubicación actual</Text>
-        </TouchableOpacity> */}
         <Button
           variant="secondary"
           label="Usar ubicación actual"
-          onPress={getCurrentLocation}
+          onPress={setCurrentLocation}
         />
       </View>
       <Controller
@@ -166,7 +118,7 @@ const Form = () => {
           />
         )}
       />
-      <Controller
+      {/* <Controller
         name="multimediaReports"
         control={control}
         render={({ field }) => (
@@ -176,8 +128,8 @@ const Form = () => {
             onChange={field.onChange}
           />
         )}
-      />
-      {submitLoading ? (
+      /> */}
+      {isPending ? (
         <Button
           label="Enviando..."
           variant="danger"
@@ -199,11 +151,9 @@ const Form = () => {
       >
         <MapPicker
           onSelectLocation={(location) => {
-            setValue("location", {
-              address: location.address,
-              latitude: location.latitude,
-              longitude: location.longitude,
-            });
+            setValue("latitude", location.latitude);
+            setValue("longitude", location.longitude);
+            setValue("address", location.address);
             setMapPickerVisible(false);
           }}
           onClose={() => setMapPickerVisible(false)}
