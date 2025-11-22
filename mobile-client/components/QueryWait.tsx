@@ -4,18 +4,18 @@ import ErrorMsg from "./ErrorMsg"
 import LoadingMsg from "./LoadingMsg"
 import { View } from "react-native"
 
-const Content = ({ query }: {
-  query: UseQueryResult
+const Content = ({ qr }: {
+  qr: UseQueryResult
 }) => {
-  if (query.isLoading) return <LoadingMsg />
-  if (query.isError) return <ErrorMsg />
-  if (query.data === null) return <EmptyMsg />
+  if (qr.isLoading) return <LoadingMsg />
+  if (qr.isError) return <ErrorMsg />
+  if (qr.data === null) return <EmptyMsg />
 }
 
-export default ({ query }: {
-  query: UseQueryResult
+export default ({ qr }: {
+  qr: UseQueryResult
 }) => (
   <View className="p-6 flex-1">
-    <Content query={query} />
+    <Content qr={qr} />
   </View>
 )

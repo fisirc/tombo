@@ -3,9 +3,9 @@ import { supabase } from "./supabase";
 
 export default class AuthService {
   static signIn = async (signInData: SignInData) => {
-    const res = await supabase.auth.signInWithPassword(signInData);
-    if (res.error) throw res.error;
-    return res;
+    const { data, error } = await supabase.auth.signInWithPassword(signInData);
+    if (error) throw error;
+    return data;
   }
 
   static signUp = async (signUpData: SignUpData) => {
@@ -19,5 +19,10 @@ export default class AuthService {
     });
     if (error) throw error;
     return data;
+  }
+
+  static signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   }
 }

@@ -187,18 +187,21 @@ export type Database = {
       profiles: {
         Row: {
           alert_radius_km: number | null
+          alerts_on: boolean
           id: string
-          name: string
+          username: string
         }
         Insert: {
           alert_radius_km?: number | null
+          alerts_on?: boolean
           id?: string
-          name?: string
+          username: string
         }
         Update: {
           alert_radius_km?: number | null
+          alerts_on?: boolean
           id?: string
-          name?: string
+          username?: string
         }
         Relationships: []
       }

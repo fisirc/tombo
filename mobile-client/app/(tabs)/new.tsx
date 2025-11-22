@@ -18,6 +18,7 @@ import * as Location from "expo-location";
 import { IconLocationFilled } from "@tabler/icons-react-native";
 import { TablesInsert } from "@/types/supabase";
 import useCreateReport from "@/hooks/useCreateReport";
+import useSession from "@/hooks/useSession";
 
 const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
   value: rt.name,
@@ -33,8 +34,13 @@ const Form = () => {
     },
   });
 
-  const { mutate: createReport, isPending } = useCreateReport(reset);
-  const onSubmit: SubmitHandler<TablesInsert<'reports'>> = (data) => createReport(data)
+  const { data: session } = useSession()
+  console.log(session)
+
+  const { mutate: createReport, isPending } = useCreateReport();
+  const onSubmit = (formData: TablesInsert<'reports'>) => createReport(formData, {
+    onSuccess: () => reset()
+  })
 
   const address = watch("address")
 
@@ -129,20 +135,12 @@ const Form = () => {
           />
         )}
       /> */}
-      {isPending ? (
-        <Button
-          label="Enviando..."
-          variant="danger"
-          style={{ opacity: 0.5 }}
-          disabled
-        />
-      ) : (
-        <Button
-          label="Enviar reporte"
-          variant="danger"
-          onPress={handleSubmit(onSubmit)}
-        />
-      )}
+      <Button
+        label="Enviar reporte"
+        variant="danger"
+        disabled={isPending}
+        onPress={handleSubmit(onSubmit)}
+      />
 
       <Modal
         visible={mapPickerVisible}
@@ -163,7 +161,7 @@ const Form = () => {
   );
 };
 
-export default function Settings() {
+export default function New() {
   return (
     <ScrollView className="flex-1 bg-default">
       <Form />

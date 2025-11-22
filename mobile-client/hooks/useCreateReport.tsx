@@ -4,13 +4,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReset } from "react-hook-form";
 import { Alert } from "react-native";
 
-export default (reset: UseFormReset<TablesInsert<'reports'>>) => {
+export default () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: ReportService.createReport,
     onSuccess: () => {
-      reset();
       Alert.alert("Reporte enviado", "Tu reporte ha sido enviado con éxito");
       queryClient.invalidateQueries({
         queryKey: ["reports"],

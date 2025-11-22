@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { ScrollView } from 'react-native-gesture-handler';
 import TextArea from '@/components/TextArea';
 import Button from '@/components/Button';
+import useSession from '@/hooks/useSession';
 
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
@@ -79,7 +80,7 @@ const ReportComments = ({ reportId }: {
     queryFn: () => ReportService.getComments(reportId),
   })
 
-  if (!commentsQuery.data) return <QueryWait query={commentsQuery} />
+  if (!commentsQuery.data) return <QueryWait qr={commentsQuery} />
 
   console.log(commentsQuery.data)
 

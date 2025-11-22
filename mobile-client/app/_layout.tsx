@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect } from "react";
 import dayjs from "dayjs";
+import useSessionInit from "@/hooks/useSessionInit";
 import useSession from "@/hooks/useSession";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
@@ -30,10 +31,29 @@ import useSession from "@/hooks/useSession";
 // 	return userInfo;
 // };
 
-export default function RootLayout() {
-  const queryClient = new QueryClient();
+const RootLayout = () => {
+  useSessionInit()
+  const { data: session } = useSession();
+
   const { colorScheme } = useColorScheme();
-  const session = useSession();
+
+  return (
+    <View style={themes[colorScheme || "dark"]} className="flex-1">
+      <Stack>
+        <Stack.Protected guard={session !== null}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={session === null}>
+          <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+          <Stack.Screen name="sign-up" options={{ headerShown: false }} />
+        </Stack.Protected>
+      </Stack>
+    </View>
+  );
+}
+
+export default () => {
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     dayjs.locale("es");
@@ -50,19 +70,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
         <BottomSheetModalProvider>
-          <View style={themes[colorScheme || "dark"]} className="flex-1">
-            <Stack>
-              <Stack.Protected guard={session !== null}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack.Protected>
-              <Stack.Protected guard={session === null}>
-                <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-                <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-              </Stack.Protected>
-            </Stack>
-          </View>
+          <RootLayout />
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
-  );
+  )
 }
