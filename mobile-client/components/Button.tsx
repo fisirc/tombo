@@ -9,18 +9,18 @@ export default ({
   label,
   variant = "primary",
   onPress,
+  disabled,
   children,
   className,
   ...props
 }: ButtonProps) => {
   return (
     <Pressable
-      className={`${className} flex-grow rounded-xl h-14 flex-row items-center justify-center px-4 ${
-        variant === "primary"
-          ? "bg-inverse active:bg-inverse-mild"
-          : variant === "secondary"
-          ? "bg-foreground active:bg-foreground-mild"
-          : "bg-danger active:bg-red-600"
+      className={`${className} flex-grow rounded-xl h-14 flex-row items-center justify-center px-4 disabled:opacity-50 
+      ${
+        variant === "primary"   ? "bg-inverse active:bg-inverse-mild" :
+        variant === "secondary" ? "bg-foreground active:bg-foreground-mild" :
+        "bg-danger active:bg-red-600"
       }`}
       onPress={onPress}
       {...props}
@@ -28,11 +28,9 @@ export default ({
       {label ? (
         <Text
           className={`font-medium ${
-            variant === "primary"
-              ? "text-inverse"
-              : variant === "secondary"
-              ? "text-default"
-              : "text-white"
+            variant === "primary"   ? "text-inverse" :
+            variant === "secondary" ? "text-default" :
+            "text-white"
           }`}
         >
           {label}

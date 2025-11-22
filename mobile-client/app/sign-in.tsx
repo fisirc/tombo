@@ -1,25 +1,25 @@
-import React, { useState } from "react";
-import { Alert, Dimensions, Image, StyleSheet, Text, View } from "react-native";
-import { supabase } from "@/services/supabase";
+import React from "react";
+import { Image, Text, View } from "react-native";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { Link } from "expo-router";
+import useSignIn from "@/hooks/useSignIn";
+import { useForm, Controller } from "react-hook-form";
+import { SignInData } from "@/types/";
 
 export default function Auth() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { mutate: signIn, isPending } = useSignIn();
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<SignInData>({
+    mode: "onBlur",
+    defaultValues: { email: "", password: "" },
+  });
 
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  }
+  const onSubmit = (formData: SignInData) => signIn(formData);
 
   return (
     <View className="h-full flex flex-col justify-center bg-default px-5">
@@ -34,29 +34,47 @@ export default function Auth() {
             }}
           />
         </View>
+
         <View className="flex flex-col gap-4">
-          <Input
-            label="Correo electrónico"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-            placeholder="email@dirección.com"
-            autoCapitalize={"none"}
+          <Controller
+            control={control}
+            name="email"
+            rules={{ required: "El correo es requerido" }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Correo electrónico"
+                onChangeText={onChange}
+                value={value}
+                placeholder="email@dirección.com"
+                autoCapitalize={"none"}
+              />
+            )}
           />
-          <Input
-            label="Contraseña"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry={true}
-            placeholder="Contraseña"
-            autoCapitalize={"none"}
+
+          <Controller
+            control={control}
+            name="password"
+            rules={{ required: "La contraseña es requerida" }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Contraseña"
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry={true}
+                placeholder="Contraseña"
+                autoCapitalize={"none"}
+              />
+            )}
           />
+
           <Button
             className="mt-4"
             label="Iniciar sesión"
-            disabled={loading || !email || !password}
-            onPress={() => signInWithEmail()}
+            disabled={isPending || !isValid}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
+
         <Text className="text-default text-center mt-12">
           ¿No tienes cuenta?{" "}
           <Link href="/sign-up" className="underline">

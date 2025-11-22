@@ -1,41 +1,32 @@
-import React, { useState } from "react";
-import { Alert, Image, View } from "react-native";
-import { supabase } from "@/services/supabase";
+import { Image, View } from "react-native";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
+import { SignUpData } from "@/types/";
+import { useForm, Controller } from "react-hook-form";
+import useSignUp from "@/hooks/useSignUp";
 
 export default function Auth() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repassword, setRepassword] = useState("");
-  // const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { mutate: signUp, isPending } = useSignUp();
 
-  const router = useRouter();
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { isValid }
+  } = useForm<SignUpData>({
+    defaultValues: {
+      full_name: "",
+      email: "",
+      password: "",
+      confirm_password: ""
+    },
+  });
 
-  async function signUpWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      // phone,
-      options: { data: { username } },
-    });
+  const password = watch("password")
 
-    if (error) {
-      Alert.alert(error.message);
-      return;
-    }
-
-    Alert.alert(
-      "Cuenta creada",
-      "Por favor revisa tu correo para verificar tu cuenta."
-    );
-    router.navigate("/sign-in");
-    setLoading(false);
-  }
+  const onSubmit = (data: SignUpData) => signUp(data)
 
   return (
     <View className="h-full flex flex-col justify-center bg-default px-5">
@@ -51,52 +42,86 @@ export default function Auth() {
           />
         </View>
         <View className="flex flex-col gap-4">
-          <Input
-            label="Nombre"
-            onChangeText={(text) => setUsername(text)}
-            value={username}
-            placeholder="Juan Tapia"
+          <Controller
+            control={control}
+            name="full_name"
+            rules={{ required: "El nombre es requerido" }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Nombre"
+                onChangeText={onChange}
+                value={value}
+                placeholder="Juan Tapia"
+              />
+            )}
           />
-          <Input
-            label="Correo electrónico"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-            placeholder="email@dirección.com"
-            autoCapitalize={"none"}
+
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: "El correo es requerido",
+              pattern: {
+                value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                message: "El correo no es válido"
+              }
+            }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Correo electrónico"
+                onChangeText={onChange}
+                value={value}
+                placeholder="email@dirección.com"
+                autoCapitalize={"none"}
+              />
+            )}
           />
-          {/* <Input
-            label="Teléfono"
-            onChangeText={(text) => setPhone(text)}
-            value={phone}
-            placeholder="987654321"
-          /> */}
-          <Input
-            label="Contraseña"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry={true}
-            placeholder="Usa una contraseña segura"
-            autoCapitalize={"none"}
+
+          <Controller
+            control={control}
+            name="password"
+            rules={{
+              required: "La contraseña es requerida",
+              minLength: {
+                value: 8,
+                message: "La contraseña debe tener al menos 8 caracteres",
+              },
+            }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Contraseña"
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry={true}
+                placeholder="Usa una contraseña segura"
+                autoCapitalize={"none"}
+              />
+            )}
           />
-          <Input
-            label="Repetir contraseña"
-            onChangeText={(text) => setRepassword(text)}
-            value={repassword}
-            secureTextEntry={true}
-            placeholder="Repite tu contraseña"
-            autoCapitalize={"none"}
+
+          <Controller
+            control={control}
+            name="confirm_password"
+            rules={{
+              validate: value => value === password || "Las contraseñas no coinciden"
+            }}
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Confirmar contraseña"
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry={true}
+                placeholder="Repite tu contraseña"
+                autoCapitalize={"none"}
+              />
+            )}
           />
+
           <Button
             className="mt-4"
-            label="Crear cuenta"
-            disabled={
-              loading ||
-              password !== repassword ||
-              !username ||
-              !email ||
-              !password
-            }
-            onPress={() => signUpWithEmail()}
+            label={isPending ? "Creando..." : "Crear cuenta"}
+            disabled={isPending || !isValid}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
         <Link
