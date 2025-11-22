@@ -1,8 +1,8 @@
 // Import your global CSS file
-import * as Application from 'expo-application';
+import * as Application from "expo-application";
 import "../global.css";
-import 'dayjs/locale/es'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import "dayjs/locale/es";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { View } from "react-native";
 import { Stack } from "expo-router";
 import themes from "@/themes";
@@ -11,8 +11,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useEffect } from "react";
-import dayjs from 'dayjs';
-import useSession from '@/hooks/useSession';
+import dayjs from "dayjs";
+import useSession from "@/hooks/useSession";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -31,13 +31,13 @@ import useSession from '@/hooks/useSession';
 // };
 
 export default function RootLayout() {
-  const queryClient = new QueryClient()
-  const { colorScheme } = useColorScheme()
-  const session = useSession()
+  const queryClient = new QueryClient();
+  const { colorScheme } = useColorScheme();
+  const session = useSession();
 
   useEffect(() => {
-    dayjs.locale('es')
-    dayjs.extend(relativeTime)
+    dayjs.locale("es");
+    dayjs.extend(relativeTime);
     // OneSignal.Notifications.requestPermission(true);
     // const androidId = Application.getAndroidId();
     // // TODO: Move this to login
@@ -50,23 +50,14 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
         <BottomSheetModalProvider>
-          <View style={themes[colorScheme || 'dark']} className="flex-1">
+          <View style={themes[colorScheme || "dark"]} className="flex-1">
             <Stack>
               <Stack.Protected guard={session !== null}>
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               </Stack.Protected>
               <Stack.Protected guard={session === null}>
-                <Stack.Screen
-                  name="sign-in"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
+                <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+                <Stack.Screen name="sign-up" options={{ headerShown: false }} />
               </Stack.Protected>
             </Stack>
           </View>

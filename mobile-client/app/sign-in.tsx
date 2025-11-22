@@ -1,65 +1,69 @@
-import React, { useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
-import { Button, Input } from '@rneui/themed'
-import { supabase } from '@/services/supabase'
+import React, { useState } from "react";
+import { Alert, Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { supabase } from "@/services/supabase";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
+import { Link } from "expo-router";
 
 export default function Auth() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function signInWithEmail() {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
+    });
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+    if (error) Alert.alert(error.message);
+    setLoading(false);
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
-          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Password"
-          leftIcon={{ type: 'font-awesome', name: 'lock' }}
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Password"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+    <View className="h-full flex flex-col justify-center bg-default px-5">
+      <View className="flex flex-col">
+        <View className="flex flex-row justify-center mb-16">
+          <Image
+            source={require("../assets/logo-white.png")}
+            style={{
+              width: 180,
+              height: undefined,
+              aspectRatio: 100 / 23.27,
+            }}
+          />
+        </View>
+        <View className="flex flex-col gap-4">
+          <Input
+            label="Correo electrónico"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            placeholder="email@dirección.com"
+            autoCapitalize={"none"}
+          />
+          <Input
+            label="Contraseña"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry={true}
+            placeholder="Contraseña"
+            autoCapitalize={"none"}
+          />
+          <Button
+            className="mt-4"
+            label="Iniciar sesión"
+            disabled={loading || !email || !password}
+            onPress={() => signInWithEmail()}
+          />
+        </View>
+        <Text className="text-default text-center mt-12">
+          ¿No tienes cuenta?{" "}
+          <Link href="/sign-up" className="underline">
+            Crea una nueva
+          </Link>
+        </Text>
       </View>
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
-  },
-})
