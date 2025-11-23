@@ -9,3 +9,9 @@ export interface SignUpData {
   confirm_password: string;
   username: string;
 }
+
+export interface GeocodedLocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+}

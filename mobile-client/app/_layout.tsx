@@ -16,6 +16,7 @@ import useSessionInit from "@/hooks/useSessionInit";
 import useSession from "@/hooks/useSession";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Mapbox from "@rnmapbox/maps";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -39,8 +40,9 @@ Mapbox.setAccessToken(mapboxToken);
 
 const RootLayout = () => {
   useSessionInit();
-  const { data: session } = useSession();
+  useCurrentLocation();
 
+  const { data: session } = useSession();
   const { colorScheme } = useColorScheme();
 
   return (

@@ -7,7 +7,7 @@ import TextArea from "@/components/TextArea";
 import reportTypes from "@/constants/reportTypes";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Modal, ScrollView, Text, View, Alert } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { IconLocationFilled } from "@tabler/icons-react-native";
 import { TablesInsert } from "@/types/supabase";
@@ -15,6 +15,7 @@ import useCreateReport from "@/hooks/useCreateReport";
 import useSession from "@/hooks/useSession";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
 
 const formattedReportTypes = reportTypes.map((rt) => ({
   value: rt.value,
@@ -24,7 +25,14 @@ const formattedReportTypes = reportTypes.map((rt) => ({
 export type FormData = Omit<TablesInsert<"reports">, "user_id">;
 
 export default () => {
-  const { control, handleSubmit, setValue, watch, reset } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { isValid },
+  } = useForm<FormData>({
     defaultValues: {
       latitude: 0,
       longitude: 0,
@@ -33,8 +41,7 @@ export default () => {
       description: "",
     },
   });
-
-  const { data: session } = useSession();
+  const { data: currentLocation } = useCurrentLocation();
 
   const { mutate: createReport, isPending } = useCreateReport();
   const onSubmit = (formData: FormData) =>
@@ -46,34 +53,20 @@ export default () => {
 
   const [mapPickerVisible, setMapPickerVisible] = useState(false);
 
-  const setCurrentLocation = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== "granted") {
-        Alert.alert(
-          "Permiso denegado",
-          "Se requiere permiso para acceder a la ubicación"
-        );
-        return;
-      }
-
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-
-      const { latitude, longitude } = currentLocation.coords;
-
-      const address = await reverseGeocoding(longitude, latitude);
-
-      setValue("latitude", latitude);
-      setValue("longitude", longitude);
-      setValue("address", address);
-    } catch (error) {
-      Alert.alert("Error", "No se pudo obtener la ubicación actual");
-      console.error("Error getting location:", error);
+  const setCurrentLocation = () => {
+    if (!currentLocation) {
+      return;
     }
+    setValue("latitude", currentLocation.latitude);
+    setValue("longitude", currentLocation.longitude);
+    setValue("address", currentLocation.address);
   };
+
+  useEffect(() => {
+    if (address === "") {
+      setCurrentLocation();
+    }
+  }, []);
 
   return (
     <View className="h-full">
@@ -140,7 +133,7 @@ export default () => {
           <Button
             label="Enviar reporte"
             variant="primary"
-            disabled={isPending}
+            disabled={isPending || !isValid}
             onPress={handleSubmit(onSubmit)}
           />
 

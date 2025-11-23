@@ -28,13 +28,16 @@ const Account = () => {
   const { mutate: signOut } = useSignOut();
 
   return (
-    <View className="flex flex-col gap-2 mt-8">
-      <Button
-        variant="secondary"
-        label="Cerrar sesión"
-        onPress={() => signOut()}
-      />
-      <Button variant="danger" label="Borrar cuenta" />
+    <View className="flex flex-col gap-6">
+      <Text className="text-default text-xl font-medium">Cuenta</Text>
+      <View className="flex flex-col gap-2">
+        <Button
+          variant="secondary"
+          label="Cerrar sesión"
+          onPress={() => signOut()}
+        />
+        <Button variant="danger" label="Borrar cuenta" />
+      </View>
     </View>
   );
 };
@@ -60,7 +63,7 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
 
   return (
     <View className="my-8 flex flex-col gap-14 px-5">
-      <View className="flex flex-col gap-8">
+      <View className="flex flex-col gap-6">
         <Text className="text-default text-xl font-medium">
           Perfil y preferencias
         </Text>
@@ -69,7 +72,7 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
           control={control}
           render={({ field }) => (
             <Input
-              label="Nombre de usuario*"
+              label="Nombre de usuario"
               value={field.value}
               onChangeText={field.onChange}
               placeholder="Juan Tapia"
@@ -77,10 +80,8 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
             />
           )}
         />
-        <View className="flex gap-8">
-          <Text className="text-default text-xl font-medium">
-            Notificaciones
-          </Text>
+        <View className="flex gap-6">
+          <Text className="text-default text-md">Notificaciones</Text>
           <View className="flex gap-6">
             <Controller
               name="alerts_on"
@@ -96,27 +97,25 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
             />
           </View>
         </View>
-        <View className="flex flex-col gap-6">
-          <Controller
-            name="alert_radius_km"
-            control={control}
-            render={({ field }) => (
-              <View className="flex gap-2">
-                <Text className="text-default">Rango de cercanía</Text>
-                {/* <Select
-                  data={radii}
-                  onSelect={field.onChange}
-                  onBlur={field.onBlur}
-                  defaultValue={radii.find(
-                    (r) => r.value === (profile.alert_radius_km as number)
-                  )}
-                  placeholder="1 km"
-                  // disabled={isPending}
-                /> */}
-              </View>
-            )}
-          />
-        </View>
+        {/* <Controller
+          name="alert_radius_km"
+          control={control}
+          render={({ field }) => (
+            <View className="flex gap-2">
+              <Text className="text-default">Rango de cercanía</Text>
+              <Select
+                data={radii}
+                onSelect={field.onChange}
+                onBlur={field.onBlur}
+                defaultValue={radii.find(
+                  (r) => r.value === (profile.alert_radius_km as number)
+                )}
+                placeholder="1 km"
+                // disabled={isPending}
+              />
+            </View>
+          )}
+        /> */}
         <Button
           label="Guardar cambios"
           onPress={handleSubmit(onSubmit)}
