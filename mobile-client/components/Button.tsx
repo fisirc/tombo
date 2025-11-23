@@ -18,19 +18,24 @@ export default ({
     <Pressable
       className={`${className} flex-grow rounded-xl h-14 flex-row items-center justify-center px-4 disabled:opacity-50 
       ${
-        variant === "primary"   ? "bg-inverse active:bg-inverse-mild" :
-        variant === "secondary" ? "bg-foreground active:bg-foreground-mild" :
-        "bg-danger active:bg-red-600"
+        variant === "primary"
+          ? "bg-inverse active:bg-inverse-mild"
+          : variant === "secondary"
+          ? "bg-foreground active:bg-foreground-mild"
+          : "bg-danger active:bg-red-600"
       }`}
+      disabled={disabled}
       onPress={onPress}
       {...props}
     >
       {label ? (
         <Text
           className={`font-medium ${
-            variant === "primary"   ? "text-inverse" :
-            variant === "secondary" ? "text-default" :
-            "text-white"
+            variant === "primary"
+              ? "text-inverse"
+              : variant === "secondary"
+              ? "text-default"
+              : "text-white"
           }`}
         >
           {label}
