@@ -11,10 +11,10 @@ export default class ReportService {
     return data;
   };
 
-  static getReports = async (): Promise<Tables<'reports'>[]> => {
+  static getReports = async (): Promise<Tables<"reports">[]> => {
     const query = supabase.from("reports").select("*");
     const { data, error } = await query;
     if (error) throw error;
     return data;
-  }
+  };
 }

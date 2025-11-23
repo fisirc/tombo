@@ -33,8 +33,8 @@ import Mapbox from "@rnmapbox/maps";
 // 	return userInfo;
 // };
 
-const mapboxToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN
-if (!mapboxToken) throw Error('No Mapbox Token')
+const mapboxToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
+if (!mapboxToken) throw Error("No Mapbox Token");
 Mapbox.setAccessToken(mapboxToken);
 
 const RootLayout = () => {

@@ -5,6 +5,7 @@ import { UseFormReset } from "react-hook-form";
 import { Alert } from "react-native";
 import useSession from "./useSession";
 import { FormData } from "@/app/(tabs)/new";
+import { supabase } from "@/services/supabase";
 
 export default () => {
   const queryClient = useQueryClient();
@@ -19,15 +20,30 @@ export default () => {
         user_id: session.user.id,
       });
     },
-    onSuccess: () => {
+    onSuccess: (report) => {
       Alert.alert("Reporte enviado", "Tu reporte ha sido enviado con éxito");
       queryClient.invalidateQueries({
         queryKey: ["reports"],
       });
+      supabase
+        .channel("reports")
+        .send({
+          type: "broadcast",
+          event: "report_created",
+          payload: { report },
+        })
+        .then((res) => console.log("Broadcasted report_created event:", res))
+        .catch((error) => {
+          console.error("Error broadcasting report_created event:", error);
+          Alert.alert("Error", "No se pudo enviar la notificación del reporte");
+        })
+        .finally(() =>
+          console.log("Finished attempting to broadcast report_created event")
+        );
     },
     onError: (error) => {
-      Alert.alert("Error", "No se pudo enviar el reporte");
       console.error("Error creating report:", error);
+      Alert.alert("Error", "No se pudo enviar el reporte");
     },
   });
 
