@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import useSessionInit from "@/hooks/useSessionInit";
 import useSession from "@/hooks/useSession";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -32,7 +33,7 @@ import useSession from "@/hooks/useSession";
 // };
 
 const RootLayout = () => {
-  useSessionInit()
+  useSessionInit();
   const { data: session } = useSession();
 
   const { colorScheme } = useColorScheme();
@@ -50,7 +51,7 @@ const RootLayout = () => {
       </Stack>
     </View>
   );
-}
+};
 
 export default () => {
   const queryClient = new QueryClient();
@@ -68,11 +69,13 @@ export default () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView>
-        <BottomSheetModalProvider>
-          <RootLayout />
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <RootLayout />
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
     </QueryClientProvider>
-  )
-}
+  );
+};

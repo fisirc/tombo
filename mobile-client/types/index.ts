@@ -7,5 +7,5 @@ export interface SignUpData {
   email: string;
   password: string;
   confirm_password: string;
-  full_name: string;
+  username: string;
 }

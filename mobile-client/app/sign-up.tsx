@@ -15,19 +15,19 @@ export default function Auth() {
     control,
     handleSubmit,
     watch,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm<SignUpData>({
     defaultValues: {
-      full_name: "",
+      username: "",
       email: "",
       password: "",
-      confirm_password: ""
+      confirm_password: "",
     },
   });
 
-  const password = watch("password")
+  const password = watch("password");
 
-  const onSubmit = (data: SignUpData) => signUp(data)
+  const onSubmit = (data: SignUpData) => signUp(data);
 
   return (
     <View className="h-full bg-default flex flex-row items-center">
@@ -46,7 +46,7 @@ export default function Auth() {
           <View className="flex flex-col gap-4">
             <Controller
               control={control}
-              name="full_name"
+              name="username"
               rules={{ required: "El nombre es requerido" }}
               render={({ field: { onChange, value } }) => (
                 <Input
@@ -65,8 +65,8 @@ export default function Auth() {
                 required: "El correo es requerido",
                 pattern: {
                   value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                  message: "El correo no es válido"
-                }
+                  message: "El correo no es válido",
+                },
               }}
               render={({ field: { onChange, value } }) => (
                 <Input
@@ -105,7 +105,8 @@ export default function Auth() {
               control={control}
               name="confirm_password"
               rules={{
-                validate: value => value === password || "Las contraseñas no coinciden"
+                validate: (value) =>
+                  value === password || "Las contraseñas no coinciden",
               }}
               render={({ field: { onChange, value } }) => (
                 <Input
