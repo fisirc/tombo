@@ -223,7 +223,7 @@ export type Database = {
           id?: string
           latitude: number
           longitude: number
-          report_type: string
+          report_type?: string
           user_id: string
         }
         Update: {

@@ -1,54 +1,58 @@
 import { ReportType } from "@/types";
 
-const reportTypes: ReportType[] = [
+const reportTypes = [
   {
-    name: '🔪 Robo a mano armada',
-    icon: 'slice'
+    label: '🔪 Robo a mano armada',
+    value: 'robbery_with_violence'
   },
   {
-    name: '💀 Homicidio',
-    icon: 'skull'
+    label: '💀 Homicidio',
+    value: 'homicide'
   },
   {
-    name: '🚗 Robo de vehículo',
-    icon: 'car'
+    label: '🚗 Robo de vehículo',
+    value: 'vehicle_theft'
   },
   {
-    name: '👪 Violencia doméstica',
-    icon: 'heart'
+    label: '👪 Violencia doméstica',
+    value: 'domestic_violence'
   },
   {
-    name: '😠 Acoso sexual',
-    icon: 'heart'
+    label: '😠 Acoso sexual',
+    value: 'sexual_harassment'
   },
   {
-    name: '💼 Acoso laboral',
-    icon: 'work'
+    label: '💼 Acoso laboral',
+    value: 'workplace_harassment'
   },
   {
-    name: '⚧️ Violencia de género',
-    icon: 'heart'
+    label: '⚧️ Violencia de género',
+    value: 'gender_based_violence'
   },
   {
-    name: '💥 Choque',
-    icon: 'car'
+    label: '💥 Choque',
+    value: 'collision'
   },
   {
-    name: '🚙 Choque múltiple',
-    icon: 'car'
+    label: '🚙 Choque múltiple',
+    value: 'multiple_collision'
   },
   {
-    name: '🔥 Incendio',
-    icon: 'fire'
+    label: '🔥 Incendio',
+    value: 'fire'
   },
   {
-    name: '🚑 Accidente de tránsito con heridos',
-    icon: 'car'
+    label: '🚑 Accidente de tránsito con heridos',
+    value: 'traffic_accident_with_injuries'
   },
   {
-    name: '⚰️ Accidente de tránsito con fallecidos',
-    icon: 'car'
+    label: '⚰️ Accidente de tránsito con fallecidos',
+    value: 'traffic_accident_with_deaths'
   },
+  {
+    label: '❓ Otro',
+    value: 'other'
+  }
 ]
 
 export default reportTypes

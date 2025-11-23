@@ -103,7 +103,7 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
             render={({ field }) => (
               <View className="flex gap-2">
                 <Text className="text-default">Rango de cercanía</Text>
-                <Select
+                {/* <Select
                   data={radii}
                   onSelect={field.onChange}
                   onBlur={field.onBlur}
@@ -111,8 +111,8 @@ const Form = ({ profile }: { profile: Tables<"profiles"> }) => {
                     (r) => r.value === (profile.alert_radius_km as number)
                   )}
                   placeholder="1 km"
-                  disabled={isPending}
-                />
+                  // disabled={isPending}
+                /> */}
               </View>
             )}
           />

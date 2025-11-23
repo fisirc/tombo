@@ -16,9 +16,9 @@ import useSession from "@/hooks/useSession";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const formattedReportTypes: SelectItem[] = reportTypes.map((rt) => ({
-  value: rt.name,
-  label: rt.name,
+const formattedReportTypes = reportTypes.map((rt) => ({
+  value: rt.value,
+  label: rt.label,
 }));
 
 export type FormData = Omit<TablesInsert<"reports">, "user_id">;
@@ -29,7 +29,7 @@ export default () => {
       latitude: 0,
       longitude: 0,
       address: "",
-      report_type: "",
+      report_type: "other",
       description: "",
     },
   });
@@ -79,7 +79,7 @@ export default () => {
     <SafeAreaView className="h-full bg-default">
       <KeyboardAwareScrollView enableOnAndroid keyboardOpeningTime={2000}>
         <View className="px-5 my-8 flex gap-6">
-          <Controller
+          {/* <Controller
             name="report_type"
             control={control}
             render={({ field }) => (
@@ -95,7 +95,7 @@ export default () => {
                 />
               </View>
             )}
-          />
+          /> */}
           <View className="flex flex-col gap-2">
             <Text className="text-default">Lugar</Text>
             <Button
