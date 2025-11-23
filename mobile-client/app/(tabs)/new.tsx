@@ -76,7 +76,7 @@ export default () => {
   };
 
   return (
-    <SafeAreaView className="h-full bg-default">
+    <View className="h-full">
       <KeyboardAwareScrollView enableOnAndroid keyboardOpeningTime={2000}>
         <View className="px-5 my-8 flex gap-6">
           {/* <Controller
@@ -139,7 +139,7 @@ export default () => {
           /> */}
           <Button
             label="Enviar reporte"
-            variant="danger"
+            variant="primary"
             disabled={isPending}
             onPress={handleSubmit(onSubmit)}
           />
@@ -161,6 +161,6 @@ export default () => {
           </Modal>
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </View>
   );
 };

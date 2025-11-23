@@ -2,6 +2,7 @@ import TabButton, { TabButtonProps } from '@/components/TabButton';
 import { IconAlertSquareRounded, IconAlertSquareRoundedFilled, IconCompass, IconCompassFilled, IconUser } from '@tabler/icons-react-native';
 import { Redirect } from 'expo-router';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const tabs: TabButtonProps[] = [
   {
@@ -29,23 +30,25 @@ const tabs: TabButtonProps[] = [
 
 export default function TabLayout() {
   return (
-    <Tabs>
-      <TabSlot />
-      <TabList className='h-24 bg-deep'>
-      {
-        tabs.map((tab) => (
-          <TabTrigger key={tab.label} name={tab.name} href={tab.href} asChild>
-            <TabButton
-              name={tab.name}
-              href={tab.href}
-              label={tab.label}
-              IconDefault={tab.IconDefault}
-              IconFocused={tab.IconFocused}
-            />
-          </TabTrigger>
-        ))
-      }
-      </TabList>
-    </Tabs>
+    <SafeAreaView className='h-full bg-default'>
+      <Tabs>
+        <TabSlot />
+        <TabList className='h-24 bg-deep'>
+        {
+          tabs.map((tab) => (
+            <TabTrigger key={tab.label} name={tab.name} href={tab.href} asChild>
+              <TabButton
+                name={tab.name}
+                href={tab.href}
+                label={tab.label}
+                IconDefault={tab.IconDefault}
+                IconFocused={tab.IconFocused}
+              />
+            </TabTrigger>
+          ))
+        }
+        </TabList>
+      </Tabs>
+    </SafeAreaView>
   );
 }

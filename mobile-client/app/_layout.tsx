@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import useSessionInit from "@/hooks/useSessionInit";
 import useSession from "@/hooks/useSession";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Mapbox from "@rnmapbox/maps";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -31,6 +32,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // 	const userInfo = await GoogleSignin.signIn();
 // 	return userInfo;
 // };
+
+const mapboxToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN
+if (!mapboxToken) throw Error('No Mapbox Token')
+Mapbox.setAccessToken(mapboxToken);
 
 const RootLayout = () => {
   useSessionInit();

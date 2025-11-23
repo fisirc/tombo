@@ -141,10 +141,10 @@ export default function Settings() {
   }
 
   return (
-    <SafeAreaView className="h-full bg-default">
+    <View className="h-full">
       <KeyboardAwareScrollView enableOnAndroid keyboardOpeningTime={2000}>
         <Form profile={profile} />
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
