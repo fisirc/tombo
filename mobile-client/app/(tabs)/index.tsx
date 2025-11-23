@@ -205,7 +205,7 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
             ></View>
           </Mapbox.PointAnnotation>
         ))}
-        {reports.map((report) => (
+        {/* {reports.map((report) => (
           <Mapbox.MarkerView
             key={report.id}
             coordinate={[report.longitude, report.latitude]}
@@ -217,7 +217,7 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
               minHeight: zoom * ZOOM_SIZE_MULT * 4,
             }}
           >
-            {/* <View className='items-center justify-center overflow-visible'>
+            <View className='items-center justify-center overflow-visible'>
                 {
                   report.multimediaReports.length > 0 ? <Image
                     source={{
@@ -255,9 +255,9 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
                     borderRightColor: 'transparent',
                   }}
                 />
-              </View> */}
+              </View>
           </Mapbox.MarkerView>
-        ))}
+        ))} */}
         <Camera
           followZoomLevel={16}
           followUserMode={UserTrackingMode.Follow}
@@ -283,22 +283,6 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
 export default () => {
   const getReportsQR = useGetReports();
   const { data: reports } = getReportsQR;
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await Mapbox.requestAndroidLocationPermissions();
-  //     Mapbox.locationManager.start();
-  //   })();
-
-  //   ws.onmessage = (e) => {
-  //     console.log(e.data);
-  //     setNewReports((prev) => [...prev, JSON.parse(e.data)]);
-  //   };
-
-  //   return () => {
-  //     Mapbox.locationManager.stop();
-  //   };
-  // }, []);
 
   return (
     <View className="h-full">
