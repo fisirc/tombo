@@ -9,10 +9,13 @@ export default (report_id: string) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     supabase
-      .channel("reports:" + report_id + '/comments')
+      .channel("reports:" + report_id + "/comments")
       .on("broadcast", { event: "comment_created" }, () =>
-        queryClient.invalidateQueries({ queryKey: ["report", report_id, "comments"] })
-      );
+        queryClient.invalidateQueries({
+          queryKey: ["reports", report_id, "comments"],
+        })
+      )
+      .subscribe();
   }, []);
   return useQuery({
     queryKey: ["reports", report_id, "comments"],

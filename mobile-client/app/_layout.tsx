@@ -17,6 +17,7 @@ import useSession from "@/hooks/useSession";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Mapbox from "@rnmapbox/maps";
 import useCurrentLocation from "@/hooks/useCurrentLocation";
+import useRealtimeInit from "@/hooks/useRealtimeInit";
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { LogLevel, OneSignal } from "react-native-onesignal";
 
@@ -44,6 +45,7 @@ dayjs.extend(relativeTime);
 const RootLayout = () => {
   useSessionInit();
   useCurrentLocation();
+  useRealtimeInit();
 
   const { data: session } = useSession();
   const { colorScheme } = useColorScheme();

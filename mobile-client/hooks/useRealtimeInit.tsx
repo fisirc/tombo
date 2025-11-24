@@ -7,8 +7,12 @@ export default () => {
   useEffect(() => {
     supabase
       .channel("reports")
-      .on("broadcast", { event: "report_created" }, () =>
-        queryClient.invalidateQueries({ queryKey: ["reports"] })
-      );
+      .on("broadcast", { event: "report_created" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["reports"] });
+        console.log(
+          "Received report_created event, invalidating reports query"
+        );
+      })
+      .subscribe();
   }, []);
-}
+};
