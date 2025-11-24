@@ -10,10 +10,5 @@ export default () => {
       .on("broadcast", { event: "report_created" }, () =>
         queryClient.invalidateQueries({ queryKey: ["reports"] })
       );
-    supabase
-      .channel("comments")
-      .on("broadcast", { event: "comment_created" }, () =>
-        queryClient.invalidateQueries({ queryKey: ["comments"] })
-      );
   }, []);
 }

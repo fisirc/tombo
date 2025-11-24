@@ -1,55 +1,78 @@
+import {
+  IconBomb,
+  IconBriefcaseFilled,
+  IconCarCrash,
+  IconCarFilled,
+  IconFlame,
+  IconFriends,
+  IconGenderFemale,
+  IconMoodAngry,
+  IconQuestionMark,
+  IconRoad,
+  IconSkull,
+  IconSlice
+} from "@tabler/icons-react-native";
+
 const reportTypes = [
   {
-    label: "🔪 Robo a mano armada",
+    label: "Robo a mano armada",
     value: "robbery_with_violence",
+    Icon: IconSlice,
   },
   {
-    label: "💀 Homicidio",
+    label: "Homicidio",
     value: "homicide",
+    Icon: IconSkull,
   },
   {
-    label: "🚗 Robo de vehículo",
+    label: "Robo de vehículo",
     value: "vehicle_theft",
+    Icon: IconCarFilled,
   },
   {
-    label: "👪 Violencia doméstica",
+    label: "Violencia doméstica",
     value: "domestic_violence",
+    Icon: IconFriends,
   },
   {
-    label: "😠 Acoso sexual",
+    label: "Acoso sexual",
     value: "sexual_harassment",
+    Icon: IconMoodAngry,
   },
   {
-    label: "💼 Acoso laboral",
+    label: "Acoso laboral",
     value: "workplace_harassment",
+    Icon: IconBriefcaseFilled,
   },
   {
-    label: "⚧️ Violencia de género",
+    label: "Violencia de género",
     value: "gender_based_violence",
+    Icon: IconGenderFemale,
   },
   {
-    label: "💥 Choque",
+    label: "Choque",
     value: "collision",
+    Icon: IconCarCrash,
   },
   {
-    label: "🚙 Choque múltiple",
-    value: "multiple_collision",
-  },
-  {
-    label: "🔥 Incendio",
+    label: "Incendio",
     value: "fire",
+    Icon: IconFlame,
   },
   {
-    label: "🚑 Accidente de tránsito con heridos",
-    value: "traffic_accident_with_injuries",
+    label: "Atropello",
+    value: "run_over",
+    Icon: IconRoad,
   },
   {
-    label: "⚰️ Accidente de tránsito con fallecidos",
-    value: "traffic_accident_with_deaths",
+    label: "Detonación",
+    value: "detonation",
+    Icon: IconBomb,
   },
   {
-    label: "❓ Otro",
+    label: "Otro",
     value: "other",
+    Icon: IconQuestionMark,
   },
 ];
 

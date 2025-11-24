@@ -9,12 +9,12 @@ export default class AuthService {
   }
 
   static signUp = async (signUpData: SignUpData) => {
-    const { email, password, full_name } = signUpData;
+    const { email, password, username } = signUpData;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name },
+        data: { username },
       },
     });
     if (error) throw error;

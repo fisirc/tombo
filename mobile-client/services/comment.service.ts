@@ -15,7 +15,7 @@ export default class CommentService {
     return data;
   };
 
-  static addCommentToReport = async (
+  static createReportComment = async (
     { report_id, message, user_id }: TablesInsert<'comments'>
   ): Promise<Tables<"comments">> => {
     const query = supabase

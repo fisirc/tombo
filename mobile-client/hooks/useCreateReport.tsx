@@ -35,7 +35,6 @@ export default () => {
         .then((res) => console.log("Broadcasted report_created event:", res))
         .catch((error) => {
           console.error("Error broadcasting report_created event:", error);
-          Alert.alert("Error", "No se pudo enviar la notificación del reporte");
         })
         .finally(() =>
           console.log("Finished attempting to broadcast report_created event")

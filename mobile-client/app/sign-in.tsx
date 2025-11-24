@@ -8,6 +8,8 @@ import { useForm, Controller } from "react-hook-form";
 import { SignInData } from "@/types/";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+import { Icon } from '@tabler/icons-react-native'
+
 export default function Auth() {
   const { mutate: signIn, isPending } = useSignIn();
 
@@ -36,7 +38,6 @@ export default function Auth() {
               }}
             />
           </View>
-
           <View className="flex flex-col gap-4">
             <Controller
               control={control}

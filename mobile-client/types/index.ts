@@ -1,3 +1,5 @@
+import { Icon } from "@tabler/icons-react-native";
+
 export interface SignInData {
   email: string;
   password: string;
@@ -14,4 +16,10 @@ export interface GeocodedLocation {
   latitude: number;
   longitude: number;
   address: string;
+}
+
+export interface ReportType {
+  label: string;
+  value: string;
+  Icon: Icon;
 }

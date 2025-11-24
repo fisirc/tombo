@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IReportResponse, ReportService } from "@/api/services/report";
 import BottomSheet, {
   BottomSheetModal,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import useTheme from "@/hooks/useTheme";
 import QueryWait from "@/components/QueryWait";
@@ -25,31 +25,19 @@ import useGetReportComments from "@/hooks/useGetReportComments";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import reportTypes from "@/constants/reportTypes";
 import EmptyMsg from "@/components/EmptyMsg";
+import useCreateReportComment from "@/hooks/useCreateReportComment";
 
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
 
 const NewCommentForm = ({ report_id }: { report_id: string }) => {
   const theme = useTheme();
-  const queryClient = useQueryClient();
   const [message, setMessage] = useState<string>("");
+  const { mutate: createReportComment } = useCreateReportComment(report_id);
 
-  const commentMutation = useMutation({
-    mutationFn: ReportService.createComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["reports", report_id, "comments"],
-      });
-      setMessage("");
-    },
+  const handleSubmit = () => createReportComment(message, {
+    onSuccess: () => setMessage(""),
   });
-
-  const handleSubmit = () => {
-    commentMutation.mutate({
-      report_id,
-      message,
-    });
-  };
 
   return (
     <View className="flex gap-3">
@@ -109,21 +97,38 @@ const ReportComments = ({ report_id }: { report_id: string }) => {
   );
 };
 
-const ReportSheet = ({ report }: { report: Tables<"reports"> }) => {
+const ReportSheet = ({
+  report,
+}: {
+  report: Tables<"reports">,
+}) => {
   const theme = useTheme();
 
+  const reportType = reportTypes.find((r) => r.value === report.report_type);
+
+  if (!reportType) throw new Error("Invalid report type");
+
   return (
-    <BottomSheetView style={{ backgroundColor: theme["--color-bg-default"] }}>
+    <BottomSheetScrollView
+      // style={{ backgroundColor: theme["--color-bg-default"] }}
+    >
       <SafeAreaView mode="margin" edges={['bottom']}>
-        <KeyboardAwareScrollView className="h-[60vh]" enableOnAndroid keyboardOpeningTime={2000}>
+        {/* <KeyboardAwareScrollView
+          className="h-[60vh]"
+          enableOnAndroid
+          keyboardOpeningTime={2000}
+        > */}
           <View className="flex gap-8 px-5 py-10">
-            <View className="flex gap-3">
-              <Text
-                className="text-4xl font-bold"
-                style={{ color: theme["--color-text-default"] }}
-              >
-                {reportTypes.find((r) => r.value === report.report_type)?.label}
-              </Text>
+            <View className="flex gap-2">
+              <View className="flex flex-row gap-2 items-center">
+                {/* <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={3} /> */}
+                <Text
+                  className="text-4xl font-bold"
+                  style={{ color: theme["--color-text-default"] }}
+                >
+                  {reportType.label}
+                </Text>
+              </View>
               <Text
                 style={{ color: theme["--color-text-default"] }}
               >
@@ -144,9 +149,9 @@ const ReportSheet = ({ report }: { report: Tables<"reports"> }) => {
             <NewCommentForm report_id={report.id} />
             <ReportComments report_id={report.id} />
           </View>
-        </KeyboardAwareScrollView>
+        {/* </KeyboardAwareScrollView> */}
       </SafeAreaView>
-    </BottomSheetView>
+    </BottomSheetScrollView>
   );
 };
 
@@ -161,8 +166,17 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
+    if (index === -1) {
+      setSelectedReport(null);
+    }
   }, []);
+
+  const handlePointPress = (report: Tables<'reports'>) => {
+    setSelectedReport(report)
+    bottomSheetModalRef.current?.present()
+  }
+
+  console.log('selectedReport', selectedReport)
 
   return (
     <View style={{ flex: 1 }}>
@@ -187,16 +201,8 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
             coordinate={[report.longitude, report.latitude]}
             id={report.id}
             key={report.id}
-            onSelected={() => {
-              console.log("🚨 Selecting report", report);
-              if (selectedReport === report) {
-                setSelectedReport(null);
-                bottomSheetModalRef.current?.close();
-              } else {
-                setSelectedReport(report);
-                bottomSheetModalRef.current?.present();
-              }
-            }}
+            onSelected={() => handlePointPress(report)}
+            onDeselected={() => handlePointPress(report)}
           >
             <View
               style={{
@@ -273,10 +279,11 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
-        handleStyle={{ backgroundColor: theme["--color-bg-default"] }}
+        snapPoints={[500, '100%']}
         handleIndicatorStyle={{
-          backgroundColor: theme["--color-bg-foreground"],
+          backgroundColor: theme["--color-bg-foreground-extra"],
         }}
+        backgroundStyle={{ backgroundColor: theme["--color-bg-default"] }}
       >
         {selectedReport && <ReportSheet report={selectedReport} />}
       </BottomSheetModal>
