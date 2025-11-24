@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useCurrentLocation from "@/hooks/useCurrentLocation";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import useTheme from "@/hooks/useTheme";
+import { LocalMedia } from "@/types";
 
 export type FormData = Omit<TablesInsert<"reports">, "user_id">;
 
@@ -43,7 +44,7 @@ export default () => {
 
   const { mutate: createReport, isPending } = useCreateReport();
   const onSubmit = (formData: FormData) =>
-    createReport(formData, {
+    createReport({ formData, media }, {
       onSuccess: () => reset(),
     });
 
@@ -57,6 +58,8 @@ export default () => {
   const [mapPickerVisible, setMapPickerVisible] = useState(false);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const [media, setMedia] = useState<LocalMedia[]>([])
 
   const setCurrentLocation = () => {
     if (!currentLocation) {
@@ -144,17 +147,11 @@ export default () => {
             }
             </Button>
           </View>
-          {/* <Controller
-            name="multimediaReports"
-            control={control}
-            render={({ field }) => (
-              <ImageInput
-                label="Imágenes"
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          /> */}
+          <ImageInput
+            label="Imágenes"
+            value={media}
+            onChange={setMedia}
+          />
           <Button
             label="Enviar reporte"
             variant="danger"

@@ -17,3 +17,9 @@ export interface GeocodedLocation {
   longitude: number;
   address: string;
 }
+
+export type LocalMedia = {
+  uri: string
+  name: string
+  type: string
+}
