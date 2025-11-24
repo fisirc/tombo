@@ -131,7 +131,7 @@ const ReportSheet = ({
           <View className="flex gap-8 px-5 py-10">
             <View className="flex gap-2">
               <View className="flex flex-row gap-2 items-center">
-                {/* <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={3} /> */}
+                <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={3} />
                 <Text
                   className="text-4xl font-bold"
                   style={{ color: theme["--color-text-default"] }}
@@ -222,6 +222,7 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
               <reportType.Icon
                 size={MARKER_SIZE - 10}
                 color={isSelected ? theme['--color-danger'] : 'white'}
+                strokeWidth={3}
                 style={{
                   backgroundColor: isSelected ? 'white' : theme['--color-danger'],
                   borderRadius: 1000,

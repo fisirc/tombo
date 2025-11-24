@@ -19,7 +19,7 @@ export default (report_id: string) => {
       });
     },
     onSuccess: (comment) => {
-      Alert.alert("Comentario enviado", "Tu comentario ha sido enviado con éxito");
+      // Alert.alert("Comentario enviado", "Tu comentario ha sido enviado con éxito");
       queryClient.invalidateQueries({
         queryKey: ["reports", report_id, "comments"],
       });

@@ -96,7 +96,7 @@ export default () => {
               variant="secondary"
               onPress={() => setMapPickerVisible(true)}
             >
-              <Text className="text-default">
+              <Text className="text-default max-w-[90%] line-clamp-1 overflow-ellipsis">
                 {address || "Seleccionar ubicación"}
               </Text>
               <IconLocationFilled size={20} color="#7f7f7f" />
