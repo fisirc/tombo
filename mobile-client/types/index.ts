@@ -17,9 +17,3 @@ export interface GeocodedLocation {
   longitude: number;
   address: string;
 }
-
-export interface ReportType {
-  label: string;
-  value: string;
-  Icon: Icon;
-}

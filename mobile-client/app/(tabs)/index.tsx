@@ -28,7 +28,7 @@ import EmptyMsg from "@/components/EmptyMsg";
 import useCreateReportComment from "@/hooks/useCreateReportComment";
 
 const DISPLACEMENT = [0, 5, 10];
-const ZOOM_SIZE_MULT = 1.5;
+const MARKER_SIZE = 35
 
 const NewCommentForm = ({
   report_id,
@@ -206,26 +206,32 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
           setZoom(zoom);
         }}
       >
-        {reports.map((report) => (
-          <Mapbox.PointAnnotation
-            coordinate={[report.longitude, report.latitude]}
-            id={report.id}
-            key={report.id}
-            onSelected={() => handlePointPress(report)}
-            onDeselected={() => handlePointPress(report)}
-          >
-            <View
-              style={{
-                height: zoom * ZOOM_SIZE_MULT,
-                width: zoom * ZOOM_SIZE_MULT,
-                backgroundColor: "#f84747",
-                borderRadius: 50,
-                borderColor: "#fff",
-                borderWidth: 1.5,
-              }}
-            ></View>
-          </Mapbox.PointAnnotation>
-        ))}
+        {reports.map((report) => {
+          const reportType = reportTypes.find(rep => rep.value === report.report_type);
+          if (!reportType) throw new Error("Invalid report type");
+          const isSelected = selectedReport?.id === report.id;
+          if (isSelected) console.log('selected', report.description, isSelected)
+          return (
+            <Mapbox.PointAnnotation
+              coordinate={[report.longitude, report.latitude]}
+              id={report.id}
+              key={`${report.id}-${isSelected}`}
+              onSelected={() => handlePointPress(report)}
+              onDeselected={() => handlePointPress(report)}
+            >
+              <reportType.Icon
+                size={MARKER_SIZE - 10}
+                color={isSelected ? theme['--color-danger'] : 'white'}
+                style={{
+                  backgroundColor: isSelected ? 'white' : theme['--color-danger'],
+                  borderRadius: 1000,
+                  width: MARKER_SIZE,
+                  height: MARKER_SIZE,
+                }}
+              />
+            </Mapbox.PointAnnotation>
+          )
+        })}
         {/* {reports.map((report) => (
           <Mapbox.MarkerView
             key={report.id}
