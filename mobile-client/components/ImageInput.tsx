@@ -1,19 +1,19 @@
 import { Pressable, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { LocalMedia } from "@/types";
+import { MediaAsset } from "@/types";
 import PagerView from "react-native-pager-view";
 import { Image } from "expo-image";
 import Button from "./Button";
 
 export type ImageInputProps = {
   label: string;
-  value: LocalMedia[];
-  onChange: (value: LocalMedia[]) => void;
+  value: MediaAsset[];
+  onChange: (value: MediaAsset[]) => void;
 };
 
 export default function ImageInput({
   label,
-  value,
+  value: assets,
   onChange,
 }: ImageInputProps) {
   const updateValue = (result: ImagePicker.ImagePickerResult) => {
@@ -25,13 +25,7 @@ export default function ImageInput({
       throw new Error("Invalid image");
     }
 
-    const media: LocalMedia[] = value.concat(
-      result.assets.map((a) => ({
-        uri: a.uri,
-        type: a.mimeType as string,
-        name: a.fileName as string,
-      }))
-    );
+    const media: MediaAsset[] = assets.concat(result.assets);
 
     onChange(media);
   };
@@ -59,12 +53,12 @@ export default function ImageInput({
   return (
     <View className="flex gap-2">
       <Text className="text-default">{label}</Text>
-      {value.length ? (
+      {assets.length ? (
         <PagerView style={{ height: 250 }} pageMargin={16}>
-          {value.map((image) => (
+          {assets.map((asset) => (
             <Image
-              key={image.uri}
-              source={image}
+              key={asset.uri}
+              source={{ uri: asset.uri }}
               style={{ borderRadius: 12, height: 250 }}
             />
           ))}

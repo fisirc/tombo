@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useCurrentLocation from "@/hooks/useCurrentLocation";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import useTheme from "@/hooks/useTheme";
-import { LocalMedia } from "@/types";
+import { MediaAsset } from "@/types";
 
 export type FormData = Omit<TablesInsert<"reports">, "user_id">;
 
@@ -40,26 +40,28 @@ export default () => {
     },
   });
   const { data: currentLocation } = useCurrentLocation();
-  const theme = useTheme()
+  const theme = useTheme();
+
+  const [mediaAssets, setMediaAssets] = useState<MediaAsset[]>([]);
 
   const { mutate: createReport, isPending } = useCreateReport();
+
   const onSubmit = (formData: FormData) =>
-    createReport({ formData, media }, {
-      onSuccess: () => reset(),
-    });
+    createReport(
+      { formData, mediaAssets },
+      {
+        onSuccess: () => reset(),
+      }
+    );
 
   const report_type = watch("report_type");
   const address = watch("address");
 
-  const report_type_object = reportTypes.find(
-    (rt) => rt.value === report_type
-  );
+  const report_type_object = reportTypes.find((rt) => rt.value === report_type);
 
   const [mapPickerVisible, setMapPickerVisible] = useState(false);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const [media, setMedia] = useState<LocalMedia[]>([])
 
   const setCurrentLocation = () => {
     if (!currentLocation) {
@@ -135,22 +137,26 @@ export default () => {
                 bottomSheetModalRef.current?.present();
               }}
             >
-            {
-              report_type_object
-              ? <View className="flex flex-row gap-2 items-center">
-                  <report_type_object.Icon size={24} color={theme["--color-text-default"]} strokeWidth={1.5} />
+              {report_type_object ? (
+                <View className="flex flex-row gap-2 items-center">
+                  <report_type_object.Icon
+                    size={24}
+                    color={theme["--color-text-default"]}
+                    strokeWidth={1.5}
+                  />
                   <Text style={{ color: theme["--color-text-default"] }}>
                     {report_type_object.label}
                   </Text>
                 </View>
-              : <Text className="text-default">Seleccionar tipo</Text>
-            }
+              ) : (
+                <Text className="text-default">Seleccionar tipo</Text>
+              )}
             </Button>
           </View>
           <ImageInput
             label="Imágenes"
-            value={media}
-            onChange={setMedia}
+            value={mediaAssets}
+            onChange={setMediaAssets}
           />
           <Button
             label="Enviar reporte"
@@ -179,39 +185,53 @@ export default () => {
       </KeyboardAwareScrollView>
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        snapPoints={[400, '100%']}
+        snapPoints={[400, "100%"]}
         handleIndicatorStyle={{
           backgroundColor: theme["--color-bg-foreground-extra"],
         }}
         backgroundStyle={{ backgroundColor: theme["--color-bg-foreground"] }}
       >
         <BottomSheetScrollView>
-          <SafeAreaView edges={['bottom', 'top']}>
+          <SafeAreaView edges={["bottom", "top"]}>
             <KeyboardAwareScrollView>
               <View className="flex flex-col gap-2 px-5">
-              {
-                reportTypes.map((rt) => {
+                {reportTypes.map((rt) => {
                   const isSelected = report_type === rt.value;
                   return (
                     <Button
                       className="flex flex-row gap-2 items-center"
                       key={rt.value}
                       style={{
-                        backgroundColor: isSelected ? 'white' : theme["--color-bg-foreground-extra"],
+                        backgroundColor: isSelected
+                          ? "white"
+                          : theme["--color-bg-foreground-extra"],
                       }}
                       onPress={() => {
                         setValue("report_type", rt.value);
                         bottomSheetModalRef.current?.dismiss();
                       }}
                     >
-                      <rt.Icon size={24} color={isSelected ? theme['--color-text-inverse'] : theme["--color-text-default"]} strokeWidth={1.5} />
-                      <Text style={{ color: isSelected ? theme['--color-text-inverse'] : theme["--color-text-default"] }}>
+                      <rt.Icon
+                        size={24}
+                        color={
+                          isSelected
+                            ? theme["--color-text-inverse"]
+                            : theme["--color-text-default"]
+                        }
+                        strokeWidth={1.5}
+                      />
+                      <Text
+                        style={{
+                          color: isSelected
+                            ? theme["--color-text-inverse"]
+                            : theme["--color-text-default"],
+                        }}
+                      >
                         {rt.label}
                       </Text>
                     </Button>
-                  )
-                })
-              }
+                  );
+                })}
               </View>
             </KeyboardAwareScrollView>
           </SafeAreaView>

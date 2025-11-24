@@ -166,7 +166,7 @@ const ReportSheet = ({
               </View>
             </View>
           </View>
-          {report.multimedia_reports.length && (
+          {report.multimedia_reports.length ? (
             <PagerView style={{ height: 250 }} pageMargin={16}>
               {report.multimedia_reports.map((image) => (
                 <Image
@@ -176,7 +176,7 @@ const ReportSheet = ({
                 />
               ))}
             </PagerView>
-          )}
+          ) : null}
           <View className="flex gap-3">
             <Text
               className="text-sm"

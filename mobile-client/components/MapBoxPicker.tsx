@@ -4,6 +4,7 @@ import Mapbox, { Camera, UserTrackingMode } from "@rnmapbox/maps";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import Button from "./Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface MapBoxPickerProps {
   onSelectLocation: (location: {
@@ -54,7 +55,7 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
   >(null);
   const [placeName, setPlaceName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const mapRef = useRef<Mapbox.MapView | null>(null);
+  const mapRef = useRef<Mapbox.MapView>(null);
 
   useEffect(() => {
     const getUserLocation = async () => {
@@ -115,7 +116,7 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} className="bg-default">
       <View style={styles.header} className="bg-default">
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close" size={24} color="#fff" />
@@ -126,7 +127,9 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
       </View>
 
       <Mapbox.MapView
-        ref={(ref) => (mapRef.current = ref)}
+        ref={(ref) => {
+          mapRef.current = ref;
+        }}
         style={styles.map}
         styleURL="mapbox://styles/mapbox/dark-v11"
         onPress={handleMapPress}
@@ -154,29 +157,32 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
         )}
       </Mapbox.MapView>
 
-      <View className="absolute bottom-0 left-0 w-full p-4 ">
+      <SafeAreaView className="absolute bottom-0 left-0 w-full p-4">
         <View className="bg-default p-6 rounded-xl flex flex-col gap-4">
           {selectedCoordinates ? (
             <>
-              <Text
-                className="text-default text-lg"
-                numberOfLines={2}
-              >
+              <Text className="text-default text-lg" numberOfLines={2}>
                 {isLoading
                   ? "Obteniendo ubicación..."
                   : placeName || "Selecciona una ubicación en el mapa"}
               </Text>
               <View className="flex-row justify-between gap-4">
-                <Button onPress={onClose} label="Cancelar" variant="secondary" />
+                <Button
+                  onPress={onClose}
+                  label="Cancelar"
+                  variant="secondary"
+                />
                 <Button onPress={handleConfirmLocation} label="Confirmar" />
               </View>
             </>
           ) : (
-            <Text>Toca en el mapa para seleccionar</Text>
+            <Text className="text-default">
+              Toca en el mapa para seleccionar
+            </Text>
           )}
         </View>
-      </View>
-    </View>
+      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 

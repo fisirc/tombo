@@ -1,4 +1,5 @@
 import { Icon } from "@tabler/icons-react-native";
+import { ImagePickerAsset } from "expo-image-picker";
 
 export interface SignInData {
   email: string;
@@ -18,8 +19,4 @@ export interface GeocodedLocation {
   address: string;
 }
 
-export type LocalMedia = {
-  uri: string
-  name: string
-  type: string
-}
+export type MediaAsset = ImagePickerAsset;

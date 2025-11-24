@@ -7,7 +7,7 @@ import useSession from "./useSession";
 import { FormData } from "@/app/(tabs)/new";
 import { supabase } from "@/services/supabase";
 import { useRouter } from "expo-router";
-import { LocalMedia } from "@/types";
+import { MediaAsset } from "@/types";
 
 export default () => {
   const queryClient = useQueryClient();
@@ -15,16 +15,22 @@ export default () => {
   const { data: session } = useSession();
 
   const mutation = useMutation({
-    mutationFn: ({ formData, media }: {
+    mutationFn: ({
+      formData,
+      mediaAssets,
+    }: {
       formData: FormData;
-      media: LocalMedia[];
+      mediaAssets: MediaAsset[];
     }) => {
       if (!session)
         throw new Error("report submission attempted without signed-in user");
-      return ReportService.createReport({
-        ...formData,
-        user_id: session.user.id,
-      }, media);
+      return ReportService.createReport(
+        {
+          ...formData,
+          user_id: session.user.id,
+        },
+        mediaAssets
+      );
     },
     onSuccess: (report) => {
       Alert.alert("Reporte enviado", "Tu reporte ha sido enviado con éxito");
@@ -45,7 +51,7 @@ export default () => {
         .finally(() =>
           console.log("Finished attempting to broadcast report_created event")
         );
-      router.navigate('/');
+      router.navigate("/");
     },
     onError: (error) => {
       console.error("Error creating report:", error);
