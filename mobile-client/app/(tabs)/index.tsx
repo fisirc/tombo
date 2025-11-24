@@ -30,7 +30,13 @@ import useCreateReportComment from "@/hooks/useCreateReportComment";
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
 
-const NewCommentForm = ({ report_id }: { report_id: string }) => {
+const NewCommentForm = ({
+  report_id,
+  sheetRef
+}: {
+  report_id: string,
+  sheetRef: React.RefObject<BottomSheetModal | null>
+}) => {
   const theme = useTheme();
   const [message, setMessage] = useState<string>("");
   const { mutate: createReportComment } = useCreateReportComment(report_id);
@@ -48,12 +54,14 @@ const NewCommentForm = ({ report_id }: { report_id: string }) => {
         placeholder="El sospechoso escapó por la avenida..."
         value={message}
         onChangeText={setMessage}
+        onPress={() => sheetRef.current?.expand()}
       />
       <Button
         style={{ backgroundColor: theme["--color-bg-inverse"] }}
         label="Publicar"
         className="mt-1"
         onPress={handleSubmit}
+        disabled={message.trim().length === 0}
       />
     </View>
   );
@@ -99,8 +107,10 @@ const ReportComments = ({ report_id }: { report_id: string }) => {
 
 const ReportSheet = ({
   report,
+  sheetRef
 }: {
   report: Tables<"reports">,
+  sheetRef: React.RefObject<BottomSheetModal | null>
 }) => {
   const theme = useTheme();
 
@@ -112,7 +122,7 @@ const ReportSheet = ({
     <BottomSheetScrollView
       // style={{ backgroundColor: theme["--color-bg-default"] }}
     >
-      <SafeAreaView mode="margin" edges={['bottom']}>
+      <SafeAreaView edges={['bottom']}>
         {/* <KeyboardAwareScrollView
           className="h-[60vh]"
           enableOnAndroid
@@ -146,7 +156,7 @@ const ReportSheet = ({
                 {report.description}
               </Text>
             </View>
-            <NewCommentForm report_id={report.id} />
+            <NewCommentForm report_id={report.id} sheetRef={sheetRef} />
             <ReportComments report_id={report.id} />
           </View>
         {/* </KeyboardAwareScrollView> */}
@@ -285,7 +295,7 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
         }}
         backgroundStyle={{ backgroundColor: theme["--color-bg-default"] }}
       >
-        {selectedReport && <ReportSheet report={selectedReport} />}
+        {selectedReport && <ReportSheet report={selectedReport} sheetRef={bottomSheetModalRef} />}
       </BottomSheetModal>
     </View>
   );

@@ -8,7 +8,10 @@ const Content = ({ qr }: {
   qr: UseQueryResult
 }) => {
   if (qr.isLoading) return <LoadingMsg />
-  if (qr.isError) return <ErrorMsg />
+  if (qr.isError) {
+    console.error(qr.error)
+    return <ErrorMsg />
+  }
   if (qr.data === null) return <EmptyMsg />
 }
 
