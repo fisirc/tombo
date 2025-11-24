@@ -1,9 +1,9 @@
 import {
   Icon,
   IconBomb,
-  IconBriefcaseFilled,
+  IconBriefcase,
+  IconCar,
   IconCarCrash,
-  IconCarFilled,
   IconFlame,
   IconFriends,
   IconGenderFemale,
@@ -37,7 +37,7 @@ const reportTypes: ReportType[] = [
   {
     label: "Robo de vehículo",
     value: "vehicle_theft",
-    Icon: IconCarFilled,
+    Icon: IconCar,
     severity: 2,
   },
   {
@@ -55,7 +55,7 @@ const reportTypes: ReportType[] = [
   {
     label: "Acoso laboral",
     value: "workplace_harassment",
-    Icon: IconBriefcaseFilled,
+    Icon: IconBriefcase,
     severity: 1,
   },
   {

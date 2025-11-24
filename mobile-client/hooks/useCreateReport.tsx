@@ -6,9 +6,11 @@ import { Alert } from "react-native";
 import useSession from "./useSession";
 import { FormData } from "@/app/(tabs)/new";
 import { supabase } from "@/services/supabase";
+import { useRouter } from "expo-router";
 
 export default () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { data: session } = useSession();
 
   const mutation = useMutation({
@@ -39,6 +41,7 @@ export default () => {
         .finally(() =>
           console.log("Finished attempting to broadcast report_created event")
         );
+      router.navigate('/');
     },
     onError: (error) => {
       console.error("Error creating report:", error);

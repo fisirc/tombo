@@ -28,7 +28,6 @@ import EmptyMsg from "@/components/EmptyMsg";
 import useCreateReportComment from "@/hooks/useCreateReportComment";
 
 const DISPLACEMENT = [0, 5, 10];
-const MARKER_SIZE = 35
 
 const NewCommentForm = ({
   report_id,
@@ -131,7 +130,7 @@ const ReportSheet = ({
           <View className="flex gap-8 px-5 py-10">
             <View className="flex gap-2">
               <View className="flex flex-row gap-2 items-center">
-                <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={3} />
+                <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={2.5} />
                 <Text
                   className="text-4xl font-bold"
                   style={{ color: theme["--color-text-default"] }}
@@ -210,24 +209,38 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
           const reportType = reportTypes.find(rep => rep.value === report.report_type);
           if (!reportType) throw new Error("Invalid report type");
           const isSelected = selectedReport?.id === report.id;
-          if (isSelected) console.log('selected', report.description, isSelected)
           return (
             <Mapbox.PointAnnotation
               coordinate={[report.longitude, report.latitude]}
-              id={report.id}
-              key={`${report.id}-${isSelected}`}
+              id={`icon-${report.id}`}
+              key={`icon-${report.id}-${isSelected}`}
+            >
+              <reportType.Icon
+                color={isSelected ? theme['--color-danger'] : 'white'}
+                strokeWidth={1.5}
+                size={20}
+              />
+            </Mapbox.PointAnnotation>
+          )
+        })}
+        {reports.map((report) => {
+          const reportType = reportTypes.find(rep => rep.value === report.report_type);
+          if (!reportType) throw new Error("Invalid report type");
+          const isSelected = selectedReport?.id === report.id;
+          return (
+            <Mapbox.PointAnnotation
+              coordinate={[report.longitude, report.latitude]}
+              id={`bg-${report.id}`}
+              key={`bg-${report.id}-${isSelected}`}
               onSelected={() => handlePointPress(report)}
               onDeselected={() => handlePointPress(report)}
             >
-              <reportType.Icon
-                size={MARKER_SIZE - 10}
-                color={isSelected ? theme['--color-danger'] : 'white'}
-                strokeWidth={3}
+              <View
                 style={{
                   backgroundColor: isSelected ? 'white' : theme['--color-danger'],
                   borderRadius: 1000,
-                  width: MARKER_SIZE,
-                  height: MARKER_SIZE,
+                  width: 30,
+                  height: 30,
                 }}
               />
             </Mapbox.PointAnnotation>
