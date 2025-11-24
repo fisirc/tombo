@@ -24,7 +24,7 @@ export default (report_id: string) => {
         queryKey: ["reports", report_id, "comments"],
       });
       supabase
-        .channel("report:" + report_id + '/comments')
+        .channel("reports:" + report_id + '/comments')
         .send({
           type: "broadcast",
           event: "comment_created",
