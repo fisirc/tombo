@@ -38,6 +38,9 @@ const mapboxToken = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
 if (!mapboxToken) throw Error("No Mapbox Token");
 Mapbox.setAccessToken(mapboxToken);
 
+dayjs.locale("es");
+dayjs.extend(relativeTime);
+
 const RootLayout = () => {
   useSessionInit();
   useCurrentLocation();
@@ -62,17 +65,6 @@ const RootLayout = () => {
 
 export default () => {
   const queryClient = new QueryClient();
-
-  useEffect(() => {
-    dayjs.locale("es");
-    dayjs.extend(relativeTime);
-    // OneSignal.Notifications.requestPermission(true);
-    // const androidId = Application.getAndroidId();
-    // // TODO: Move this to login
-    // console.log(`📨 Logging to OneSignal with Android ID: ${androidId}`);
-    // OneSignal.logout();
-    // OneSignal.login(androidId);
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -15,18 +15,21 @@ import BottomSheet, {
 import useTheme from "@/hooks/useTheme";
 import QueryWait from "@/components/QueryWait";
 import dayjs from "dayjs";
-import { ScrollView } from "react-native-gesture-handler";
 import TextArea from "@/components/TextArea";
 import Button from "@/components/Button";
 import useSession from "@/hooks/useSession";
 import useGetReports from "@/hooks/useGetReports";
 import { Tables } from "@/types/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useGetReportComments from "@/hooks/useGetReportComments";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import reportTypes from "@/constants/reportTypes";
+import EmptyMsg from "@/components/EmptyMsg";
 
 const DISPLACEMENT = [0, 5, 10];
 const ZOOM_SIZE_MULT = 1.5;
 
-const NewCommentForm = ({ reportId }: { reportId: string }) => {
+const NewCommentForm = ({ report_id }: { report_id: string }) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState<string>("");
@@ -35,7 +38,7 @@ const NewCommentForm = ({ reportId }: { reportId: string }) => {
     mutationFn: ReportService.createComment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reports", reportId, "comments"],
+        queryKey: ["reports", report_id, "comments"],
       });
       setMessage("");
     },
@@ -43,13 +46,13 @@ const NewCommentForm = ({ reportId }: { reportId: string }) => {
 
   const handleSubmit = () => {
     commentMutation.mutate({
-      reportId,
+      report_id,
       message,
     });
   };
 
   return (
-    <View className="flex gap-2">
+    <View className="flex gap-3">
       <Text className="text-sm" style={{ color: theme["--color-text-muted"] }}>
         Nuevo comentario
       </Text>
@@ -61,46 +64,47 @@ const NewCommentForm = ({ reportId }: { reportId: string }) => {
       <Button
         style={{ backgroundColor: theme["--color-bg-inverse"] }}
         label="Publicar"
+        className="mt-1"
         onPress={handleSubmit}
       />
     </View>
   );
 };
 
-const ReportComments = ({ reportId }: { reportId: string }) => {
+const ReportComments = ({ report_id }: { report_id: string }) => {
   const theme = useTheme();
 
-  const commentsQuery = useQuery({
-    queryKey: ["reports", reportId, "comments"],
-    queryFn: () => ReportService.getComments(reportId),
-  });
+  const commentsQR = useGetReportComments(report_id);
+  const { data: comments } = commentsQR;
 
-  if (!commentsQuery.data) return <QueryWait qr={commentsQuery} />;
-
-  console.log(commentsQuery.data);
+  if (!comments) return <QueryWait qr={commentsQR} />;
 
   return (
     <View className="flex gap-3">
       <Text className="text-sm" style={{ color: theme["--color-text-muted"] }}>
         Comentarios
       </Text>
-      {commentsQuery.data.map((comment) => (
-        <View
-          key={comment.id}
-          className="p-4 rounded-xl gap-2"
-          style={{ backgroundColor: theme["--color-bg-foreground"] }}
-        >
-          <Text style={{ color: theme["--color-text-default"] }}>
-            {comment.message}
-          </Text>
-          <Text
-            className="text-sm"
-            style={{ color: theme["--color-text-muted"] }}
+      {
+        comments.length
+        ? comments.map((comment) => (
+          <View
+            key={comment.id}
+            className="p-4 rounded-xl gap-2"
+            style={{ backgroundColor: theme["--color-bg-foreground"] }}
           >
-            {dayjs(comment.createdAt).fromNow()}
-          </Text>
-        </View>
-      ))}
+            <Text style={{ color: theme["--color-text-default"] }}>
+              {comment.message}
+            </Text>
+            <Text
+              className="text-sm"
+              style={{ color: theme["--color-text-muted"] }}
+            >
+              {dayjs(comment.created_at).fromNow()}
+            </Text>
+          </View>
+        ))
+        : <EmptyMsg />
+      }
     </View>
   );
 };
@@ -110,37 +114,38 @@ const ReportSheet = ({ report }: { report: Tables<"reports"> }) => {
 
   return (
     <BottomSheetView style={{ backgroundColor: theme["--color-bg-default"] }}>
-      <ScrollView className="h-[60vh]">
-        <View className="flex gap-8 px-5 py-10">
-          <View className="flex gap-2">
-            <Text
-              className="text-4xl font-bold"
-              style={{ color: theme["--color-text-default"] }}
-            >
-              {report.report_type}
-            </Text>
-            <Text
-              className="text-sm"
-              style={{ color: theme["--color-text-muted"] }}
-            >
-              {report.address}
-            </Text>
+      <SafeAreaView mode="margin" edges={['bottom']}>
+        <KeyboardAwareScrollView className="h-[60vh]" enableOnAndroid keyboardOpeningTime={2000}>
+          <View className="flex gap-8 px-5 py-10">
+            <View className="flex gap-3">
+              <Text
+                className="text-4xl font-bold"
+                style={{ color: theme["--color-text-default"] }}
+              >
+                {reportTypes.find((r) => r.value === report.report_type)?.label}
+              </Text>
+              <Text
+                style={{ color: theme["--color-text-default"] }}
+              >
+                {report.address}
+              </Text>
+            </View>
+            <View className="flex gap-3">
+              <Text
+                className="text-sm"
+                style={{ color: theme["--color-text-muted"] }}
+              >
+                Descripción
+              </Text>
+              <Text style={{ color: theme["--color-text-default"] }}>
+                {report.description}
+              </Text>
+            </View>
+            <NewCommentForm report_id={report.id} />
+            <ReportComments report_id={report.id} />
           </View>
-          <View className="flex gap-2">
-            <Text
-              className="text-sm"
-              style={{ color: theme["--color-text-muted"] }}
-            >
-              Descripción
-            </Text>
-            <Text style={{ color: theme["--color-text-default"] }}>
-              {report.description}
-            </Text>
-          </View>
-          <NewCommentForm reportId={report.id} />
-          <ReportComments reportId={report.id} />
-        </View>
-      </ScrollView>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
     </BottomSheetView>
   );
 };

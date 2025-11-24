@@ -1,5 +1,3 @@
-import { ReportType } from "@/types";
-
 const reportTypes = [
   {
     label: "🔪 Robo a mano armada",
