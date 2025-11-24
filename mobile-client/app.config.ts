@@ -15,15 +15,16 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     newArchEnabled: true,
     web: {
       bundler: "metro",
-      output: "static"
+      output: "static",
     },
     plugins: [
       "expo-router",
+      "expo-notifications",
       [
         "onesignal-expo-plugin",
         {
-          "mode": "development",
-        }
+          mode: "development",
+        },
       ],
       [
         "expo-splash-screen",
@@ -35,28 +36,30 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
       [
         "@rnmapbox/maps",
         {
-          RNMAPBOX_MAPS_DOWNLOAD_TOKEN: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
-        }
+          RNMAPBOX_MAPS_DOWNLOAD_TOKEN: process.env.EXPO_PUBLIC_MAPBOX_TOKEN,
+        },
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "La aplicación accede a tus fotos para adjuntarlas a los reportes que realices.",
-          "cameraPermission": "La aplicación accede a tu cámara para adjuntar fotos a los reportes que realices."
-        }
+          photosPermission:
+            "La aplicación accede a tus fotos para adjuntarlas a los reportes que realices.",
+          cameraPermission:
+            "La aplicación accede a tu cámara para adjuntar fotos a los reportes que realices.",
+        },
       ],
     ],
     experiments: {
-      typedRoutes: true
+      typedRoutes: true,
     },
     scheme: "myapp",
     extra: {
       router: {
-        origin: false
+        origin: false,
       },
       eas: {
-        projectId: "16276d4d-ca48-4ad3-8775-aeb18f91c38f"
-      }
-    }
+        projectId: "16276d4d-ca48-4ad3-8775-aeb18f91c38f",
+      },
+    },
   };
 };

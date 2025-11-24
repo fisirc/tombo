@@ -19,7 +19,6 @@ import TextArea from "@/components/TextArea";
 import Button from "@/components/Button";
 import useSession from "@/hooks/useSession";
 import useGetReports from "@/hooks/useGetReports";
-import { Tables } from "@/types/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useGetReportComments from "@/hooks/useGetReportComments";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -27,23 +26,26 @@ import reportTypes from "@/constants/reportTypes";
 import EmptyMsg from "@/components/EmptyMsg";
 import useCreateReportComment from "@/hooks/useCreateReportComment";
 import { IconClock, IconRoute } from "@tabler/icons-react-native";
+import { FullReport } from "@/services/report.service";
+import PagerView from "react-native-pager-view";
 
 const DISPLACEMENT = [0, 5, 10];
 
 const NewCommentForm = ({
   report_id,
-  sheetRef
+  sheetRef,
 }: {
-  report_id: string,
-  sheetRef: React.RefObject<BottomSheetModal | null>
+  report_id: string;
+  sheetRef: React.RefObject<BottomSheetModal | null>;
 }) => {
   const theme = useTheme();
   const [message, setMessage] = useState<string>("");
   const { mutate: createReportComment } = useCreateReportComment(report_id);
 
-  const handleSubmit = () => createReportComment(message, {
-    onSuccess: () => setMessage(""),
-  });
+  const handleSubmit = () =>
+    createReportComment(message, {
+      onSuccess: () => setMessage(""),
+    });
 
   return (
     <View className="flex gap-3">
@@ -80,9 +82,8 @@ const ReportComments = ({ report_id }: { report_id: string }) => {
       <Text className="text-sm" style={{ color: theme["--color-text-muted"] }}>
         Comentarios
       </Text>
-      {
-        comments.length
-        ? comments.map((comment) => (
+      {comments.length ? (
+        comments.map((comment) => (
           <View
             key={comment.id}
             className="p-4 rounded-xl gap-2"
@@ -99,18 +100,19 @@ const ReportComments = ({ report_id }: { report_id: string }) => {
             </Text>
           </View>
         ))
-        : <EmptyMsg />
-      }
+      ) : (
+        <EmptyMsg />
+      )}
     </View>
   );
 };
 
 const ReportSheet = ({
   report,
-  sheetRef
+  sheetRef,
 }: {
-  report: Tables<"reports">,
-  sheetRef: React.RefObject<BottomSheetModal | null>
+  report: FullReport;
+  sheetRef: React.RefObject<BottomSheetModal | null>;
 }) => {
   const theme = useTheme();
 
@@ -122,66 +124,86 @@ const ReportSheet = ({
 
   return (
     <BottomSheetScrollView>
-      <SafeAreaView edges={['bottom']}>
-          <View className="flex gap-8 px-5 py-10">
-            <View className="flex gap-2">
-              <View className="flex flex-row gap-2 items-center">
-                <reportType.Icon color={theme["--color-text-default"]} size={32} strokeWidth={2.5} />
-                <Text
-                  className="text-4xl font-bold"
-                  style={{ color: theme["--color-text-default"] }}
-                >
-                  {reportType.label}
+      <SafeAreaView edges={["bottom"]}>
+        <View className="flex gap-8 px-5 py-10">
+          <View className="flex gap-2">
+            <View className="flex flex-row gap-2 items-center">
+              <reportType.Icon
+                color={theme["--color-text-default"]}
+                size={32}
+                strokeWidth={2.5}
+              />
+              <Text
+                className="text-4xl font-bold"
+                style={{ color: theme["--color-text-default"] }}
+              >
+                {reportType.label}
+              </Text>
+            </View>
+            <View className="flex flex-col gap-2 mt-4">
+              <View className="flex flex-row gap-3 items-center">
+                <IconClock
+                  size={15}
+                  color={theme["--color-text-muted"]}
+                  strokeWidth={1.75}
+                />
+                <Text style={{ color: theme["--color-text-muted"] }}>
+                  {timeElapsed}
                 </Text>
               </View>
-              <View className="flex flex-col gap-2 mt-4">
-                <View className="flex flex-row gap-3 items-center">
-                  <IconClock size={15} color={theme["--color-text-muted"]} strokeWidth={1.75} />
-                  <Text
-                    style={{ color: theme["--color-text-muted"] }}
-                  >
-                    {timeElapsed}
-                  </Text>
-                </View>
-                <View className="flex flex-row gap-3 items-center">
-                  <IconRoute size={15} color={theme["--color-text-muted"]} strokeWidth={1.75} />
-                  <Text
-                    style={{ color: theme["--color-text-muted"] }}
-                    className="text-wrap max-w-[90%]"
-                  >
-                    {report.address}
-                  </Text>
-                </View>
+              <View className="flex flex-row gap-3 items-center">
+                <IconRoute
+                  size={15}
+                  color={theme["--color-text-muted"]}
+                  strokeWidth={1.75}
+                />
+                <Text
+                  style={{ color: theme["--color-text-muted"] }}
+                  className="text-wrap max-w-[90%]"
+                >
+                  {report.address}
+                </Text>
               </View>
             </View>
-            <View className="flex gap-3">
-              <Text
-                className="text-sm"
-                style={{ color: theme["--color-text-muted"] }}
-              >
-                Descripción
-              </Text>
-              <Text style={{ color: theme["--color-text-default"] }}>
-                {report.description}
-              </Text>
-            </View>
-            <NewCommentForm report_id={report.id} sheetRef={sheetRef} />
-            <ReportComments report_id={report.id} />
           </View>
+          {report.multimedia_reports.length && (
+            <PagerView style={{ height: 250 }} pageMargin={16}>
+              {report.multimedia_reports.map((image) => (
+                <Image
+                  key={image.id}
+                  source={{ uri: image.resource }}
+                  style={{ borderRadius: 12, height: 250 }}
+                />
+              ))}
+            </PagerView>
+          )}
+          <View className="flex gap-3">
+            <Text
+              className="text-sm"
+              style={{ color: theme["--color-text-muted"] }}
+            >
+              Descripción
+            </Text>
+            <Text style={{ color: theme["--color-text-default"] }}>
+              {report.description}
+            </Text>
+          </View>
+          <NewCommentForm report_id={report.id} sheetRef={sheetRef} />
+          <ReportComments report_id={report.id} />
+        </View>
         {/* </KeyboardAwareScrollView> */}
       </SafeAreaView>
     </BottomSheetScrollView>
   );
 };
 
-const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
+const Container = ({ reports }: { reports: FullReport[] }) => {
   const theme = useTheme();
 
   const map = useRef<Mapbox.MapView | null>(null);
   const [zoom, setZoom] = useState(15);
 
-  const [selectedReport, setSelectedReport] =
-    useState<Tables<"reports"> | null>(null);
+  const [selectedReport, setSelectedReport] = useState<FullReport | null>(null);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleSheetChanges = useCallback((index: number) => {
@@ -190,12 +212,12 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
     }
   }, []);
 
-  const handlePointPress = (report: Tables<'reports'>) => {
-    setSelectedReport(report)
-    bottomSheetModalRef.current?.present()
-  }
+  const handlePointPress = (report: FullReport) => {
+    setSelectedReport(report);
+    bottomSheetModalRef.current?.present();
+  };
 
-  console.log('selectedReport', selectedReport)
+  console.log("selectedReport", selectedReport);
 
   return (
     <View style={{ flex: 1 }}>
@@ -216,7 +238,9 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
         }}
       >
         {reports.map((report) => {
-          const reportType = reportTypes.find(rep => rep.value === report.report_type);
+          const reportType = reportTypes.find(
+            (rep) => rep.value === report.report_type
+          );
           if (!reportType) throw new Error("Invalid report type");
           const isSelected = selectedReport?.id === report.id;
           return (
@@ -228,15 +252,17 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
               onDeselected={() => handlePointPress(report)}
             >
               <reportType.Icon
-                color={isSelected ? theme['--color-danger'] : 'white'}
+                color={isSelected ? theme["--color-danger"] : "white"}
                 strokeWidth={1.75}
                 size={20}
               />
             </Mapbox.PointAnnotation>
-          )
+          );
         })}
         {reports.map((report) => {
-          const reportType = reportTypes.find(rep => rep.value === report.report_type);
+          const reportType = reportTypes.find(
+            (rep) => rep.value === report.report_type
+          );
           if (!reportType) throw new Error("Invalid report type");
           const isSelected = selectedReport?.id === report.id;
           return (
@@ -249,14 +275,16 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
             >
               <View
                 style={{
-                  backgroundColor: isSelected ? 'white' : theme['--color-danger'],
+                  backgroundColor: isSelected
+                    ? "white"
+                    : theme["--color-danger"],
                   borderRadius: 1000,
                   width: 30,
                   height: 30,
                 }}
               />
             </Mapbox.PointAnnotation>
-          )
+          );
         })}
         <Camera
           followZoomLevel={16}
@@ -268,13 +296,15 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
-        snapPoints={[500, '100%']}
+        snapPoints={[500, "100%"]}
         handleIndicatorStyle={{
           backgroundColor: theme["--color-bg-foreground-extra"],
         }}
         backgroundStyle={{ backgroundColor: theme["--color-bg-default"] }}
       >
-        {selectedReport && <ReportSheet report={selectedReport} sheetRef={bottomSheetModalRef} />}
+        {selectedReport && (
+          <ReportSheet report={selectedReport} sheetRef={bottomSheetModalRef} />
+        )}
       </BottomSheetModal>
     </View>
   );

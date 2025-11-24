@@ -2,6 +2,19 @@ import { Tables, TablesInsert } from "@/types/supabase";
 import { supabase } from "./supabase";
 import { LocalMedia } from "@/types";
 import { Alert } from "react-native";
+import { QueryData } from "@supabase/supabase-js";
+
+const getReportsQuery = supabase
+  .from("reports")
+  .select(
+    `
+    *,
+    multimedia_reports(*)
+  `
+  )
+  .single();
+
+export type FullReport = QueryData<typeof getReportsQuery>;
 
 export default class ReportService {
   static createReport = async (
@@ -38,19 +51,24 @@ export default class ReportService {
           report_id: reportData.id,
           resource: imageData.publicUrl,
           type: file.type,
-        })
-      
+        });
+
       if (dbError) {
         Alert.alert("Database Error", "Error al registrar imagen " + file.name);
         throw dbError;
       }
-    })
+    });
 
     return reportData;
   };
 
-  static getReports = async (): Promise<Tables<"reports">[]> => {
-    const query = supabase.from("reports").select("*");
+  static getReports = async (): Promise<FullReport[]> => {
+    const query = supabase.from("reports").select(
+      `
+        *,
+        multimedia_reports(*)
+      `
+    );
     const { data, error } = await query;
     if (error) throw error;
     return data;
