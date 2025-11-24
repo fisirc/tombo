@@ -38,7 +38,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_comments_report"
+            foreignKeyName: "comments_report_id_fkey"
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "reports"
@@ -189,18 +189,24 @@ export type Database = {
           alert_radius_km: number | null
           alerts_on: boolean
           id: string
+          process_end: string | null
+          process_start: string | null
           username: string
         }
         Insert: {
           alert_radius_km?: number | null
           alerts_on?: boolean
           id?: string
+          process_end?: string | null
+          process_start?: string | null
           username: string
         }
         Update: {
           alert_radius_km?: number | null
           alerts_on?: boolean
           id?: string
+          process_end?: string | null
+          process_start?: string | null
           username?: string
         }
         Relationships: []
@@ -213,6 +219,8 @@ export type Database = {
           id: string
           latitude: number
           longitude: number
+          process_end: string | null
+          process_start: string | null
           report_type: string
           user_id: string
         }
@@ -223,6 +231,8 @@ export type Database = {
           id?: string
           latitude: number
           longitude: number
+          process_end?: string | null
+          process_start?: string | null
           report_type?: string
           user_id: string
         }
@@ -233,6 +243,8 @@ export type Database = {
           id?: string
           latitude?: number
           longitude?: number
+          process_end?: string | null
+          process_start?: string | null
           report_type?: string
           user_id?: string
         }
