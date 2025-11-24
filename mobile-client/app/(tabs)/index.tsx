@@ -26,6 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import reportTypes from "@/constants/reportTypes";
 import EmptyMsg from "@/components/EmptyMsg";
 import useCreateReportComment from "@/hooks/useCreateReportComment";
+import { IconClock, IconRoute } from "@tabler/icons-react-native";
 
 const DISPLACEMENT = [0, 5, 10];
 
@@ -115,18 +116,13 @@ const ReportSheet = ({
 
   const reportType = reportTypes.find((r) => r.value === report.report_type);
 
+  const timeElapsed = dayjs(report.created_at).fromNow();
+
   if (!reportType) throw new Error("Invalid report type");
 
   return (
-    <BottomSheetScrollView
-      // style={{ backgroundColor: theme["--color-bg-default"] }}
-    >
+    <BottomSheetScrollView>
       <SafeAreaView edges={['bottom']}>
-        {/* <KeyboardAwareScrollView
-          className="h-[60vh]"
-          enableOnAndroid
-          keyboardOpeningTime={2000}
-        > */}
           <View className="flex gap-8 px-5 py-10">
             <View className="flex gap-2">
               <View className="flex flex-row gap-2 items-center">
@@ -138,11 +134,25 @@ const ReportSheet = ({
                   {reportType.label}
                 </Text>
               </View>
-              <Text
-                style={{ color: theme["--color-text-default"] }}
-              >
-                {report.address}
-              </Text>
+              <View className="flex flex-col gap-2 mt-4">
+                <View className="flex flex-row gap-3 items-center">
+                  <IconClock size={15} color={theme["--color-text-muted"]} strokeWidth={1.75} />
+                  <Text
+                    style={{ color: theme["--color-text-muted"] }}
+                  >
+                    {timeElapsed}
+                  </Text>
+                </View>
+                <View className="flex flex-row gap-3 items-center">
+                  <IconRoute size={15} color={theme["--color-text-muted"]} strokeWidth={1.75} />
+                  <Text
+                    style={{ color: theme["--color-text-muted"] }}
+                    className="text-wrap max-w-[90%]"
+                  >
+                    {report.address}
+                  </Text>
+                </View>
+              </View>
             </View>
             <View className="flex gap-3">
               <Text
@@ -214,10 +224,12 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
               coordinate={[report.longitude, report.latitude]}
               id={`icon-${report.id}`}
               key={`icon-${report.id}-${isSelected}`}
+              onSelected={() => handlePointPress(report)}
+              onDeselected={() => handlePointPress(report)}
             >
               <reportType.Icon
                 color={isSelected ? theme['--color-danger'] : 'white'}
-                strokeWidth={1.5}
+                strokeWidth={1.75}
                 size={20}
               />
             </Mapbox.PointAnnotation>
@@ -246,59 +258,6 @@ const Container = ({ reports }: { reports: Tables<"reports">[] }) => {
             </Mapbox.PointAnnotation>
           )
         })}
-        {/* {reports.map((report) => (
-          <Mapbox.MarkerView
-            key={report.id}
-            coordinate={[report.longitude, report.latitude]}
-            anchor={{ x: 0.5, y: 1 }}
-            className="overflow-visible"
-            style={{
-              width: zoom * ZOOM_SIZE_MULT * 4,
-              minWidth: zoom * ZOOM_SIZE_MULT * 4,
-              minHeight: zoom * ZOOM_SIZE_MULT * 4,
-            }}
-          >
-            <View className='items-center justify-center overflow-visible'>
-                {
-                  report.multimediaReports.length > 0 ? <Image
-                    source={{
-                      uri: `${process.env.EXPO_PUBLIC_STORAGE_URL}/reports/${report.multimediaReports[0].resource}`,
-                    }}
-                    width={zoom * ZOOM_SIZE_MULT * 4}
-                    height={zoom * ZOOM_SIZE_MULT * 4}
-                    style={{ overflow: 'visible', borderRadius: 20 }}
-                  ></Image>
-                  : <View
-                      style={{
-                        backgroundColor: theme['--color-bg-default'],
-                        borderRadius: 20,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: zoom * ZOOM_SIZE_MULT * 6,
-                        width: zoom * ZOOM_SIZE_MULT * 8,
-                      }}
-                      className='p-4'
-                    >
-                    <Text style={{ color: theme['--color-text-default'] }}>
-                      {report.description}
-                    </Text>
-                  </View>
-                }
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderTopWidth: 15,
-                    borderLeftWidth: 10,
-                    borderRightWidth: 10,
-                    borderTopColor: '#1f1f1f',
-                    borderLeftColor: 'transparent',
-                    borderRightColor: 'transparent',
-                  }}
-                />
-              </View>
-          </Mapbox.MarkerView>
-        ))} */}
         <Camera
           followZoomLevel={16}
           followUserMode={UserTrackingMode.Follow}
