@@ -11,13 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import Button from "./Button";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
+import QueryWait from "./QueryWait";
+import { GeocodedLocation } from "@/types";
+import { set } from "react-hook-form";
 
 interface MapBoxPickerProps {
-  onSelectLocation: (location: {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  }) => void;
+  onSelectLocation: (location: GeocodedLocation) => void;
   onClose: () => void;
 }
 
@@ -52,74 +52,42 @@ export const reverseGeocoding = async (
   }
 };
 
-export const MapPicker: React.FC<MapBoxPickerProps> = ({
-  onSelectLocation,
-  onClose,
-}) => {
-  const [selectedCoordinates, setSelectedCoordinates] = useState<
-    [number, number] | null
-  >(null);
+const MapPicker: React.FC<
+  MapBoxPickerProps & { currentLocation: GeocodedLocation }
+> = ({ onSelectLocation, onClose, currentLocation }) => {
   const colorScheme = useColorScheme();
-  const [placeName, setPlaceName] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] =
+    useState<GeocodedLocation>(currentLocation);
   const mapRef = useRef<Mapbox.MapView>(null);
 
-  useEffect(() => {
-    const getUserLocation = async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission to access location was denied");
-          return;
-        }
+  const handleMapPress = (feature: any) => {
+    setLoading(true);
+    const { coordinates } = feature.geometry;
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
 
-        const location = await Location.getCurrentPositionAsync({});
-        const currentLocation: [number, number] = [
-          location.coords.longitude,
-          location.coords.latitude,
-        ];
-        console.log({ currentLocation });
-        setSelectedCoordinates(currentLocation);
-        await fetchPlaceName(currentLocation[0], currentLocation[1]);
-      } catch (error) {
-        console.error("Error getting location:", error);
-      }
-    };
-    getUserLocation();
-  }, []);
-
-  const fetchPlaceName = async (longitude: number, latitude: number) => {
-    try {
-      setIsLoading(true);
-      const address = await reverseGeocoding(longitude, latitude);
-      if (address) {
-        setPlaceName(address);
-      } else {
-        setPlaceName("Unknown location");
-      }
-    } catch (error) {
-      console.error("Error fetching place name:", error);
-      setPlaceName("Location unavailable");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleMapPress = async (event: any) => {
-    const coordinates = event.geometry.coordinates;
-    setSelectedCoordinates(coordinates);
-    await fetchPlaceName(coordinates[0], coordinates[1]);
+    reverseGeocoding(longitude, latitude)
+      .then((address) => {
+        setSelectedLocation({
+          latitude,
+          longitude,
+          address: address || "Sin dirección",
+        });
+      })
+      .catch((error) => {
+        console.error("Error during reverse geocoding:", error);
+        setSelectedLocation({ latitude, longitude, address: "Sin dirección" });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleConfirmLocation = () => {
-    if (selectedCoordinates) {
-      onSelectLocation({
-        longitude: selectedCoordinates[0],
-        latitude: selectedCoordinates[1],
-        address: placeName,
-      });
-      onClose();
-    }
+    if (!selectedLocation) throw new Error("No location selected");
+    onSelectLocation(selectedLocation);
+    onClose();
   };
 
   return (
@@ -153,15 +121,18 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
           followUserLocation
           minZoomLevel={14}
           defaultSettings={{
-            centerCoordinate: selectedCoordinates || undefined,
+            centerCoordinate: [
+              selectedLocation.longitude,
+              selectedLocation.latitude,
+            ],
             zoomLevel: 16,
           }}
         />
 
-        {selectedCoordinates && (
+        {selectedLocation && (
           <Mapbox.PointAnnotation
             id="selected-location"
-            coordinate={selectedCoordinates}
+            coordinate={[selectedLocation.longitude, selectedLocation.latitude]}
           >
             <View />
           </Mapbox.PointAnnotation>
@@ -170,12 +141,13 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
 
       <SafeAreaView className="absolute bottom-0 left-0 w-full p-4">
         <View className="bg-default p-6 rounded-xl flex flex-col gap-4">
-          {selectedCoordinates ? (
+          {selectedLocation ? (
             <>
               <Text className="text-default text-lg" numberOfLines={2}>
-                {isLoading
+                {loading
                   ? "Obteniendo ubicación..."
-                  : placeName || "Selecciona una ubicación en el mapa"}
+                  : selectedLocation.address ||
+                    "Selecciona una ubicación en el mapa"}
               </Text>
               <View className="flex-row justify-between gap-4">
                 <Button
@@ -231,3 +203,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default (mapBoxPickerProps: MapBoxPickerProps) => {
+  const currentLocationQR = useCurrentLocation();
+  const currentLocation = currentLocationQR.data;
+
+  if (!currentLocation) {
+    return <QueryWait qr={currentLocationQR} />;
+  }
+
+  return <MapPicker {...mapBoxPickerProps} currentLocation={currentLocation} />;
+};
