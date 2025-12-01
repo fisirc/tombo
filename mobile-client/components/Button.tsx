@@ -1,3 +1,4 @@
+import useTheme from "@/hooks/useTheme";
 import { Pressable, Text, PressableProps, Button } from "react-native";
 
 export type ButtonProps = PressableProps & {
@@ -14,6 +15,8 @@ export default ({
   className,
   ...props
 }: ButtonProps) => {
+  const theme = useTheme();
+
   return (
     <Pressable
       className={`${className} flex-grow rounded-xl h-14 flex-row items-center justify-center px-4 disabled:opacity-50 
@@ -37,6 +40,14 @@ export default ({
               ? "text-default"
               : "text-white"
           }`}
+          style={{
+            color:
+              variant === "primary"
+                ? theme["--color-text-inverse"]
+                : variant === "secondary"
+                ? theme["--color-text-default"]
+                : "white",
+          }}
         >
           {label}
         </Text>

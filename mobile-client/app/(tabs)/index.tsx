@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import Mapbox, {
   Annotation,
   Camera,
@@ -133,7 +133,7 @@ const ReportSheet = ({
     <BottomSheetScrollView>
       <SafeAreaView edges={["bottom"]}>
         <View className="flex gap-8 px-5 py-10">
-          <View className="flex gap-2">
+          <View className="flex gap-4">
             <View className="flex flex-row gap-2 items-center">
               <reportType.Icon
                 color={theme["--color-text-default"]}
@@ -219,9 +219,9 @@ const ReportSheet = ({
 
 const Container = ({ reports }: { reports: FullReport[] }) => {
   const theme = useTheme();
+  const colorScheme = useColorScheme();
 
   const map = useRef<Mapbox.MapView | null>(null);
-  const [zoom, setZoom] = useState(15);
 
   const [selectedReport, setSelectedReport] = useState<FullReport | null>(null);
 
@@ -246,16 +246,16 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
           map.current = mapRef;
         }}
         zoomEnabled={true}
-        styleURL="mapbox://styles/mapbox/dark-v11"
+        styleURL={
+          colorScheme === "dark"
+            ? "mapbox://styles/mapbox/dark-v11"
+            : "mapbox://styles/mapbox/light-v11"
+        }
         compassEnabled={true}
         style={{ flex: 1 }}
         logoEnabled={false}
         attributionEnabled={false}
         scaleBarEnabled={false}
-        onTouchEnd={async () => {
-          const zoom = (await map.current?.getZoom()) ?? 1;
-          setZoom(zoom);
-        }}
       >
         {reports.map((report) => {
           const reportType = reportTypes.find(
