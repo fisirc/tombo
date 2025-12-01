@@ -1,7 +1,7 @@
 import { ReportService } from "@/api/services/report";
 import Button from "@/components/Button";
 import ImageInput from "@/components/ImageInput";
-import { MapPicker, reverseGeocoding } from "@/components/MapBoxPicker";
+import MapPicker, { reverseGeocoding } from "@/components/MapBoxPicker";
 import Select, { SelectItem } from "@/components/Select";
 import TextArea from "@/components/TextArea";
 import reportTypes from "@/constants/reportTypes";
@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useCurrentLocation from "@/hooks/useCurrentLocation";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import useTheme from "@/hooks/useTheme";
-import { MediaAsset } from "@/types";
+import { GeocodedLocation, MediaAsset } from "@/types";
 
 export type FormData = Omit<TablesInsert<"reports">, "user_id">;
 
@@ -172,7 +172,7 @@ export default () => {
             onRequestClose={() => setMapPickerVisible(false)}
           >
             <MapPicker
-              onSelectLocation={(location) => {
+              onSelectLocation={(location: GeocodedLocation) => {
                 setValue("latitude", location.latitude);
                 setValue("longitude", location.longitude);
                 setValue("address", location.address);
