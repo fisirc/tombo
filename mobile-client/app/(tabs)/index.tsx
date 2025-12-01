@@ -242,6 +242,9 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
             (rep) => rep.value === report.report_type
           );
           if (!reportType) throw new Error("Invalid report type");
+          const mainColor = report.process_start
+            ? theme["--color-warning"]
+            : theme["--color-danger"];
           const isSelected = selectedReport?.id === report.id;
           return (
             <Mapbox.PointAnnotation
@@ -252,7 +255,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
               onDeselected={() => handlePointPress(report)}
             >
               <reportType.Icon
-                color={isSelected ? theme["--color-danger"] : "white"}
+                color={isSelected ? mainColor : "white"}
                 strokeWidth={1.75}
                 size={20}
               />
@@ -264,6 +267,10 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
             (rep) => rep.value === report.report_type
           );
           if (!reportType) throw new Error("Invalid report type");
+          const mainColor = report.process_start
+            ? theme["--color-warning"]
+            : theme["--color-danger"];
+          console.log(mainColor, report.report_type, report.address);
           const isSelected = selectedReport?.id === report.id;
           return (
             <Mapbox.PointAnnotation
@@ -275,9 +282,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
             >
               <View
                 style={{
-                  backgroundColor: isSelected
-                    ? "white"
-                    : theme["--color-danger"],
+                  backgroundColor: isSelected ? "white" : mainColor,
                   borderRadius: 1000,
                   width: 30,
                   height: 30,
