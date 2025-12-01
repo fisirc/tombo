@@ -34,9 +34,9 @@ export default () => {
     defaultValues: {
       latitude: 0,
       longitude: 0,
-      address: "",
-      report_type: "",
       description: "",
+      address: undefined,
+      report_type: undefined,
     },
   });
   const { data: currentLocation } = useCurrentLocation();
@@ -166,60 +166,70 @@ export default () => {
           </Modal>
         </View>
       </KeyboardAwareScrollView>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        snapPoints={[400, "100%"]}
-        handleIndicatorStyle={{
-          backgroundColor: theme["--color-bg-foreground-extra"],
-        }}
-        backgroundStyle={{ backgroundColor: theme["--color-bg-foreground"] }}
-      >
-        <BottomSheetScrollView>
-          <SafeAreaView edges={["bottom", "top"]}>
-            <KeyboardAwareScrollView>
-              <View className="flex flex-col gap-2 px-5">
-                {reportTypes.map((rt) => {
-                  const isSelected = report_type === rt.value;
-                  return (
-                    <Button
-                      className="flex flex-row gap-2 items-center"
-                      key={rt.value}
-                      style={{
-                        backgroundColor: isSelected
-                          ? theme["--color-bg-inverse"]
-                          : theme["--color-bg-foreground-extra"],
-                      }}
-                      onPress={() => {
-                        setValue("report_type", rt.value);
-                        bottomSheetModalRef.current?.dismiss();
-                      }}
-                    >
-                      <rt.Icon
-                        size={24}
-                        color={
-                          isSelected
-                            ? theme["--color-text-inverse"]
-                            : theme["--color-text-default"]
-                        }
-                        strokeWidth={1.5}
-                      />
-                      <Text
-                        style={{
-                          color: isSelected
-                            ? theme["--color-text-inverse"]
-                            : theme["--color-text-default"],
-                        }}
-                      >
-                        {rt.label}
-                      </Text>
-                    </Button>
-                  );
-                })}
-              </View>
-            </KeyboardAwareScrollView>
-          </SafeAreaView>
-        </BottomSheetScrollView>
-      </BottomSheetModal>
+      <Controller
+        name="report_type"
+        control={control}
+        rules={{ required: "Este campo es obligatorio" }}
+        render={({ field }) => (
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            snapPoints={[400, "100%"]}
+            handleIndicatorStyle={{
+              backgroundColor: theme["--color-bg-foreground-extra"],
+            }}
+            backgroundStyle={{
+              backgroundColor: theme["--color-bg-foreground"],
+            }}
+          >
+            <BottomSheetScrollView>
+              <SafeAreaView edges={["bottom", "top"]}>
+                <KeyboardAwareScrollView>
+                  <View className="flex flex-col gap-2 px-5">
+                    {reportTypes.map((rt) => {
+                      const isSelected = field.value === rt.value;
+                      return (
+                        <Button
+                          className="flex flex-row gap-2 items-center"
+                          key={rt.value}
+                          style={{
+                            backgroundColor: isSelected
+                              ? theme["--color-bg-inverse"]
+                              : theme["--color-bg-foreground-extra"],
+                          }}
+                          onPress={() => {
+                            // setValue("report_type", rt.value);
+                            field.onChange(rt.value);
+                            bottomSheetModalRef.current?.dismiss();
+                          }}
+                        >
+                          <rt.Icon
+                            size={24}
+                            color={
+                              isSelected
+                                ? theme["--color-text-inverse"]
+                                : theme["--color-text-default"]
+                            }
+                            strokeWidth={1.5}
+                          />
+                          <Text
+                            style={{
+                              color: isSelected
+                                ? theme["--color-text-inverse"]
+                                : theme["--color-text-default"],
+                            }}
+                          >
+                            {rt.label}
+                          </Text>
+                        </Button>
+                      );
+                    })}
+                  </View>
+                </KeyboardAwareScrollView>
+              </SafeAreaView>
+            </BottomSheetScrollView>
+          </BottomSheetModal>
+        )}
+      />
     </View>
   );
 };
