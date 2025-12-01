@@ -77,12 +77,15 @@ export default class ReportService {
   };
 
   static getReports = async (): Promise<FullReport[]> => {
-    const query = supabase.from("reports").select(
-      `
-        *,
-        multimedia_reports(*)
-      `
-    );
+    const query = supabase
+      .from("reports")
+      .select(
+        `
+          *,
+          multimedia_reports(*)
+        `
+      )
+      .is("process_end", null);
     const { data, error } = await query;
     if (error) throw error;
     return data;
