@@ -82,23 +82,6 @@ export default () => {
     <View className="h-full">
       <KeyboardAwareScrollView enableOnAndroid keyboardOpeningTime={2000}>
         <View className="px-5 my-8 flex gap-6">
-          {/* <Controller
-            name="report_type"
-            control={control}
-            render={({ field }) => (
-              <View className="flex gap-2">
-                <Text className="text-default">Tipo de evento*</Text>
-                <Select
-                  data={formattedReportTypes}
-                  onSelect={field.onChange}
-                  onBlur={field.onBlur}
-                  search
-                  placeholder="Robo a mano armada"
-                  searchPlaceHolder="Buscar tipo de evento..."
-                />
-              </View>
-            )}
-          /> */}
           <View className="flex flex-col gap-2">
             <Text className="text-default">Lugar</Text>
             <Button
@@ -203,7 +186,7 @@ export default () => {
                       key={rt.value}
                       style={{
                         backgroundColor: isSelected
-                          ? "white"
+                          ? theme["--color-bg-inverse"]
                           : theme["--color-bg-foreground-extra"],
                       }}
                       onPress={() => {

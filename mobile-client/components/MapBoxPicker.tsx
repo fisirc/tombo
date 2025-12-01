@@ -97,7 +97,7 @@ const MapPicker: React.FC<
           <Ionicons name="close" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title} className="text-default">
-          🚨 Selecciona la ubicación
+          Selecciona la ubicación
         </Text>
       </View>
 
