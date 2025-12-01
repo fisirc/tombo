@@ -6,6 +6,7 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     slug: "mobile-client",
     android: {
       package: "pe.tombo.app",
+      googleServicesFile: "google-services.json",
     },
     ios: {
       bundleIdentifier: "pe.tombo.app",
@@ -20,12 +21,6 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     plugins: [
       "expo-router",
       "expo-notifications",
-      [
-        "onesignal-expo-plugin",
-        {
-          mode: "development",
-        },
-      ],
       [
         "expo-splash-screen",
         {

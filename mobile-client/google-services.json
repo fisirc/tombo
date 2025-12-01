@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "827335033030",
+    "project_id": "tombo-8a616",
+    "storage_bucket": "tombo-8a616.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827335033030:android:4c89bd15e7711f1cd6d7c7",
+        "android_client_info": {
+          "package_name": "com.tombo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOZPPc6mv879UdhSfBG4jSeX6gt7Wl-B8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
