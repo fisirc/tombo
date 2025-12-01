@@ -5,11 +5,11 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     name: "mobile-client",
     slug: "mobile-client",
     android: {
-      package: "pe.tombo.app",
+      package: "com.tombo.app",
       googleServicesFile: "google-services.json",
     },
     ios: {
-      bundleIdentifier: "pe.tombo.app",
+      bundleIdentifier: "com.tombo.app",
     },
     version: "1.0.0",
     userInterfaceStyle: "automatic",
