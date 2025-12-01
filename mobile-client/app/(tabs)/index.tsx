@@ -25,7 +25,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import reportTypes from "@/constants/reportTypes";
 import EmptyMsg from "@/components/EmptyMsg";
 import useCreateReportComment from "@/hooks/useCreateReportComment";
-import { IconClock, IconRoute } from "@tabler/icons-react-native";
+import { IconClock, IconRoute, IconSearch } from "@tabler/icons-react-native";
 import { FullReport } from "@/services/report.service";
 import PagerView from "react-native-pager-view";
 
@@ -118,7 +118,14 @@ const ReportSheet = ({
 
   const reportType = reportTypes.find((r) => r.value === report.report_type);
 
-  const timeElapsed = dayjs(report.created_at).fromNow();
+  let timeElapsedSinceReport = dayjs(report.created_at).fromNow();
+  timeElapsedSinceReport =
+    timeElapsedSinceReport.charAt(0).toUpperCase() +
+    timeElapsedSinceReport.slice(1);
+
+  const timeElapsedSinceProcessStart = report.process_start
+    ? dayjs(report.process_start).fromNow()
+    : null;
 
   if (!reportType) throw new Error("Invalid report type");
 
@@ -148,9 +155,10 @@ const ReportSheet = ({
                   strokeWidth={1.75}
                 />
                 <Text style={{ color: theme["--color-text-muted"] }}>
-                  {timeElapsed}
+                  {timeElapsedSinceReport}
                 </Text>
               </View>
+
               <View className="flex flex-row gap-3 items-center">
                 <IconRoute
                   size={15}
@@ -164,6 +172,18 @@ const ReportSheet = ({
                   {report.address}
                 </Text>
               </View>
+              {timeElapsedSinceProcessStart && (
+                <View className="flex flex-row gap-3 items-center">
+                  <IconSearch
+                    size={15}
+                    color={theme["--color-text-muted"]}
+                    strokeWidth={1.75}
+                  />
+                  <Text style={{ color: theme["--color-text-muted"] }}>
+                    En seguimiento desde {timeElapsedSinceProcessStart}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           {report.multimedia_reports.length ? (
