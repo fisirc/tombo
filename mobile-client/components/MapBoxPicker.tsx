@@ -1,5 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
 import Mapbox, { Camera, UserTrackingMode } from "@rnmapbox/maps";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
@@ -53,6 +59,7 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
   const [selectedCoordinates, setSelectedCoordinates] = useState<
     [number, number] | null
   >(null);
+  const colorScheme = useColorScheme();
   const [placeName, setPlaceName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const mapRef = useRef<Mapbox.MapView>(null);
@@ -131,7 +138,11 @@ export const MapPicker: React.FC<MapBoxPickerProps> = ({
           mapRef.current = ref;
         }}
         style={styles.map}
-        styleURL="mapbox://styles/mapbox/dark-v11"
+        styleURL={
+          colorScheme === "dark"
+            ? "mapbox://styles/mapbox/dark-v11"
+            : "mapbox://styles/mapbox/light-v11"
+        }
         onPress={handleMapPress}
         logoEnabled={false}
         scaleBarEnabled={false}
