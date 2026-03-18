@@ -5,10 +5,9 @@ import Input from "@/components/Input";
 import { Link } from "expo-router";
 import useSignIn from "@/hooks/useSignIn";
 import { useForm, Controller } from "react-hook-form";
-import { SignInData } from "@/types/";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { Icon } from '@tabler/icons-react-native'
+import { SignInWithPasswordCredentials } from "@supabase/supabase-js";
 
 export default function Auth() {
   const { mutate: signIn, isPending } = useSignIn();
@@ -17,12 +16,12 @@ export default function Auth() {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm<SignInData>({
+  } = useForm<SignInWithPasswordCredentials>({
     mode: "onBlur",
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (formData: SignInData) => signIn(formData);
+  const onSubmit = (formData: SignInWithPasswordCredentials) => signIn(formData);
 
   return (
     <View className="h-full bg-default flex flex-row items-center">

@@ -1,8 +1,9 @@
-import { SignInData, SignUpData } from "@/types/";
+import { SignUpData } from "@/types/";
 import { supabase } from "./supabase";
+import { SignInWithPasswordCredentials } from "@supabase/supabase-js";
 
 export default class AuthService {
-  static signIn = async (signInData: SignInData) => {
+  static signIn = async (signInData: SignInWithPasswordCredentials) => {
     const { data, error } = await supabase.auth.signInWithPassword(signInData);
     if (error) throw error;
     return data;

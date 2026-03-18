@@ -11,7 +11,6 @@ export default function Auth() {
   const { mutate: signUp, isPending } = useSignUp();
 
   const {
-    register,
     control,
     handleSubmit,
     watch,
