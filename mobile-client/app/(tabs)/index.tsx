@@ -231,7 +231,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
       setSelectedReport(null);
     }
   }, []);
-
+  
   const handlePointPress = (report: FullReport) => {
     setSelectedReport(report);
     bottomSheetModalRef.current?.present();
@@ -271,8 +271,8 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
               coordinate={[report.longitude, report.latitude]}
               id={`icon-${report.id}`}
               key={`icon-${report.id}-${isSelected}`}
-              onSelected={() => handlePointPress(report)}
-              onDeselected={() => handlePointPress(report)}
+              // onSelected={() => handlePointPress(report)}
+              // onDeselected={() => handlePointPress(report)}
             >
               <reportType.Icon
                 color={isSelected ? mainColor : "white"}
@@ -297,8 +297,8 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
               coordinate={[report.longitude, report.latitude]}
               id={`bg-${report.id}`}
               key={`bg-${report.id}-${isSelected}`}
-              onSelected={() => handlePointPress(report)}
-              onDeselected={() => handlePointPress(report)}
+              // onSelected={() => handlePointPress(report)}
+              // onDeselected={() => handlePointPress(report)}
             >
               <View
                 style={{
@@ -318,7 +318,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
         />
         <UserLocation minDisplacement={DISPLACEMENT[0]} />
       </Mapbox.MapView>
-      <BottomSheetModal
+      {/* <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
         snapPoints={[500, "100%"]}
@@ -330,7 +330,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
         {selectedReport && (
           <ReportSheet report={selectedReport} sheetRef={bottomSheetModalRef} />
         )}
-      </BottomSheetModal>
+      </BottomSheetModal> */}
     </View>
   );
 };

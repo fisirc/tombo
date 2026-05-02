@@ -12,20 +12,20 @@ const tabs: TabButtonProps[] = [
     IconDefault: IconCompass,
     IconFocused: IconCompassFilled
   },
-  {
-    name: 'new',
-    href: '/new',
-    label: 'Reportar',
-    IconDefault: IconAlertSquareRounded,
-    IconFocused: IconAlertSquareRoundedFilled
-  },
-  {
-    name: 'settings',
-    href: '/settings',
-    label: 'Perfil',
-    IconDefault: IconUser,
-    IconFocused: IconUser,
-  }
+  // {
+  //   name: 'new',
+  //   href: '/new',
+  //   label: 'Reportar',
+  //   IconDefault: IconAlertSquareRounded,
+  //   IconFocused: IconAlertSquareRoundedFilled
+  // },
+  // {
+  //   name: 'settings',
+  //   href: '/settings',
+  //   label: 'Perfil',
+  //   IconDefault: IconUser,
+  //   IconFocused: IconUser,
+  // }
 ]
 
 export default function TabLayout() {
