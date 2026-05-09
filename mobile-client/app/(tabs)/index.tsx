@@ -31,192 +31,6 @@ import PagerView from "react-native-pager-view";
 
 const DISPLACEMENT = [0, 5, 10];
 
-const NewCommentForm = ({
-  report_id,
-  sheetRef,
-}: {
-  report_id: string;
-  sheetRef: React.RefObject<BottomSheetModal | null>;
-}) => {
-  const theme = useTheme();
-  const [message, setMessage] = useState<string>("");
-  const { mutate: createReportComment } = useCreateReportComment(report_id);
-
-  const handleSubmit = () =>
-    createReportComment(message, {
-      onSuccess: () => setMessage(""),
-    });
-
-  return (
-    <View className="flex gap-3">
-      <Text className="text-sm" style={{ color: theme["--color-text-muted"] }}>
-        Nuevo comentario
-      </Text>
-      <TextArea
-        placeholder="El sospechoso escapó por la avenida..."
-        value={message}
-        onChangeText={setMessage}
-        onPress={() => sheetRef.current?.expand()}
-      />
-      <Button
-        style={{ backgroundColor: theme["--color-bg-inverse"] }}
-        label="Publicar"
-        className="mt-1"
-        onPress={handleSubmit}
-        disabled={message.trim().length === 0}
-      />
-    </View>
-  );
-};
-
-const ReportComments = ({ report_id }: { report_id: string }) => {
-  const theme = useTheme();
-
-  const commentsQR = useGetReportComments(report_id);
-  const { data: comments } = commentsQR;
-
-  if (!comments) return <QueryWait qr={commentsQR} />;
-
-  return (
-    <View className="flex gap-3">
-      <Text className="text-sm" style={{ color: theme["--color-text-muted"] }}>
-        Comentarios
-      </Text>
-      {comments.length ? (
-        comments.map((comment) => (
-          <View
-            key={comment.id}
-            className="p-4 rounded-xl gap-2"
-            style={{ backgroundColor: theme["--color-bg-foreground"] }}
-          >
-            <Text style={{ color: theme["--color-text-default"] }}>
-              {comment.message}
-            </Text>
-            <Text
-              className="text-sm"
-              style={{ color: theme["--color-text-muted"] }}
-            >
-              {dayjs(comment.created_at).fromNow()}
-            </Text>
-          </View>
-        ))
-      ) : (
-        <EmptyMsg />
-      )}
-    </View>
-  );
-};
-
-const ReportSheet = ({
-  report,
-  sheetRef,
-}: {
-  report: FullReport;
-  sheetRef: React.RefObject<BottomSheetModal | null>;
-}) => {
-  const theme = useTheme();
-
-  const reportType = reportTypes.find((r) => r.value === report.report_type);
-
-  let timeElapsedSinceReport = dayjs(report.created_at).fromNow();
-  timeElapsedSinceReport =
-    timeElapsedSinceReport.charAt(0).toUpperCase() +
-    timeElapsedSinceReport.slice(1);
-
-  const timeElapsedSinceProcessStart = report.process_start
-    ? dayjs(report.process_start).fromNow()
-    : null;
-
-  if (!reportType) throw new Error("Invalid report type");
-
-  return (
-    <BottomSheetScrollView>
-      <SafeAreaView edges={["bottom"]}>
-        <View className="flex gap-8 px-5 py-10">
-          <View className="flex gap-4">
-            <View className="flex flex-row gap-2 items-center">
-              <reportType.Icon
-                color={theme["--color-text-default"]}
-                size={32}
-                strokeWidth={2.5}
-              />
-              <Text
-                className="text-4xl font-bold"
-                style={{ color: theme["--color-text-default"] }}
-              >
-                {reportType.label}
-              </Text>
-            </View>
-            <View className="flex flex-col gap-2 mt-4">
-              <View className="flex flex-row gap-3 items-center">
-                <IconClock
-                  size={15}
-                  color={theme["--color-text-muted"]}
-                  strokeWidth={1.75}
-                />
-                <Text style={{ color: theme["--color-text-muted"] }}>
-                  {timeElapsedSinceReport}
-                </Text>
-              </View>
-
-              <View className="flex flex-row gap-3 items-center">
-                <IconRoute
-                  size={15}
-                  color={theme["--color-text-muted"]}
-                  strokeWidth={1.75}
-                />
-                <Text
-                  style={{ color: theme["--color-text-muted"] }}
-                  className="text-wrap max-w-[90%]"
-                >
-                  {report.address}
-                </Text>
-              </View>
-              {timeElapsedSinceProcessStart && (
-                <View className="flex flex-row gap-3 items-center">
-                  <IconSearch
-                    size={15}
-                    color={theme["--color-text-muted"]}
-                    strokeWidth={1.75}
-                  />
-                  <Text style={{ color: theme["--color-text-muted"] }}>
-                    En seguimiento desde {timeElapsedSinceProcessStart}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
-          {report.multimedia_reports.length ? (
-            <PagerView style={{ height: 250 }} pageMargin={16}>
-              {report.multimedia_reports.map((image) => (
-                <Image
-                  key={image.id}
-                  source={{ uri: image.resource }}
-                  style={{ borderRadius: 12, height: 250 }}
-                />
-              ))}
-            </PagerView>
-          ) : null}
-          <View className="flex gap-3">
-            <Text
-              className="text-sm"
-              style={{ color: theme["--color-text-muted"] }}
-            >
-              Descripción
-            </Text>
-            <Text style={{ color: theme["--color-text-default"] }}>
-              {report.description}
-            </Text>
-          </View>
-          <NewCommentForm report_id={report.id} sheetRef={sheetRef} />
-          <ReportComments report_id={report.id} />
-        </View>
-        {/* </KeyboardAwareScrollView> */}
-      </SafeAreaView>
-    </BottomSheetScrollView>
-  );
-};
-
 const Container = ({ reports }: { reports: FullReport[] }) => {
   const theme = useTheme();
   const colorScheme = useColorScheme();
@@ -231,7 +45,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
       setSelectedReport(null);
     }
   }, []);
-  
+
   const handlePointPress = (report: FullReport) => {
     setSelectedReport(report);
     bottomSheetModalRef.current?.present();
@@ -259,7 +73,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
       >
         {reports.map((report) => {
           const reportType = reportTypes.find(
-            (rep) => rep.value === report.report_type
+            (rep) => rep.value === report.report_type,
           );
           if (!reportType) throw new Error("Invalid report type");
           const mainColor = report.process_start
@@ -271,8 +85,6 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
               coordinate={[report.longitude, report.latitude]}
               id={`icon-${report.id}`}
               key={`icon-${report.id}-${isSelected}`}
-              // onSelected={() => handlePointPress(report)}
-              // onDeselected={() => handlePointPress(report)}
             >
               <reportType.Icon
                 color={isSelected ? mainColor : "white"}
@@ -284,7 +96,7 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
         })}
         {reports.map((report) => {
           const reportType = reportTypes.find(
-            (rep) => rep.value === report.report_type
+            (rep) => rep.value === report.report_type,
           );
           if (!reportType) throw new Error("Invalid report type");
           const mainColor = report.process_start
@@ -297,8 +109,6 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
               coordinate={[report.longitude, report.latitude]}
               id={`bg-${report.id}`}
               key={`bg-${report.id}-${isSelected}`}
-              // onSelected={() => handlePointPress(report)}
-              // onDeselected={() => handlePointPress(report)}
             >
               <View
                 style={{
@@ -318,19 +128,6 @@ const Container = ({ reports }: { reports: FullReport[] }) => {
         />
         <UserLocation minDisplacement={DISPLACEMENT[0]} />
       </Mapbox.MapView>
-      {/* <BottomSheetModal
-        ref={bottomSheetModalRef}
-        onChange={handleSheetChanges}
-        snapPoints={[500, "100%"]}
-        handleIndicatorStyle={{
-          backgroundColor: theme["--color-bg-foreground-extra"],
-        }}
-        backgroundStyle={{ backgroundColor: theme["--color-bg-default"] }}
-      >
-        {selectedReport && (
-          <ReportSheet report={selectedReport} sheetRef={bottomSheetModalRef} />
-        )}
-      </BottomSheetModal> */}
     </View>
   );
 };
